@@ -1,4 +1,4 @@
-package base
+package monitor
 
 import (
 	"fmt"
@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	user32              = windows.NewLazySystemDLL("user32.dll")
 	enumDisplayMonitors = user32.NewProc("EnumDisplayMonitors")
 	getMonitorInfo      = user32.NewProc("GetMonitorInfoW")
 )
