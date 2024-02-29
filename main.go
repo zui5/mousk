@@ -1,11 +1,14 @@
 package main
 
 import (
-	"changeme/base"
+	"changeme/base/listener"
+	"changeme/base/mouse"
 	"embed"
 	"fmt"
 	"sync"
 	"time"
+
+	hook "github.com/robotn/gohook"
 )
 
 //go:embed all:frontend/dist
@@ -15,7 +18,8 @@ func main() {
 	// Create an instance of the app structure
 	// app := NewApp()
 	// testrobotgo()
-	testwin32()
+	testKeyboardListener()
+	testMouseMove()
 
 	// Create application with options
 	// err := wails.Run(&options.App{
@@ -66,21 +70,62 @@ func testrobotgo() {
 
 }
 
-func testwin32() {
+func testMouseMove() {
 	// 获取当前鼠标位置
-	currentX, currentY := base.GetMousePos()
+	currentX, currentY := mouse.GetMousePos()
 	fmt.Printf("Current Mouse Position: (%d, %d)\n", currentX, currentY)
 
-	base.SetMousePos(1475, 800)
-	base.MoveMouse(-100, 0)
+	mouse.SetMousePos(1475, 800)
+	mouse.MoveMouse(-100, 0)
 
 	// 等待一段时间，以便观察鼠标移动
 	time.Sleep(3 * time.Second)
 
 	// 获取移动后的鼠标位置
-	newX, newY := base.GetMousePos()
+	newX, newY := mouse.GetMousePos()
 	fmt.Printf("New Mouse Position: (%d, %d)\n", newX, newY)
 
 	// 恢复鼠标原始位置
-	base.SetMousePos(currentX, currentY)
+	mouse.SetMousePos(currentX, currentY)
+}
+
+func testKeyboardListener() {
+	listener.RegisterOne(listener.RegisterKey{Cmd: []string{"w"}, When: hook.KeyDown}, func(e hook.Event) {
+		fmt.Println(e)
+		mouse.MoveMouse(1, 0)
+	})
+	listener.RegisterOne(listener.RegisterKey{Cmd: []string{"a"}, When: hook.KeyDown}, func(e hook.Event) {
+		fmt.Println(e)
+		mouse.MoveMouse(0, 1)
+	})
+	listener.RegisterOne(listener.RegisterKey{Cmd: []string{"s"}, When: hook.KeyDown}, func(e hook.Event) {
+		fmt.Println(e)
+		mouse.MoveMouse(-1, 0)
+	})
+	listener.RegisterOne(listener.RegisterKey{Cmd: []string{"d"}, When: hook.KeyDown}, func(e hook.Event) {
+		fmt.Println(e)
+		mouse.MoveMouse(0, -1)
+	})
+	listener.Start()
+	// fmt.Println("--- Please press ctrl + shift + q to stop hook ---")
+	// hook.Register(hook.KeyDown, []string{"q", "ctrl", "shift"}, func(e hook.Event) {
+	// 	fmt.Println("ctrl-shift-q")
+	// 	hook.End()
+	// })
+
+	// fmt.Println("--- Please press
+	// hook.Register(hook.KeyDown, []string{"w"}, func(e hook.Event) {
+	// 	fmt.Println("w")
+	// })
+
+	// s := hook.Start()
+}
+
+func low() {
+	evChan := hook.Start()
+	defer hook.End()
+
+	for ev := range evChan {
+		fmt.Println("hook: ", ev)
+	}
 }
