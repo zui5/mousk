@@ -23,6 +23,16 @@ const (
 	mouseEventF  = 0
 )
 
+const (
+	DirectionUp = iota
+	DirectionDown
+	DirectionLeft
+	DirectionRight
+
+	SpeedFast
+	SpeedSlow
+)
+
 type input struct {
 	Type uint32
 	Mi   mouseInput
