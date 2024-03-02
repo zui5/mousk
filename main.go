@@ -1,6 +1,7 @@
 package main
 
 import (
+	"changeme/base/config"
 	"changeme/base/listener"
 	"changeme/base/mouse"
 	"embed"
@@ -15,9 +16,11 @@ import (
 var assets embed.FS
 
 func main() {
-	// Create an instance of the app structure
 	// app := NewApp()
-	// testrobotgo()
+
+	// 1. load config
+	config.Init()
+	// 2. register listener event
 	testKeyboardListener()
 	testMouseMove()
 
@@ -90,22 +93,7 @@ func testMouseMove() {
 }
 
 func testKeyboardListener() {
-	listener.RegisterOne(listener.RegisterKey{Cmd: []string{"w"}, When: hook.KeyDown}, func(e hook.Event) {
-		fmt.Println(e)
-		mouse.MoveMouse(1, 0)
-	})
-	listener.RegisterOne(listener.RegisterKey{Cmd: []string{"a"}, When: hook.KeyDown}, func(e hook.Event) {
-		fmt.Println(e)
-		mouse.MoveMouse(0, 1)
-	})
-	listener.RegisterOne(listener.RegisterKey{Cmd: []string{"s"}, When: hook.KeyDown}, func(e hook.Event) {
-		fmt.Println(e)
-		mouse.MoveMouse(-1, 0)
-	})
-	listener.RegisterOne(listener.RegisterKey{Cmd: []string{"d"}, When: hook.KeyDown}, func(e hook.Event) {
-		fmt.Println(e)
-		mouse.MoveMouse(0, -1)
-	})
+	listener.RegisterFromConfig()
 	listener.Start()
 	// fmt.Println("--- Please press ctrl + shift + q to stop hook ---")
 	// hook.Register(hook.KeyDown, []string{"q", "ctrl", "shift"}, func(e hook.Event) {
@@ -128,4 +116,8 @@ func low() {
 	for ev := range evChan {
 		fmt.Println("hook: ", ev)
 	}
+}
+
+func testConfig() {
+	config.Init()
 }
