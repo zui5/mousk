@@ -1,11 +1,11 @@
 package listener
 
 import (
-	"changeme/base/callback"
-	"changeme/base/config"
-	"changeme/base/mouse"
+	"mousek/base/callback"
+	"mousek/base/config"
+	"mousek/base/mouse"
 
-	hook "github.com/robotn/gohook"
+	hook "mousek/base/hook"
 )
 
 // var RegisterKeys []RegisterKey

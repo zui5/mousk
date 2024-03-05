@@ -1,15 +1,15 @@
 package main
 
 import (
-	"changeme/base/config"
-	"changeme/base/listener"
-	"changeme/base/mouse"
 	"embed"
 	"fmt"
+	"mousek/base/config"
+	"mousek/base/listener"
+	"mousek/base/mouse"
 	"sync"
 	"time"
 
-	hook "github.com/robotn/gohook"
+	hook "mousek/base/hook"
 )
 
 //go:embed all:frontend/dist

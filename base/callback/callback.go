@@ -1,10 +1,10 @@
 package callback
 
 import (
-	"changeme/base/config"
-	"changeme/base/mouse"
+	"mousek/base/config"
+	"mousek/base/mouse"
 
-	hook "github.com/robotn/gohook"
+	hook "mousek/base/hook"
 )
 
 type CallbackFunc func(hook.Event)
