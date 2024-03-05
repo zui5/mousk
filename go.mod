@@ -1,4 +1,4 @@
-module changeme
+module mousek
 
 go 1.18
 
@@ -6,7 +6,6 @@ require golang.org/x/sys v0.17.0
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/robotn/gohook v0.41.0 // indirect
 	github.com/vcaesar/keycode v0.10.1 // indirect
 )
 
