@@ -2,9 +2,9 @@ package callback
 
 import (
 	"mousek/base/config"
+	"mousek/base/hook"
 	"mousek/base/mouse"
-
-	hook "mousek/base/hook"
+	// hook "mousek/base/hook"
 )
 
 type CallbackFunc func(hook.Event)
