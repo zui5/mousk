@@ -30,6 +30,7 @@ void dispatch_proc(iohook_event * const event) {
 		case EVENT_KEY_PRESSED:
 		case EVENT_KEY_RELEASED:
 		case EVENT_KEY_TYPED:
+			event->reserved=0x1;
            sprintf(buffer,
                 "{\"id\":%i,\"time\":%" PRIu64 ",\"mask\":%hu,\"reserved\":%hu,\"keycode\":%hu,\"rawcode\":%hu,\"keychar\":%d}",
                 event->type, event->time, event->mask,event->reserved,
