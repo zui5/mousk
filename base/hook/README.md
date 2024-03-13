@@ -1,10 +1,10 @@
 # gohook
 
-[![Build Status](https://github.com/robotn/gohook/workflows/Go/badge.svg)](https://github.com/robotn/gohook/commits/master)
+[![Build Status](https://mousek/base/hook/workflows/Go/badge.svg)](https://mousek/base/hook/commits/master)
 [![CircleCI Status](https://circleci.com/gh/robotn/gohook.svg?style=shield)](https://circleci.com/gh/robotn/gohook)
 ![Appveyor](https://ci.appveyor.com/api/projects/status/github/robotn/gohook?branch=master&svg=true)
-[![Go Report Card](https://goreportcard.com/badge/github.com/robotn/gohook)](https://goreportcard.com/report/github.com/robotn/gohook)
-[![GoDoc](https://godoc.org/github.com/robotn/gohook?status.svg)](https://godoc.org/github.com/robotn/gohook)
+[![Go Report Card](https://goreportcard.com/badge/mousek/base/hook)](https://goreportcard.com/report/mousek/base/hook)
+[![GoDoc](https://godoc.org/mousek/base/hook?status.svg)](https://godoc.org/mousek/base/hook)
 <!-- This is a work in progress. -->
 
 ## Requirements (Linux):
@@ -16,7 +16,7 @@
 With Go module support (Go 1.11+), just import:
 
 ```go
-import "github.com/robotn/gohook"
+import "mousek/base/hook"
 ```
 
 ## Examples:
@@ -27,7 +27,7 @@ package main
 import (
 	"fmt"
 
-	hook "github.com/robotn/gohook"
+	hook "mousek/base/hook"
 )
 
 func main() {

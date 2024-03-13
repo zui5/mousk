@@ -36,6 +36,5 @@ func go_send(s *C.char) {
 	}
 
 	// todo: maybe make non-bloking
-	// todo
 	ev <- out
 }
