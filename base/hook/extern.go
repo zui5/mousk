@@ -9,6 +9,7 @@ import "C"
 import (
 	"log"
 	"time"
+	"fmt"
 
 	"encoding/json"
 )
@@ -34,6 +35,7 @@ func go_send(s *C.char) {
 	if err != nil {
 		log.Fatal("json.Unmarshal error is: ", err)
 	}
+	fmt.Println(out)
 
 	// todo: maybe make non-bloking
 	ev <- out
