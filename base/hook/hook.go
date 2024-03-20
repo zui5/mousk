@@ -132,6 +132,7 @@ func Process(evChan <-chan Event) (out chan bool) {
 	out = make(chan bool)
 	go func() {
 		for ev := range evChan {
+			fmt.Println("fuck:", ev)
 			if ev.Kind == KeyDown || ev.Kind == KeyHold {
 				pressed[ev.Keycode] = true
 			} else if ev.Kind == KeyUp {
@@ -144,6 +145,7 @@ func Process(evChan <-chan Event) (out chan bool) {
 				}
 
 				if allPressed(pressed, keys[v]...) {
+					fmt.Println("wtf:", ev)
 					cbs[v](ev)
 				}
 			}
