@@ -37,10 +37,10 @@ func Start() {
 
 func RegisterFromConfig() {
 	settingsVar := config.GetSettings()
-	RegisterOne(RegisterKey{Cmd: []string{settingsVar.Mouse.Fast.Down}, When: hook.KeyUp}, callback.MouseMove(mouse.SpeedFast, mouse.DirectionDown))
-	RegisterOne(RegisterKey{Cmd: []string{settingsVar.Mouse.Fast.Up}, When: hook.KeyUp}, callback.MouseMove(mouse.SpeedFast, mouse.DirectionUp))
-	RegisterOne(RegisterKey{Cmd: []string{settingsVar.Mouse.Fast.Left}, When: hook.KeyUp}, callback.MouseMove(mouse.SpeedFast, mouse.DirectionLeft))
-	RegisterOne(RegisterKey{Cmd: []string{settingsVar.Mouse.Fast.Right}, When: hook.KeyUp}, callback.MouseMove(mouse.SpeedFast, mouse.DirectionRight))
+	RegisterOne(RegisterKey{Cmd: []string{settingsVar.Mouse.Fast.Down}, When: hook.KeyDown}, callback.MouseMove(mouse.SpeedFast, mouse.DirectionDown))
+	RegisterOne(RegisterKey{Cmd: []string{settingsVar.Mouse.Fast.Up}, When: hook.KeyDown}, callback.MouseMove(mouse.SpeedFast, mouse.DirectionUp))
+	RegisterOne(RegisterKey{Cmd: []string{settingsVar.Mouse.Fast.Left}, When: hook.KeyDown}, callback.MouseMove(mouse.SpeedFast, mouse.DirectionLeft))
+	RegisterOne(RegisterKey{Cmd: []string{settingsVar.Mouse.Fast.Right}, When: hook.KeyDown}, callback.MouseMove(mouse.SpeedFast, mouse.DirectionRight))
 
 	RegisterOne(RegisterKey{Cmd: []string{settingsVar.Mouse.Slow.Down}, When: hook.KeyDown}, callback.MouseMove(mouse.SpeedSlow, mouse.DirectionDown))
 	RegisterOne(RegisterKey{Cmd: []string{settingsVar.Mouse.Slow.Up}, When: hook.KeyDown}, callback.MouseMove(mouse.SpeedSlow, mouse.DirectionUp))

@@ -1,123 +1,90 @@
 package main
 
 import (
-	"embed"
 	"fmt"
-	"mousek/base/config"
-	"mousek/base/listener"
-	"mousek/base/mouse"
-	"sync"
+	"syscall"
 	"time"
-
-	hook "mousek/base/hook"
+	"unsafe"
 )
 
-//go:embed all:frontend/dist
-var assets embed.FS
+const (
+	WH_KEYBOARD_LL = 13
+	WM_KEYDOWN     = 0x0100
+	VK_SHIFT       = 0xA0
+	VK_CONTROL     = 0xA2
+)
+
+type KBDLLHOOKSTRUCT struct {
+	VkCode uint32
+}
+
+var (
+	user32              = syscall.NewLazyDLL("user32.dll")
+	setWindowsHookEx    = user32.NewProc("SetWindowsHookExW")
+	getMessageW         = user32.NewProc("GetMessageW")
+	unhookWindowsHookEx = user32.NewProc("UnhookWindowsHookEx")
+)
+
+type HookProc func(nCode int, wParam uintptr, lParam uintptr) uintptr
 
 func main() {
-	// app := NewApp()
+	for {
+		time.Sleep(time.Second)
+		fmt.Println(isKeyDown(VK_SHIFT) && isKeyDown(VK_CONTROL))
 
-	// 1. load config
-	config.Init()
-	// 2. register listener event
-	testKeyboardListener()
-	testMouseMove()
+	}
+	hookProc := HookProc(Callback)
 
-	// Create application with options
-	// err := wails.Run(&options.App{
-	// 	Title:  "MouseK",
-	// 	Width:  1024,
-	// 	Height: 768, AssetServer: &assetserver.Options{
-	// 		Assets: assets,
-	// 	},
-	// 	BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-	// 	OnStartup:        app.startup,
-	// 	Bind: []interface{}{
-	// 		app,
-	// 	},
-	// })
+	hookID, _, _ := setWindowsHookEx.Call(
+		uintptr(WH_KEYBOARD_LL),
+		syscall.NewCallback(hookProc),
+		0,
+		0,
+	)
 
-	// if err != nil {
-	// 	println("Error:", err.Error())
-	// }
-}
+	if hookID == 0 {
+		fmt.Println("Failed to set hook")
+		return
+	}
 
-func testrobotgo() {
+	fmt.Println("Hook set, waiting for events...")
 
-	var wg sync.WaitGroup
-	fmt.Println("--- Please press ctrl + shift + q to stop hook ---")
-	wg.Add(1)
-	// hook.Register(hook.KeyDown, []string{"q", "ctrl", "shift"}, func(e hook.Event) {
-	// 	// defer wg.Done()
-	// 	// wg.Add(1)
-	// 	fmt.Println("ctrl-shift-q")
-	// 	hook.End()
-	// })
-	// fmt.Println("--- Please press w---")
-	// hook.Register(hook.KeyDown, []string{"1"}, func(e hook.Event) {
-	// 	locx, locy := robotgo.Location()
-	// 	fmt.Println("before:" + fmt.Sprint(locx) + "," + fmt.Sprint(locy))
-	// 	// robotgo.Move(locx, locy+10)
-	// 	robotgo.MoveMouse(locx, locy+1)
-	// 	locx, locy = robotgo.Location()
-	// 	fmt.Println("after:" + fmt.Sprint(locx) + "," + fmt.Sprint(locy))
+	defer unhookWindowsHookEx.Call(hookID)
 
-	// })
-
-	// s := hook.Start()
-	// <-hook.Process(s)
-	wg.Wait()
-	// robotgo.Move(1200, 20)
-	// robotgo.DragSmooth(700, 200)
-
-}
-
-func testMouseMove() {
-	// 获取当前鼠标位置
-	currentX, currentY := mouse.GetMousePos()
-	fmt.Printf("Current Mouse Position: (%d, %d)\n", currentX, currentY)
-
-	mouse.SetMousePos(1475, 800)
-	mouse.MoveMouse(-100, 0)
-
-	// 等待一段时间，以便观察鼠标移动
-	time.Sleep(3 * time.Second)
-
-	// 获取移动后的鼠标位置
-	newX, newY := mouse.GetMousePos()
-	fmt.Printf("New Mouse Position: (%d, %d)\n", newX, newY)
-
-	// 恢复鼠标原始位置
-	mouse.SetMousePos(currentX, currentY)
-}
-
-func testKeyboardListener() {
-	listener.RegisterFromConfig()
-	listener.Start()
-	// fmt.Println("--- Please press ctrl + shift + q to stop hook ---")
-	// hook.Register(hook.KeyDown, []string{"q", "ctrl", "shift"}, func(e hook.Event) {
-	// 	fmt.Println("ctrl-shift-q")
-	// 	hook.End()
-	// })
-
-	// fmt.Println("--- Please press
-	// hook.Register(hook.KeyDown, []string{"w"}, func(e hook.Event) {
-	// 	fmt.Println("w")
-	// })
-
-	// s := hook.Start()
-}
-
-func low() {
-	evChan := hook.Start()
-	defer hook.End()
-
-	for ev := range evChan {
-		fmt.Println("hook: ", ev)
+	var msg uintptr
+	for {
+		_, _, _ = getMessageW.Call(uintptr(unsafe.Pointer(&msg)), 0, 0, 0)
 	}
 }
 
-func testConfig() {
-	config.Init()
+func Callback(nCode int, wParam uintptr, lParam uintptr) uintptr {
+	if nCode >= 0 && wParam == WM_KEYDOWN {
+		kbdStruct := (*KBDLLHOOKSTRUCT)(unsafe.Pointer(lParam))
+		vkCode := kbdStruct.VkCode
+		fmt.Printf("Key pressed (VK code): %x\n", vkCode)
+
+		fmt.Println(isKeyDown(VK_SHIFT))
+
+		// 如果同时按下了Shift和Control键，则打印消息
+		// if isKeyDown(VK_SHIFT) || isKeyDown(VK_CONTROL) {
+		// fmt.Println("Shift and Control keys pressed simultaneously")
+		// }
+		return 1
+	}
+
+	return 0
+}
+
+// 辅助函数，检查指定的虚拟键是否被按下
+func isKeyDown(vkCode uint32) bool {
+	a := GetAsyncKeyState(vkCode) & 0x8000
+	return a != 0
+}
+
+// 获取指定虚拟键的当前状态
+func GetAsyncKeyState(vkCode uint32) int32 {
+	user32 := syscall.NewLazyDLL("user32.dll")
+	getAsyncKeyState := user32.NewProc("GetAsyncKeyState")
+	ret, _, _ := getAsyncKeyState.Call(uintptr(vkCode))
+	return int32(ret)
 }

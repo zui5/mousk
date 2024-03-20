@@ -19,7 +19,8 @@ void dispatch_proc(iohook_event * const event) {
 
 	// leaking memory? hope not
     char* buffer = calloc(200, sizeof(char));
-
+	
+	
 	switch (event->type) {
 	    case EVENT_HOOK_ENABLED:
 	    case EVENT_HOOK_DISABLED:
@@ -30,7 +31,6 @@ void dispatch_proc(iohook_event * const event) {
 		case EVENT_KEY_PRESSED:
 		case EVENT_KEY_RELEASED:
 		case EVENT_KEY_TYPED:
-			event->reserved=0x1;
            sprintf(buffer,
                 "{\"id\":%i,\"time\":%" PRIu64 ",\"mask\":%hu,\"reserved\":%hu,\"keycode\":%hu,\"rawcode\":%hu,\"keychar\":%d}",
                 event->type, event->time, event->mask,event->reserved,
@@ -67,6 +67,34 @@ void dispatch_proc(iohook_event * const event) {
 		    fprintf(stderr,"\nError on file: %s, unusual event->type: %i\n",__FILE__,event->type);
 			return;
 	}
+	
+
+	// event->reserved=0x0;
+	// switch (event->type) {
+	//     // case EVENT_HOOK_ENABLED:
+	//     // case EVENT_HOOK_DISABLED:
+	//     // break;	// send it?
+	// 	// case EVENT_KEY_PRESSED:
+	// 	// 	event->reserved=0x1;
+	// 	// 	break;
+	// 	case EVENT_KEY_RELEASED:
+	// 		event->reserved=0x1;
+	// 		break;
+	// 	// case EVENT_KEY_TYPED:
+	// 	// 	event->reserved=0x1;
+    //     //     break;
+	// 	// case EVENT_MOUSE_PRESSED:
+	// 	// case EVENT_MOUSE_RELEASED:
+	// 	// case EVENT_MOUSE_CLICKED:
+	// 	// case EVENT_MOUSE_MOVED:
+	// 	// case EVENT_MOUSE_DRAGGED:
+	// 	// 	break;
+	// 	// case EVENT_MOUSE_WHEEL:
+	// 	// 	break;
+	// 	default:
+	// 	    fprintf(stderr,"\nError on file: %s, unusual event->type: %i\n",__FILE__,event->type);
+	// 		return;
+	// }
 	
 	// to-do remove this for
 	int i;
