@@ -9,4 +9,6 @@ require (
 	golang.org/x/sys v0.17.0
 )
 
+require github.com/micmonay/keybd_event v1.1.2 // indirect
+
 // replace github.com/wailsapp/wails/v2 v2.8.0 => C:\Users\x\.g\gopath\pkg\mod
