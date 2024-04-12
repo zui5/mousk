@@ -64,6 +64,17 @@ func Pressed(vkCode uint32) bool {
 	return keyStates[vkCode]
 }
 
+func AllPressed(vkCodes ...uint32) bool {
+	if vkCodes == nil {
+		return true
+	}
+	allPressed := true
+	for _, v := range vkCodes {
+		allPressed = allPressed && Pressed(v)
+	}
+	return allPressed
+}
+
 func SetPressed(vkCode uint32) {
 	keyStates[vkCode] = true
 }
