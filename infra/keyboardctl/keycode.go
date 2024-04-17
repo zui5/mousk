@@ -1,6 +1,14 @@
 package keyboardctl
 
 const (
+	WH_KEYBOARD_LL = 13
+	WM_KEYDOWN     = 0x0100
+	WM_KEYUP       = 0x0101
+	VK_SHIFT       = 0xa0
+	VK_CONTROL     = 0xa2
+)
+
+const (
 	// I add 0xFFF for all Virtual key
 	_VK_SHIFT           = 0x10 + 0xFFF
 	_VK_CTRL            = 0x11 + 0xFFF

@@ -17,7 +17,7 @@ func main() {
 		moveMouseAround(monitor.Monitor)
 	}
 
-	keyboardctl.KeyboardListener(Callback)
+	keyboardctl.RawKeyboardListener(Callback)
 
 }
 
@@ -80,9 +80,7 @@ func Callback(nCode int, wParam uintptr, lParam uintptr) uintptr {
 		if keyboardctl.Pressed(keyboardctl.VK_Q) {
 			os.Exit(0)
 		}
-
 		return 1
 	}
-
 	return 0
 }
