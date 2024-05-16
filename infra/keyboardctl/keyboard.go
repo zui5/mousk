@@ -18,7 +18,8 @@ var (
 )
 
 type KBDLLHOOKSTRUCT struct {
-	VkCode uint32
+	VkCode   uint32
+	ScanCode uint32
 }
 type KeyReference struct {
 	Count           int
@@ -36,6 +37,9 @@ type HookProc func(nCode int, wParam uintptr, lParam uintptr) uintptr
 
 func registerKeyListening(cb Callback2, vkCodes ...uint32) {
 	for _, v := range vkCodes {
+		if listeningKeyReference[v] == nil {
+			listeningKeyReference[v] = &KeyReference{}
+		}
 		listeningKeyReference[v].Count += 1
 		listeningKeyReference[v].KeyCombinations = append(listeningKeyReference[v].KeyCombinations, KeyCallback{
 			Keys: vkCodes,
@@ -53,33 +57,78 @@ func unRegisterKeyListening(vkCodes ...uint32) {
 	}
 
 }
-func Register(keyAction int, cb Callback, vkCodes ...uint32) {
-	switch keyAction {
-	case WM_KEYDOWN:
+func Register(cb Callback2, vkCodes ...uint32) {
+	// switch keyAction {
+	// case WM_KEYDOWN:
 
-		break
-	default:
-		fmt.Println("method not develop yet")
-		return
-	}
-	registerKeyListening(vkCodes...)
+	// 	break
+	// default:
+	// 	fmt.Println("method not develop yet")
+	// 	return
+	// }
+	registerKeyListening(cb, vkCodes...)
 }
 
-func Callback1(nCode int, wParam uintptr, lParam uintptr) uintptr {
+func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr {
+	if nCode == 0 {
+		kbdStruct := (*KBDLLHOOKSTRUCT)(unsafe.Pointer(lParam))
+		scanCode := kbdStruct.ScanCode
+		vkCode := kbdStruct.VkCode
+
+		if wParam == WM_KEYDOWN {
+			SetPressed(vkCode)
+			fmt.Printf("Key pressed (VK code): %d, Scan code: %d\n", vkCode, scanCode)
+		} else if wParam == WM_KEYUP {
+			vkCode := kbdStruct.ScanCode
+			SetReleased(vkCode)
+			fmt.Printf("Key released (VK code): %d, Scan code: %d\n", vkCode, scanCode)
+		}
+
+		// 检查是否同时按下了 Ctrl、Shift 和 A 键
+		if Pressed(VK_LCONTROL) && Pressed(VK_LSHIFT) && Pressed(VK_A) {
+			fmt.Println("Ctrl+Shift+A keys pressed simultaneously")
+			os.Exit(0)
+		}
+
+		if listeningKeyReference[vkCode] != nil {
+			ref := listeningKeyReference[vkCode]
+			for _, v := range ref.KeyCombinations {
+				//
+				if AllPressed(v.Keys...) {
+					v.Cb(nCode, wParam, lParam)
+				}
+			}
+		}
+
+		// // 如果按下了 'Q' 键，退出程序
+		// if Pressed(VK_Q) {
+		// 	os.Exit(0)
+		// }
+
+		// 在这里添加你的其他逻辑
+
+		// return CallNextHookEx(0, nCode, wParam, lParam)
+		return 1
+	}
+	// return CallNextHookEx(0, nCode, wParam, lParam)
+	return 0
+}
+
+func KeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr {
 	if nCode >= 0 {
 		kbdStruct := (*KBDLLHOOKSTRUCT)(unsafe.Pointer(lParam))
 		vkCode := kbdStruct.VkCode
 
 		if wParam == WM_KEYDOWN {
 			SetPressed(vkCode)
-			fmt.Printf("Key pressed (VK code): %x\n", vkCode)
+			fmt.Printf("Key pressed (VK code): %d\n", vkCode)
 		} else if wParam == WM_KEYUP {
 			SetReleased(vkCode)
-			fmt.Printf("Key released (VK code): %x\n", vkCode)
+			fmt.Printf("Key released (VK code): %d\n", vkCode)
 		}
 
 		// 检查是否同时按下了 Ctrl、Shift 和 A 键
-		if Pressed(VK_CONTROL) && Pressed(VK_SHIFT) && Pressed(VK_A) {
+		if Pressed(VK_LCONTROL) && Pressed(VK_LSHIFT) && Pressed(VK_A) {
 			fmt.Println("Ctrl+Shift+A keys pressed simultaneously")
 		}
 
@@ -122,6 +171,7 @@ func RawKeyboardListener(cb Callback) {
 }
 
 func Pressed(vkCode uint32) bool {
+	// fmt.Println(vkCode, keyPressedStates[vkCode])
 	return keyPressedStates[vkCode]
 }
 

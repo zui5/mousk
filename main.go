@@ -10,14 +10,35 @@ import (
 	"unsafe"
 )
 
+var mode = 0 // 0:normal, 1:control
+const (
+	ModeNormal  = 0
+	ModeControl = 1
+)
+
 func main() {
 
-	monitors := monitor.GetMonitors()
-	for _, monitor := range monitors {
-		moveMouseAround(monitor.Monitor)
+	// monitors := monitor.GetMonitors()
+	// for _, monitor := range monitors {
+	// 	moveMouseAround(monitor.Monitor)
+	// }
+	// win+space : activate control mode
+	vkCodesWinSpace := []uint32{keyboardctl.VK_LWIN, keyboardctl.VK_SPACE}
+	startControlMode := func(nCode int, wParam uintptr, lParam uintptr) uintptr {
+		fmt.Printf("current mode:%d", mode)
+		fmt.Println()
+		if mode == ModeControl {
+			fmt.Println("already in control mode", time.Now())
+		} else {
+			mode = ModeControl
+			fmt.Println("change to control mode", time.Now())
+		}
+		return 0
 	}
 
-	keyboardctl.RawKeyboardListener(Callback)
+	keyboardctl.Register(startControlMode, vkCodesWinSpace...)
+
+	keyboardctl.RawKeyboardListener(keyboardctl.LowLevelKeyboardCallback)
 
 }
 
@@ -72,9 +93,9 @@ func Callback(nCode int, wParam uintptr, lParam uintptr) uintptr {
 		}
 
 		// 检查是否同时按下了 Ctrl、Shift 和 A 键
-		if keyboardctl.Pressed(keyboardctl.VK_CONTROL) && keyboardctl.Pressed(keyboardctl.VK_SHIFT) && keyboardctl.Pressed(keyboardctl.VK_A) {
-			fmt.Println("Ctrl+Shift+A keys pressed simultaneously")
-		}
+		// if keyboardctl.Pressed(keyboardctl._VK_CTRL) && keyboardctl.Pressed(keyboardctl._VK_SHIFT) && keyboardctl.Pressed(keyboardctl.VK_A) {
+		// 	fmt.Println("Ctrl+Shift+A keys pressed simultaneously")
+		// }
 
 		// 如果按下了 'Q' 键，退出程序
 		if keyboardctl.Pressed(keyboardctl.VK_Q) {
