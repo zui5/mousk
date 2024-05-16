@@ -42,7 +42,7 @@ func GetMonitors() []MONITORINFOEX {
 		if ret, _, _ := enumDisplayMonitors.Call(hdc, uintptr(unsafe.Pointer(&RECT{})), syscall.NewCallback(func(lprc uintptr, hdc uintptr, lprcClip uintptr, dwData uintptr) uintptr {
 			return 1
 		}), 0); ret != 0 {
-			if ret, _, _ := syscall.Syscalln(getMonitorInfoW.Addr(), 2, hMonitor, uintptr(unsafe.Pointer(&mi)), 0); ret != 0 {
+			if ret, _, _ := syscall.Syscall(getMonitorInfoW.Addr(), 2, hMonitor, uintptr(unsafe.Pointer(&mi)), 0); ret != 0 {
 				monitors = append(monitors, mi)
 			}
 		}
