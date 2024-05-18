@@ -5,12 +5,16 @@ import (
 	"mousek/infra/keyboardctl"
 	"mousek/infra/monitor"
 	"mousek/infra/mousectl"
+	"mousek/infra/util"
 	"os"
 	"time"
 	"unsafe"
 )
 
-var mode = 0 // 0:normal, 1:control
+var mode = 0       // 0:normal, 1:control
+var speedLevel = 1 // the speed of you mouse movement
+var vkCodesMulitiSpeedLevelArr = []uint32{keyboardctl.VK_1, keyboardctl.VK_2, keyboardctl.VK_3, keyboardctl.VK_4, keyboardctl.VK_5}
+
 const (
 	ModeNormal  = 0
 	ModeControl = 1
@@ -24,7 +28,7 @@ func main() {
 	// }
 	// win+space : activate control mode
 	vkCodesWinSpace := []uint32{keyboardctl.VK_LWIN, keyboardctl.VK_SPACE}
-	startControlMode := func(nCode int, wParam uintptr, lParam uintptr) uintptr {
+	startControlMode := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		fmt.Printf("current mode:%d", mode)
 		fmt.Println()
 		if mode == ModeControl {
@@ -35,8 +39,24 @@ func main() {
 		}
 		return 0
 	}
+	keyboardctl.RegisterOne(startControlMode, vkCodesWinSpace...)
 
-	keyboardctl.Register(startControlMode, vkCodesWinSpace...)
+	// when in ModeControl, 1\2\3\4...,control the speed of your mouse move
+	vkCodesMulitiSpeedLevel := [][]uint32{{keyboardctl.VK_1}, {keyboardctl.VK_2}, {keyboardctl.VK_3}, {keyboardctl.VK_4}, {keyboardctl.VK_5}}
+	speedLevelSwitch := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		fmt.Printf("current mode:%d,current speed:%d\n", mode, speedLevel)
+
+		if mode != ModeControl {
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", mode, speedLevel)
+			return 0
+		}
+		if util.Contains[uint32](vkCodesMulitiSpeedLevelArr, uint32(vkCode)) {
+			speedLevel = int(vkCode) - keyboardctl.VK_0
+			fmt.Printf("change speed to :%d\n", speedLevel)
+		}
+		return 0
+	}
+	keyboardctl.RegisterMulti(speedLevelSwitch, vkCodesMulitiSpeedLevel...)
 
 	keyboardctl.RawKeyboardListener(keyboardctl.LowLevelKeyboardCallback)
 
