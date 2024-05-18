@@ -32,7 +32,9 @@ type KeyCallback struct {
 }
 
 type Callback HookProc
-type Callback2 HookProc
+
+// type Callback2 HookProc
+type Callback2 func(wParam uintptr, vkCode, scanCode uint32) uintptr
 type HookProc func(nCode int, wParam uintptr, lParam uintptr) uintptr
 
 func registerKeyListening(cb Callback2, vkCodes ...uint32) {
@@ -57,7 +59,22 @@ func unRegisterKeyListening(vkCodes ...uint32) {
 	}
 
 }
-func Register(cb Callback2, vkCodes ...uint32) {
+
+func RegisterMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
+	// switch keyAction {
+	// case WM_KEYDOWN:
+
+	// 	break
+	// default:
+	// 	fmt.Println("method not develop yet")
+	// 	return
+	// }
+	for _, vkCodes := range mulitiVkCodes {
+		registerKeyListening(cb, vkCodes...)
+	}
+}
+
+func RegisterOne(cb Callback2, vkCodes ...uint32) {
 	// switch keyAction {
 	// case WM_KEYDOWN:
 
@@ -79,7 +96,6 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			SetPressed(vkCode)
 			fmt.Printf("Key pressed (VK code): %d, Scan code: %d\n", vkCode, scanCode)
 		} else if wParam == WM_KEYUP {
-			vkCode := kbdStruct.ScanCode
 			SetReleased(vkCode)
 			fmt.Printf("Key released (VK code): %d, Scan code: %d\n", vkCode, scanCode)
 		}
@@ -95,7 +111,7 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			for _, v := range ref.KeyCombinations {
 				//
 				if AllPressed(v.Keys...) {
-					v.Cb(nCode, wParam, lParam)
+					v.Cb(wParam, vkCode, scanCode)
 				}
 			}
 		}
