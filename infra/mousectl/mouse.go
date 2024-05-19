@@ -9,6 +9,8 @@ import (
 var (
 	setCursorPos = base.User32.NewProc("SetCursorPos")
 	sendInput    = base.User32.NewProc("SendInput")
+
+	getCursorPos = base.User32.NewProc("GetCursorPos")
 )
 
 type MoveSpeedType int
@@ -64,19 +66,28 @@ func MoveMouse(dx, dy int32) {
 			Time:    0,
 		},
 	}
-	sendInput.Call(
-		uintptr(unsafe.Sizeof(input{})),
+	// sendInput.Call(
+	// 	uintptr(unsafe.Sizeof(input{})),
+	// 	uintptr(unsafe.Pointer(&inputs[0])),
+	// 	uintptr(unsafe.Sizeof(input{})),
+	// )
+	ret, _, err := sendInput.Call(
+		uintptr(1),
 		uintptr(unsafe.Pointer(&inputs[0])),
-		uintptr(unsafe.Sizeof(input{})),
+		unsafe.Sizeof(inputs[0]),
 	)
+
+	if ret == 0 {
+		fmt.Printf("SendInput failed: %v\n", err)
+	}
 }
 
 func MoveMouseCtrl(direction MoveDirection, speedType MoveSpeedType) {
-
+	GetMousePos()
 	dx := 0
 	dy := 0
 	speed := int(speedType) * base.GetSpeedLevel()
-	fmt.Printf("speedType:%d, speedLevel:%d, direction:%s", speedType, base.GetSpeedLevel(), direction)
+	fmt.Printf("speedType:%d, speedLevel:%d, direction:%s\n", speedType, base.GetSpeedLevel(), direction)
 	switch direction {
 	case DirectionUp:
 		dx, dy = 0, -1*speed
@@ -90,4 +101,16 @@ func MoveMouseCtrl(direction MoveDirection, speedType MoveSpeedType) {
 		fmt.Printf("move direction undefined:%s\n", direction)
 	}
 	MoveMouse(int32(dx), int32(dy))
+}
+
+var moveCount = 0
+
+func GetMousePos() (int32, int32) {
+	var pos struct {
+		x, y int32
+	}
+	getCursorPos.Call(uintptr(unsafe.Pointer(&pos)))
+	moveCount += 1
+	fmt.Printf("cursor position, x:%d, y:%d, move count:%d\n", pos.x, pos.y, moveCount)
+	return pos.x, pos.y
 }

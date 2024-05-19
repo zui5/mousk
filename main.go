@@ -28,7 +28,7 @@ func main() {
 	// win+space : activate control mode
 	vkCodesWinSpace := []uint32{keyboardctl.VK_LWIN, keyboardctl.VK_SPACE}
 	startControlMode := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
-		fmt.Printf("current mode:%d", base.GetMode())
+		fmt.Printf("current mode:%d\n", base.GetMode())
 		fmt.Println()
 		if base.GetMode() == ModeControl {
 			fmt.Println("already in control mode", time.Now())
