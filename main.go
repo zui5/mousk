@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"mousek/infra/base"
 	"mousek/infra/keyboardctl"
 	"mousek/infra/monitor"
 	"mousek/infra/mousectl"
@@ -11,8 +12,6 @@ import (
 	"unsafe"
 )
 
-var mode = 0       // 0:normal, 1:control
-var speedLevel = 1 // the speed of you mouse movement
 var vkCodesMulitiSpeedLevelArr = []uint32{keyboardctl.VK_1, keyboardctl.VK_2, keyboardctl.VK_3, keyboardctl.VK_4, keyboardctl.VK_5}
 
 const (
@@ -29,12 +28,12 @@ func main() {
 	// win+space : activate control mode
 	vkCodesWinSpace := []uint32{keyboardctl.VK_LWIN, keyboardctl.VK_SPACE}
 	startControlMode := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
-		fmt.Printf("current mode:%d", mode)
+		fmt.Printf("current mode:%d", base.GetMode())
 		fmt.Println()
-		if mode == ModeControl {
+		if base.GetMode() == ModeControl {
 			fmt.Println("already in control mode", time.Now())
 		} else {
-			mode = ModeControl
+			base.SetMode(ModeControl)
 			fmt.Println("change to control mode", time.Now())
 		}
 		return 0
@@ -44,22 +43,50 @@ func main() {
 	// when in ModeControl, 1\2\3\4...,control the speed of your mouse move
 	vkCodesMulitiSpeedLevel := [][]uint32{{keyboardctl.VK_1}, {keyboardctl.VK_2}, {keyboardctl.VK_3}, {keyboardctl.VK_4}, {keyboardctl.VK_5}}
 	speedLevelSwitch := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
-		fmt.Printf("current mode:%d,current speed:%d\n", mode, speedLevel)
-
-		if mode != ModeControl {
-			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", mode, speedLevel)
+		fmt.Printf("current mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+		if base.GetMode() != ModeControl {
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
 			return 0
 		}
 		if util.Contains[uint32](vkCodesMulitiSpeedLevelArr, uint32(vkCode)) {
-			speedLevel = int(vkCode) - keyboardctl.VK_0
-			fmt.Printf("change speed to :%d\n", speedLevel)
+			speedLevel := int(vkCode) - keyboardctl.VK_0 + 1
+			base.SetSpeedLevel(speedLevel)
+			fmt.Printf("change speed to :%d\n", base.GetSpeedLevel())
 		}
 		return 0
 	}
 	keyboardctl.RegisterMulti(speedLevelSwitch, vkCodesMulitiSpeedLevel...)
 
+	vkCodesSetMousePosUpFast := []uint32{keyboardctl.VK_K}
+	vkCodesSetMousePosDownFast := []uint32{keyboardctl.VK_J}
+	vkCodesSetMousePosLeftFast := []uint32{keyboardctl.VK_H}
+	vkCodesSetMousePosRightFast := []uint32{keyboardctl.VK_L}
+	vkCodesSetMousePosUpSlow := []uint32{keyboardctl.VK_W}
+	vkCodesSetMousePosDownSlow := []uint32{keyboardctl.VK_S}
+	vkCodesSetMousePosLeftSlow := []uint32{keyboardctl.VK_A}
+	vkCodesSetMousePosRightSlow := []uint32{keyboardctl.VK_D}
+
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionDown, mousectl.SpeedFast), vkCodesSetMousePosDownFast...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionUp, mousectl.SpeedFast), vkCodesSetMousePosUpFast...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionLeft, mousectl.SpeedFast), vkCodesSetMousePosLeftFast...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionRight, mousectl.SpeedFast), vkCodesSetMousePosRightFast...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionUp, mousectl.SpeedSlow), vkCodesSetMousePosUpSlow...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionDown, mousectl.SpeedSlow), vkCodesSetMousePosDownSlow...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionLeft, mousectl.SpeedSlow), vkCodesSetMousePosLeftSlow...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionRight, mousectl.SpeedSlow), vkCodesSetMousePosRightSlow...)
+
 	keyboardctl.RawKeyboardListener(keyboardctl.LowLevelKeyboardCallback)
 
+}
+func MoveMouseFunc(direction mousectl.MoveDirection, speedType mousectl.MoveSpeedType) keyboardctl.Callback2 {
+	return func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		if base.GetMode() != ModeControl {
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+			return 0
+		}
+		mousectl.MoveMouseCtrl(direction, speedType)
+		return 0
+	}
 }
 
 // 控制鼠标在指定显示器的四周移动
@@ -72,28 +99,28 @@ func moveMouseAround(monitor monitor.RECT) {
 	*/
 	// 向右移动到显示器右边缘
 	for x < int(monitor.Right) {
-		mousectl.MoveMouse(x, y)
+		mousectl.SetMousePos(x, y)
 		x += 10
 		time.Sleep(5 * time.Millisecond)
 	}
 
 	// 向下移动到显示器底边缘
 	for y < int(monitor.Bottom) {
-		mousectl.MoveMouse(x, y)
+		mousectl.SetMousePos(x, y)
 		y += 10
 		time.Sleep(5 * time.Millisecond)
 	}
 
 	// 向左移动到显示器左边缘
 	for x > int(monitor.Left) {
-		mousectl.MoveMouse(x, y)
+		mousectl.SetMousePos(x, y)
 		x -= 10
 		time.Sleep(5 * time.Millisecond)
 	}
 
 	// 向上移动到显示器上边缘
 	for y > int(monitor.Top) {
-		mousectl.MoveMouse(x, y)
+		mousectl.SetMousePos(x, y)
 		y -= 10
 		time.Sleep(5 * time.Millisecond)
 	}
