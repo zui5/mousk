@@ -25,6 +25,7 @@ func main() {
 	// for _, monitor := range monitors {
 	// 	moveMouseAround(monitor.Monitor)
 	// }
+
 	// win+space : activate control mode
 	vkCodesWinSpace := []uint32{keyboardctl.VK_LWIN, keyboardctl.VK_SPACE}
 	startControlMode := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
@@ -74,6 +75,25 @@ func main() {
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionDown, mousectl.SpeedSlow), vkCodesSetMousePosDownSlow...)
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionLeft, mousectl.SpeedSlow), vkCodesSetMousePosLeftSlow...)
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionRight, mousectl.SpeedSlow), vkCodesSetMousePosRightSlow...)
+
+	// when in ModeControl, 1\2\3\4...,control the speed of your mouse move
+	vkCoodesLeftDown := [][]uint32{{keyboardctl.VK_C}, {keyboardctl.VK_N}}
+	mouseLeftDown := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		if base.GetMode() != ModeControl {
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+			return 0
+		}
+
+		if wParam == keyboardctl.WM_KEYDOWN {
+			fmt.Printf("mouse left button down\n")
+			mousectl.MouseLeftDown()
+		} else if wParam == keyboardctl.WM_KEYUP {
+			fmt.Printf("mouse left button up\n")
+			mousectl.MouseLeftUp()
+		}
+		return 0
+	}
+	keyboardctl.RegisterWithReleaseEventMulti(mouseLeftDown, vkCoodesLeftDown...)
 
 	keyboardctl.RawKeyboardListener(keyboardctl.LowLevelKeyboardCallback)
 

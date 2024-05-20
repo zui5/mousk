@@ -64,11 +64,14 @@ func MoveMouse(dx, dy int32) {
 			Time:    0,
 		},
 	}
+
 	sendInput.Call(
-		uintptr(unsafe.Sizeof(input{})),
+		// uintptr(unsafe.Sizeof(input{})),
+		1,
 		uintptr(unsafe.Pointer(&inputs[0])),
 		uintptr(unsafe.Sizeof(input{})),
 	)
+
 }
 
 func MoveMouseCtrl(direction MoveDirection, speedType MoveSpeedType) {
