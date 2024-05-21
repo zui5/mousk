@@ -90,8 +90,8 @@ func MoveMouseCtrl(direction MoveDirection, speedType MoveSpeedType) {
 	GetMousePos()
 	dx := 0
 	dy := 0
-	speed := int(speedType) * base.GetSpeedLevel()
-	fmt.Printf("speedType:%d, speedLevel:%d, direction:%s\n", speedType, base.GetSpeedLevel(), direction)
+	speed := int(speedType) * base.GetMoveSpeedLevel()
+	fmt.Printf("speedType:%d, speedLevel:%d, direction:%s\n", speedType, base.GetMoveSpeedLevel(), direction)
 	switch direction {
 	case DirectionUp:
 		dx, dy = 0, -1*speed
