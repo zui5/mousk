@@ -102,18 +102,19 @@ func main() {
 	}
 	keyboardctl.RegisterMulti(mouseRightClick, vkCodesMouseRightClick...)
 
-	mouseRightClickPress := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
-		fmt.Printf("current mode:%d\n", base.GetMode())
-		if base.GetMode() != ModeControl {
-			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
-			return 0
+	// when in ModeControl, 1\2\3\4...,control the speed of your mouse move
+	vkCoodesLeftDown := [][]uint32{{keyboardctl.VK_C}, {keyboardctl.VK_N}}
+	mouseLeftDown := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		if wParam == keyboardctl.WM_KEYDOWN {
+			fmt.Printf("mouse left button down\n")
+			mousectl.MouseLeftDown()
+		} else if wParam == keyboardctl.WM_KEYUP {
+			fmt.Printf("mouse left button up\n")
+			mousectl.MouseLeftUp()
 		}
-		fmt.Printf("mouse left pressed\n")
-		mousectl.RightClickLongPress(1 * time.Second)
-		time.Sleep(1 * time.Second)
 		return 0
 	}
-	keyboardctl.RegisterMulti(mouseRightClickPress, vkCodesMouseRightClickPress...)
+	keyboardctl.RegisterWithReleaseEventMulti(mouseLeftDown, vkCoodesLeftDown...)
 
 	keyboardctl.RawKeyboardListener(keyboardctl.LowLevelKeyboardCallback)
 
