@@ -5,11 +5,12 @@ import (
 	"mousek/infra/base"
 	"os"
 	"syscall"
+	"time"
 	"unsafe"
 )
 
 var (
-	keyPressedStates    map[uint32]bool
+	keyPressedStates    map[uint32]*KeyState
 	setWindowsHookEx    = base.User32.NewProc("SetWindowsHookExW")
 	getMessageW         = base.User32.NewProc("GetMessageW")
 	unhookWindowsHookEx = base.User32.NewProc("UnhookWindowsHookEx")
@@ -17,6 +18,10 @@ var (
 	listeningKeyReference = make(map[uint32]*KeyReference, 0)
 )
 
+type KeyState struct {
+	Pressed      bool
+	LastReleased *time.Time
+}
 type KBDLLHOOKSTRUCT struct {
 	VkCode   uint32
 	ScanCode uint32
@@ -27,8 +32,9 @@ type KeyReference struct {
 }
 
 type KeyCallback struct {
-	Keys []uint32 // for example. []{"ctrl","a"}
-	Cb   Callback2
+	Keys             []uint32 // for example. []{"ctrl","a"}
+	Cb               Callback2
+	withReleaseEvent bool
 }
 
 type Callback HookProc
@@ -37,15 +43,16 @@ type Callback HookProc
 type Callback2 func(wParam uintptr, vkCode, scanCode uint32) uintptr
 type HookProc func(nCode int, wParam uintptr, lParam uintptr) uintptr
 
-func registerKeyListening(cb Callback2, vkCodes ...uint32) {
+func registerKeyListening(cb Callback2, withReleaseEvent bool, vkCodes ...uint32) {
 	for _, v := range vkCodes {
 		if listeningKeyReference[v] == nil {
 			listeningKeyReference[v] = &KeyReference{}
 		}
 		listeningKeyReference[v].Count += 1
 		listeningKeyReference[v].KeyCombinations = append(listeningKeyReference[v].KeyCombinations, KeyCallback{
-			Keys: vkCodes,
-			Cb:   cb,
+			Keys:             vkCodes,
+			Cb:               cb,
+			withReleaseEvent: withReleaseEvent,
 		})
 	}
 }
@@ -70,7 +77,7 @@ func RegisterMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 	// 	return
 	// }
 	for _, vkCodes := range mulitiVkCodes {
-		registerKeyListening(cb, vkCodes...)
+		registerKeyListening(cb, false, vkCodes...)
 	}
 }
 
@@ -83,7 +90,7 @@ func RegisterOne(cb Callback2, vkCodes ...uint32) {
 	// 	fmt.Println("method not develop yet")
 	// 	return
 	// }
-	registerKeyListening(cb, vkCodes...)
+	registerKeyListening(cb, false, vkCodes...)
 }
 
 func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr {
@@ -109,8 +116,10 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 		if listeningKeyReference[vkCode] != nil {
 			ref := listeningKeyReference[vkCode]
 			for _, v := range ref.KeyCombinations {
-				//
 				if AllPressed(v.Keys...) {
+					v.Cb(wParam, vkCode, scanCode)
+				}
+				if v.withReleaseEvent && AllReleased(time.Second, v.Keys...) {
 					v.Cb(wParam, vkCode, scanCode)
 				}
 			}
@@ -159,7 +168,7 @@ func KeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr {
 
 func RawKeyboardListener(cb Callback) {
 
-	keyPressedStates = make(map[uint32]bool)
+	keyPressedStates = make(map[uint32]*KeyState)
 
 	hookProc := HookProc(cb)
 
@@ -188,7 +197,10 @@ func RawKeyboardListener(cb Callback) {
 
 func Pressed(vkCode uint32) bool {
 	// fmt.Println(vkCode, keyPressedStates[vkCode])
-	return keyPressedStates[vkCode]
+	if keyPressedStates[vkCode] == nil {
+		keyPressedStates[vkCode] = &KeyState{false, nil}
+	}
+	return keyPressedStates[vkCode].Pressed
 }
 
 func AllPressed(vkCodes ...uint32) bool {
@@ -203,9 +215,69 @@ func AllPressed(vkCodes ...uint32) bool {
 }
 
 func SetPressed(vkCode uint32) {
-	keyPressedStates[vkCode] = true
+	if keyPressedStates[vkCode] == nil {
+		keyPressedStates[vkCode] = &KeyState{false, nil}
+	}
+	keyPressedStates[vkCode].Pressed = true
 }
 
 func SetReleased(vkCode uint32) {
-	keyPressedStates[vkCode] = false
+	if keyPressedStates[vkCode] == nil {
+		keyPressedStates[vkCode] = &KeyState{false, nil}
+	}
+	keyPressedStates[vkCode].Pressed = false
+	currTime := time.Now()
+	keyPressedStates[vkCode].LastReleased = &currTime
+}
+
+func RegisterWithReleaseEventMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
+	// switch keyAction {
+	// case WM_KEYDOWN:
+
+	// 	break
+	// default:
+	// 	fmt.Println("method not develop yet")
+	// 	return
+	// }
+	for _, vkCodes := range mulitiVkCodes {
+		registerKeyListening(cb, true, vkCodes...)
+	}
+}
+
+func AllReleased(durationBetween time.Duration, vkCodes ...uint32) bool {
+	if vkCodes == nil {
+		return true
+	}
+
+	var maxLastReleasedTime *time.Time = nil
+	var minLastReleasedTime *time.Time = nil
+	for _, v := range vkCodes {
+		keyState := keyPressedStates[v]
+		if keyState.Pressed || keyState.LastReleased == nil {
+			return false
+		}
+
+		if maxLastReleasedTime == nil {
+			maxLastReleasedTime = keyState.LastReleased
+		} else {
+			if maxLastReleasedTime.Sub(*keyState.LastReleased) < 0 {
+				maxLastReleasedTime = keyState.LastReleased
+			}
+		}
+		if minLastReleasedTime == nil {
+			minLastReleasedTime = keyState.LastReleased
+		} else {
+			if minLastReleasedTime.Sub(*keyState.LastReleased) > 0 {
+				minLastReleasedTime = keyState.LastReleased
+			}
+		}
+	}
+	durationVal := minLastReleasedTime.Sub(*maxLastReleasedTime)
+	if durationVal < 0 {
+		durationVal = -1 * durationVal
+	}
+	if durationVal > durationBetween {
+		return false
+	}
+	return true
 }
