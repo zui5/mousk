@@ -17,8 +17,8 @@ const (
 const (
 	MOUSEEVENTF_WHEEL  = 0x0800
 	MOUSEEVENTF_HWHEEL = 0x1000
-	// WHEEL_DELTA        = 120
-	WHEEL_DELTA = 10
+	WHEEL_DELTA        = 120
+	// WHEEL_DELTA = 10
 )
 
 var (
