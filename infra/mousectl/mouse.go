@@ -27,13 +27,17 @@ const (
 )
 
 const (
-	inputMouse   = 0
-	mouseMove    = 0x0001
-	mouseEventFV = 0x8000
-	absolute     = 0x8000
-	inputMouseFV = 0
-	move         = 1
-	mouseEventF  = 0
+	inputMouse          = 0
+	mouseMove           = 0x0001
+	mouseEventLeftDown  = 0x0002
+	mouseEventLeftUp    = 0x0004
+	mouseEventRightDown = 0x0008
+	mouseEventRightUp   = 0x0010
+	mouseEventFV        = 0x8000
+	absolute            = 0x8000
+	inputMouseFV        = 0
+	move                = 1
+	mouseEventF         = 0
 )
 
 type input struct {

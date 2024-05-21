@@ -25,6 +25,7 @@ func main() {
 	// for _, monitor := range monitors {
 	// 	moveMouseAround(monitor.Monitor)
 	// }
+
 	// win+space : activate control mode
 	vkCodesWinSpace := []uint32{keyboardctl.VK_LWIN, keyboardctl.VK_SPACE}
 	startControlMode := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
@@ -74,6 +75,45 @@ func main() {
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionDown, mousectl.SpeedSlow), vkCodesSetMousePosDownSlow...)
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionLeft, mousectl.SpeedSlow), vkCodesSetMousePosLeftSlow...)
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionRight, mousectl.SpeedSlow), vkCodesSetMousePosRightSlow...)
+
+	vkCodesMouseLeftClick := [][]uint32{{keyboardctl.VK_I}, {keyboardctl.VK_R}}
+	mouseLeftClick := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		fmt.Printf("current mode:%d\n", base.GetMode())
+		if base.GetMode() != ModeControl {
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+			return 0
+		}
+		mousectl.LeftClick()
+		fmt.Printf("mouse left click\n")
+		return 0
+	}
+	keyboardctl.RegisterMulti(mouseLeftClick, vkCodesMouseLeftClick...)
+
+	vkCodesMouseRightClick := [][]uint32{{keyboardctl.VK_O}, {keyboardctl.VK_T}}
+	mouseRightClick := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		fmt.Printf("current mode:%d\n", base.GetMode())
+		if base.GetMode() != ModeControl {
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+			return 0
+		}
+		mousectl.RightClick()
+		fmt.Printf("mouse right click\n")
+		return 0
+	}
+	keyboardctl.RegisterMulti(mouseRightClick, vkCodesMouseRightClick...)
+
+	mouseRightClickPress := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		fmt.Printf("current mode:%d\n", base.GetMode())
+		if base.GetMode() != ModeControl {
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+			return 0
+		}
+		fmt.Printf("mouse left pressed\n")
+		mousectl.RightClickLongPress(1 * time.Second)
+		time.Sleep(1 * time.Second)
+		return 0
+	}
+	keyboardctl.RegisterMulti(mouseRightClickPress, vkCodesMouseRightClickPress...)
 
 	keyboardctl.RawKeyboardListener(keyboardctl.LowLevelKeyboardCallback)
 
