@@ -42,17 +42,34 @@ func main() {
 	keyboardctl.RegisterOne(startControlMode, vkCodesWinSpace...)
 
 	// when in ModeControl, 1\2\3\4...,control the speed of your mouse move
-	vkCodesMulitiSpeedLevel := [][]uint32{{keyboardctl.VK_1}, {keyboardctl.VK_2}, {keyboardctl.VK_3}, {keyboardctl.VK_4}, {keyboardctl.VK_5}}
-	speedLevelSwitch := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
-		fmt.Printf("current mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+	vkCodesMulitiScrollSpeedLevel := [][]uint32{{keyboardctl.VK_LSHIFT, keyboardctl.VK_1}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_2}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_3}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_4}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_5}}
+	scrollSpeedLevelSwitch := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		fmt.Printf("current mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
 		if base.GetMode() != ModeControl {
-			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
 			return 0
 		}
 		if util.Contains[uint32](vkCodesMulitiSpeedLevelArr, uint32(vkCode)) {
 			speedLevel := int(vkCode) - keyboardctl.VK_0 + 1
-			base.SetSpeedLevel(speedLevel)
-			fmt.Printf("change speed to :%d\n", base.GetSpeedLevel())
+			base.SetScrollSpeedLevel(speedLevel)
+			fmt.Printf("change speed to :%d\n", base.GetScrollSpeedLevel())
+		}
+		return 0
+	}
+	keyboardctl.RegisterMulti(scrollSpeedLevelSwitch, vkCodesMulitiScrollSpeedLevel...)
+
+	// when in ModeControl, 1\2\3\4...,control the speed of your mouse move
+	vkCodesMulitiSpeedLevel := [][]uint32{{keyboardctl.VK_1}, {keyboardctl.VK_2}, {keyboardctl.VK_3}, {keyboardctl.VK_4}, {keyboardctl.VK_5}}
+	speedLevelSwitch := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		fmt.Printf("current mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+		if base.GetMode() != ModeControl {
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+			return 0
+		}
+		if util.Contains[uint32](vkCodesMulitiSpeedLevelArr, uint32(vkCode)) {
+			speedLevel := int(vkCode) - keyboardctl.VK_0 + 1
+			base.SetMoveSpeedLevel(speedLevel)
+			fmt.Printf("change speed to :%d\n", base.GetMoveSpeedLevel())
 		}
 		return 0
 	}
@@ -80,7 +97,7 @@ func main() {
 	mouseLeftClick := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		fmt.Printf("current mode:%d\n", base.GetMode())
 		if base.GetMode() != ModeControl {
-			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
 			return 0
 		}
 		mousectl.LeftClick()
@@ -93,7 +110,7 @@ func main() {
 	mouseRightClick := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		fmt.Printf("current mode:%d\n", base.GetMode())
 		if base.GetMode() != ModeControl {
-			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
 			return 0
 		}
 		mousectl.RightClick()
@@ -116,13 +133,45 @@ func main() {
 	}
 	keyboardctl.RegisterWithReleaseEventMulti(mouseLeftDown, vkCoodesLeftDown...)
 
+	vkCodesMouseVerticalScrollDownFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_J}
+	vkCodesMouseVerticalScrollUpFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_K}
+	vkCodesMouseHorizontalScrollLeftFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_H}
+	vkCodesMouseHorizontalScrollRightFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_L}
+	vkCodesMouseVerticalScrollDownSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_S}
+	vkCodesMouseVerticalScrollUpSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_W}
+	vkCodesMouseHorizontalScrollLeftSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_A}
+	vkCodesMouseHorizontalScrollRightSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_D}
+
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedFast), vkCodesMouseHorizontalScrollLeftFast...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalRight, mousectl.SpeedFast), vkCodesMouseHorizontalScrollRightFast...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalDown, mousectl.SpeedFast), vkCodesMouseVerticalScrollDownFast...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalUp, mousectl.SpeedFast), vkCodesMouseVerticalScrollUpFast...)
+
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedSlow), vkCodesMouseHorizontalScrollLeftSlow...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalRight, mousectl.SpeedSlow), vkCodesMouseHorizontalScrollRightSlow...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalDown, mousectl.SpeedSlow), vkCodesMouseVerticalScrollDownSlow...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalUp, mousectl.SpeedSlow), vkCodesMouseVerticalScrollUpSlow...)
+
+	// _____________________________________________________________________________________________________________________________11111111111111111111111111222222222222222222222222222222222223333333333333333
 	keyboardctl.RawKeyboardListener(keyboardctl.LowLevelKeyboardCallback)
 
 }
+
+func ScrollMouseFunc(direction mousectl.ScrollDirection, speed mousectl.MoveSpeedType) keyboardctl.Callback2 {
+	return func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		if base.GetMode() != ModeControl {
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+			return 0
+		}
+		mousectl.ScrollMouseCtrl(direction, speed)
+		return 0
+	}
+}
+
 func MoveMouseFunc(direction mousectl.MoveDirection, speedType mousectl.MoveSpeedType) keyboardctl.Callback2 {
 	return func(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		if base.GetMode() != ModeControl {
-			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetSpeedLevel())
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
 			return 0
 		}
 		mousectl.MoveMouseCtrl(direction, speedType)
