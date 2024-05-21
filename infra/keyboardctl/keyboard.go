@@ -115,14 +115,38 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 
 		if listeningKeyReference[vkCode] != nil {
 			ref := listeningKeyReference[vkCode]
+			// TODO : ref.KeyCombinations中满足多个快捷键组合时，仅优先执行其中按键数量最多的
+			// k | ctrl+k, 优先执行ctrl+k
+
+			satisfiedCallback := make([]KeyCallback, 0)
 			for _, v := range ref.KeyCombinations {
 				if AllPressed(v.Keys...) {
-					v.Cb(wParam, vkCode, scanCode)
+					satisfiedCallback = append(satisfiedCallback, v)
 				}
 				if v.withReleaseEvent && AllReleased(time.Second, v.Keys...) {
-					v.Cb(wParam, vkCode, scanCode)
+					satisfiedCallback = append(satisfiedCallback, v)
 				}
 			}
+			if len(satisfiedCallback) == 0 {
+				return 0
+			}
+
+			mostKeyNumCallback := satisfiedCallback[0]
+			for _, v := range satisfiedCallback {
+				if len(v.Keys) >= len(mostKeyNumCallback.Keys) {
+					mostKeyNumCallback = v
+				}
+			}
+			mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
+
+			// for _, v := range ref.KeyCombinations {
+			// 	if AllPressed(v.Keys...) {
+			// 		v.Cb(wParam, vkCode, scanCode)
+			// 	}
+			// 	if v.withReleaseEvent && AllReleased(time.Second, v.Keys...) {
+			// 		v.Cb(wParam, vkCode, scanCode)
+			// 	}
+			// }
 		}
 
 		// // 如果按下了 'Q' 键，退出程序
