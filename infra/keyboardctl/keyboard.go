@@ -127,8 +127,10 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 					satisfiedCallback = append(satisfiedCallback, v)
 				}
 			}
+
+			// return 1 is important
 			if len(satisfiedCallback) == 0 {
-				return 0
+				return 1
 			}
 
 			mostKeyNumCallback := satisfiedCallback[0]
