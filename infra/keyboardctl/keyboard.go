@@ -93,6 +93,13 @@ func RegisterOne(cb Callback2, vkCodes ...uint32) {
 	registerKeyListening(cb, false, vkCodes...)
 }
 
+func ShouldSetToControlMode() bool {
+	if AllPressed(VK_LWIN, VK_SPACE) {
+		return true
+	}
+	return false
+}
+
 func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr {
 	if nCode == 0 {
 		kbdStruct := (*KBDLLHOOKSTRUCT)(unsafe.Pointer(lParam))
@@ -111,6 +118,11 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 		if Pressed(VK_LCONTROL) && Pressed(VK_LSHIFT) && Pressed(VK_A) {
 			fmt.Println("Ctrl+Shift+A keys pressed simultaneously")
 			os.Exit(0)
+			return 1
+		}
+		if base.GetMode() != base.ModeControl && !ShouldSetToControlMode() {
+			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+			return 0
 		}
 
 		if listeningKeyReference[vkCode] != nil {
@@ -139,7 +151,7 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 					mostKeyNumCallback = v
 				}
 			}
-			mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
+			return mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
 
 			// for _, v := range ref.KeyCombinations {
 			// 	if AllPressed(v.Keys...) {
