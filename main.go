@@ -34,7 +34,22 @@ func main() {
 	}
 	keyboardctl.RegisterOne(startControlMode, vkCodesWinSpace...)
 
-	// when in base.ModeControl, 1\2\3\4...,control the speed of your mouse move
+	// win+space : activate control mode
+	vkCodesEsc := []uint32{keyboardctl.VK_ESCAPE}
+	quitControlMode := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		fmt.Printf("current mode:%d\n", base.GetMode())
+		fmt.Println()
+		if base.GetMode() == base.ModeControl {
+			fmt.Println("change to normal mode", time.Now())
+			base.SetMode(base.ModeNormal)
+		} else {
+			fmt.Println("already in normal mode", time.Now())
+		}
+		return 1
+	}
+	keyboardctl.RegisterOne(quitControlMode, vkCodesEsc...)
+
+	// when in ModeControl, 1\2\3\4...,control the speed of your mouse move
 	vkCodesMulitiScrollSpeedLevel := [][]uint32{{keyboardctl.VK_LSHIFT, keyboardctl.VK_1}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_2}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_3}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_4}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_5}}
 	scrollSpeedLevelSwitch := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		fmt.Printf("current mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
