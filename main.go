@@ -21,6 +21,7 @@ func main() {
 
 	// win+space : activate control mode
 	vkCodesWinSpace := []uint32{keyboardctl.VK_LWIN, keyboardctl.VK_SPACE}
+	vkCodesTabSpace := []uint32{keyboardctl.VK_TAB, keyboardctl.VK_SPACE}
 	startControlMode := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		fmt.Printf("current mode:%d\n", base.GetMode())
 		fmt.Println()
@@ -32,10 +33,10 @@ func main() {
 		}
 		return 1
 	}
+	keyboardctl.RegisterOne(startControlMode, vkCodesTabSpace...)
 	keyboardctl.RegisterOne(startControlMode, vkCodesWinSpace...)
 
-	// win+space : activate control mode
-	vkCodesEsc := []uint32{keyboardctl.VK_ESCAPE}
+	vkCodesEsc := []uint32{keyboardctl.VK_ESCAPE, keyboardctl.VK_ESCAPE}
 	quitControlMode := func(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		fmt.Printf("current mode:%d\n", base.GetMode())
 		fmt.Println()
