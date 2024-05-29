@@ -19,8 +19,9 @@ var (
 )
 
 type KeyState struct {
-	Pressed      bool
-	LastReleased *time.Time
+	Pressed            bool
+	LastReleased       *time.Time
+	SecondLastReleased *time.Time
 }
 type KBDLLHOOKSTRUCT struct {
 	VkCode   uint32
@@ -32,7 +33,9 @@ type KeyReference struct {
 }
 
 type KeyCallback struct {
-	Keys             []uint32 // for example. []{"ctrl","a"}
+	LastTriggerTime  time.Time
+	FirstClickKeys   []uint32 // for example. []{"ctrl","a"}
+	SecondClickKeys  []uint32 // for example. []{"ctrl","a"}
 	Cb               Callback2
 	withReleaseEvent bool
 }
@@ -43,14 +46,27 @@ type Callback HookProc
 type Callback2 func(wParam uintptr, vkCode, scanCode uint32) uintptr
 type HookProc func(nCode int, wParam uintptr, lParam uintptr) uintptr
 
-func registerKeyListening(cb Callback2, withReleaseEvent bool, vkCodes ...uint32) {
-	for _, v := range vkCodes {
+func registerKeyListening(cb Callback2, withReleaseEvent bool, firstClickVkCodes []uint32, secondClickVkCodes []uint32) {
+	for _, v := range firstClickVkCodes {
 		if listeningKeyReference[v] == nil {
 			listeningKeyReference[v] = &KeyReference{}
 		}
 		listeningKeyReference[v].Count += 1
 		listeningKeyReference[v].KeyCombinations = append(listeningKeyReference[v].KeyCombinations, KeyCallback{
-			Keys:             vkCodes,
+			FirstClickKeys:   firstClickVkCodes,
+			SecondClickKeys:  secondClickVkCodes,
+			Cb:               cb,
+			withReleaseEvent: withReleaseEvent,
+		})
+	}
+	for _, v := range secondClickVkCodes {
+		if listeningKeyReference[v] == nil {
+			listeningKeyReference[v] = &KeyReference{}
+		}
+		listeningKeyReference[v].Count += 1
+		listeningKeyReference[v].KeyCombinations = append(listeningKeyReference[v].KeyCombinations, KeyCallback{
+			FirstClickKeys:   firstClickVkCodes,
+			SecondClickKeys:  secondClickVkCodes,
 			Cb:               cb,
 			withReleaseEvent: withReleaseEvent,
 		})
@@ -61,7 +77,7 @@ func unRegisterKeyListening(vkCodes ...uint32) {
 	for _, v := range vkCodes {
 		listeningKeyReference[v].Count -= 1
 		listeningKeyReference[v].KeyCombinations = append(listeningKeyReference[v].KeyCombinations, KeyCallback{
-			Keys: vkCodes,
+			FirstClickKeys: vkCodes,
 		})
 	}
 
@@ -77,24 +93,23 @@ func RegisterMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 	// 	return
 	// }
 	for _, vkCodes := range mulitiVkCodes {
-		registerKeyListening(cb, false, vkCodes...)
+		registerKeyListening(cb, false, vkCodes, nil)
 	}
 }
 
 func RegisterOne(cb Callback2, vkCodes ...uint32) {
-	// switch keyAction {
-	// case WM_KEYDOWN:
+	registerKeyListening(cb, false, vkCodes, nil)
+}
 
-	// 	break
-	// default:
-	// 	fmt.Println("method not develop yet")
-	// 	return
-	// }
-	registerKeyListening(cb, false, vkCodes...)
+func RegisterDoubleClick(cb Callback2, firstClick []uint32, secondClick []uint32) {
+	registerKeyListening(cb, false, firstClick, secondClick)
 }
 
 func ShouldSetToControlMode() bool {
 	if AllPressed(VK_LWIN, VK_SPACE) {
+		return true
+	}
+	if AllPressed(VK_TAB, VK_SPACE) {
 		return true
 	}
 	return false
@@ -132,22 +147,23 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 
 			satisfiedCallback := make([]KeyCallback, 0)
 			for _, v := range ref.KeyCombinations {
-				if AllPressed(v.Keys...) {
+				if AllPressed(v.FirstClickKeys...) {
 					satisfiedCallback = append(satisfiedCallback, v)
 				}
-				if v.withReleaseEvent && AllReleased(time.Second, v.Keys...) {
+				if v.withReleaseEvent && AllReleased(time.Second, v.FirstClickKeys...) {
 					satisfiedCallback = append(satisfiedCallback, v)
 				}
 			}
 
-			// return 1 is important
+			// return 1 is importantA
+			// 如果没有匹配的快捷键，返回1
 			if len(satisfiedCallback) == 0 {
 				return 1
 			}
 
 			mostKeyNumCallback := satisfiedCallback[0]
 			for _, v := range satisfiedCallback {
-				if len(v.Keys) >= len(mostKeyNumCallback.Keys) {
+				if len(v.FirstClickKeys) >= len(mostKeyNumCallback.FirstClickKeys) {
 					mostKeyNumCallback = v
 				}
 			}
@@ -162,6 +178,7 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			// 	}
 			// }
 		}
+		return 0
 
 		// // 如果按下了 'Q' 键，退出程序
 		// if Pressed(VK_Q) {
@@ -171,7 +188,6 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 		// 在这里添加你的其他逻辑
 
 		// return CallNextHookEx(0, nCode, wParam, lParam)
-		return 1
 	}
 	// return CallNextHookEx(0, nCode, wParam, lParam)
 	return 0
@@ -236,7 +252,7 @@ func RawKeyboardListener(cb Callback) {
 func Pressed(vkCode uint32) bool {
 	// fmt.Println(vkCode, keyPressedStates[vkCode])
 	if keyPressedStates[vkCode] == nil {
-		keyPressedStates[vkCode] = &KeyState{false, nil}
+		keyPressedStates[vkCode] = &KeyState{false, nil, nil}
 	}
 	return keyPressedStates[vkCode].Pressed
 }
@@ -254,17 +270,18 @@ func AllPressed(vkCodes ...uint32) bool {
 
 func SetPressed(vkCode uint32) {
 	if keyPressedStates[vkCode] == nil {
-		keyPressedStates[vkCode] = &KeyState{false, nil}
+		keyPressedStates[vkCode] = &KeyState{false, nil, nil}
 	}
 	keyPressedStates[vkCode].Pressed = true
 }
 
 func SetReleased(vkCode uint32) {
 	if keyPressedStates[vkCode] == nil {
-		keyPressedStates[vkCode] = &KeyState{false, nil}
+		keyPressedStates[vkCode] = &KeyState{false, nil, nil}
 	}
 	keyPressedStates[vkCode].Pressed = false
 	currTime := time.Now()
+	keyPressedStates[vkCode].SecondLastReleased = keyPressedStates[vkCode].LastReleased
 	keyPressedStates[vkCode].LastReleased = &currTime
 }
 
@@ -278,7 +295,7 @@ func RegisterWithReleaseEventMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 	// 	return
 	// }
 	for _, vkCodes := range mulitiVkCodes {
-		registerKeyListening(cb, true, vkCodes...)
+		registerKeyListening(cb, true, vkCodes, nil)
 	}
 }
 
