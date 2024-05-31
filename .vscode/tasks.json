@@ -2,9 +2,11 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "pnpm install",
-      "type": "npm",
-      "script": "install",
+      "label": "npm install",
+      "type": "process",
+      "command":"nu",
+      // "script": "install",
+      "args": ["-c","npm","install"],
       "options": {
         "cwd": "${workspaceFolder}/frontend"
       },
@@ -17,8 +19,14 @@
     },
     {
       "label": "npm run build",
-      "type": "npm",
-      "script": "build",
+      // "type": "npm",
+      "type": "process",
+      // "script": "build",
+      "command":"nu",
+      "args":[
+        "-c",
+        "npm run build"
+      ],
       "options": {
         "cwd": "${workspaceFolder}/frontend"
       },
@@ -61,13 +69,14 @@
         "-gcflags",
         "all=-N -l",
         "-o",
-        "build/bin/MouseK.exe"
+        "build/bin/mousek.exe"
       ],
       "dependsOn": ["npm install", "npm run build"]
     },
     {
       "label": "build debug",
-      "type": "shell",
+      "type": "process",
+      "command":"nu",
       "options": {
         "cwd": "${workspaceFolder}",
         "env": {
@@ -89,17 +98,12 @@
           }
         }
       },
-      "command": "go",
+      // "command": "go",
+      // "command"
       "args": [
-        "build",
-        "-tags",
-        "production,desktop,debug",
-        "-gcflags",
-        "all=-N -l",
-        "-o",
-        "build/bin/MouseK.exe"
+        "-c go build -tags production,desktop,debug -gcflags all=-N -l -o build/bin/mousek.exe"
       ],
-      "dependsOn": ["npm install", "npm run build"]
+      // "dependsOn": ["npm install", "npm run build"]
     },
     {
       "label": "build dev",
