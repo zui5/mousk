@@ -4,44 +4,46 @@
     {
       "label": "npm install",
       "type": "process",
-      "command":"nu",
-      // "script": "install",
-      "args": ["-c","npm","install"],
+      "command": "pnpm",
+      "args": [
+        "install"
+      ],
       "options": {
-        "cwd": "${workspaceFolder}/frontend"
+        "cwd": "${workspaceFolder}/frontend",
       },
       "presentation": {
-        "clear": true,
-        "panel": "shared",
-        "showReuseMessage": false
-      },
-      "problemMatcher": []
+        "reveal": "always",
+        "echo": true,
+        "focus": true,
+        "panel": "sharedd",
+        "showReuseMessage": true,
+        "clear": true
+      }
     },
     {
       "label": "npm run build",
-      // "type": "npm",
       "type": "process",
-      // "script": "build",
-      "command":"nu",
-      "args":[
-        "-c",
-        "npm run build"
+      "command": "pnpm",
+      "args": [
+        "run",
+        "build"
       ],
       "options": {
-        "cwd": "${workspaceFolder}/frontend"
+        "cwd": "${workspaceFolder}/frontend",
       },
       "presentation": {
-        "clear": true,
+        "reveal": "always",
         "panel": "shared",
-        "showReuseMessage": false
-      },
-      "problemMatcher": []
+        "showReuseMessage": false,
+        "clear": true
+      }
+      // "dependsOn":["npm install"],
     },
     {
       "label": "build",
       "type": "shell",
       "options": {
-        "cwd": "${workspaceFolder}",
+        "cwd": "${workspaceFolder}/frontend",
         "env": {
           "CGO_ENABLED": "1"
         }
@@ -71,76 +73,39 @@
         "-o",
         "build/bin/mousek.exe"
       ],
-      "dependsOn": ["npm install", "npm run build"]
+      "dependsOn": [
+        "npm install",
+        "npm run build"
+      ]
     },
     {
       "label": "build debug",
       "type": "process",
-      "command":"nu",
       "options": {
-        "cwd": "${workspaceFolder}",
         "env": {
           "CGO_ENABLED": "1"
         }
       },
-      "osx": {
-        "options": {
-          "env": {
-            "CGO_CFLAGS": "-mmacosx-version-min=10.13",
-            "CGO_LDFLAGS": "-framework UniformTypeIdentifiers -mmacosx-version-min=10.13"
-          }
-        }
-      },
-      "windows": {
-        "options": {
-          "env": {
-            "CGO_ENABLED": "0"
-          }
-        }
-      },
-      // "command": "go",
-      // "command"
-      "args": [
-        "-c go build -tags production,desktop,debug -gcflags all=-N -l -o build/bin/mousek.exe"
-      ],
-      // "dependsOn": ["npm install", "npm run build"]
-    },
-    {
-      "label": "build dev",
-      "type": "shell",
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "env": {
-          "CGO_ENABLED": "1"
-        }
-      },
-      "osx": {
-        "options": {
-          "env": {
-            "CGO_CFLAGS": "-mmacosx-version-min=10.13",
-            "CGO_LDFLAGS": "-framework UniformTypeIdentifiers -mmacosx-version-min=10.13"
-          }
-        }
-      },
-      "windows": {
-        "options": {
-          "env": {
-            "CGO_ENABLED": "0"
-          }
-        }
-      },
-      "command": "go",
+      "command": "C:\\Users\\x\\.g\\go\\bin\\go.exe",
       "args": [
         "build",
         "-tags",
-        "dev",
+        "production,desktop,debug",
         "-gcflags",
         "all=-N -l",
         "-o",
-        "build/bin/MouseK.exe"
+        "build/bin/mousek.exe"
       ],
-      "dependsOn": ["npm install", "npm run build"]
+      "dependsOn": [
+        "npm install",
+        "npm run build"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      }
     }
   ]
 }
-  
