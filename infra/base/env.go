@@ -4,9 +4,12 @@ import (
 	"math"
 )
 
-var moveSpeedLevel = 1   // the speed of you mouse movement
-var scrollSpeedLevel = 1 // the speed of you mouse scroll
-var mode = 0             // 0:normal, 1:control
+var (
+	mode             = 0 // 0:normal, 1:control
+	moveSpeedLevel   = 1 // the speed of you mouse movement
+	scrollSpeedLevel = 1 // the speed of you mouse scroll
+)
+
 const (
 	ModeNormal  = 0
 	ModeControl = 1
