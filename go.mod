@@ -1,4 +1,4 @@
-module changeme
+module mousek
 
 go 1.22
 
