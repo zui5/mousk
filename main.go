@@ -52,6 +52,11 @@ func main() {
 	tray.SetLabel("systemtray test")
 	tray.OnClick(func() {
 		ToggleControlMode()
+
+		// var dlog = application.InfoDialog().SetTitle("123").SetMessage("hello world")
+		// . AttachToWindow(application.NewWindow(*application.WebviewWindowDefaults))
+		// dlog.Show()
+
 		// fmt.Println("on click system tray")
 		// fmt.Println(app.CurrentWindow().IsVisible())
 		// if app.CurrentWindow().IsVisible() {
