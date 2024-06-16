@@ -5,6 +5,7 @@ import (
 	"mousek/infra/base"
 	"mousek/infra/keyboardctl"
 	"mousek/infra/mousectl"
+	"mousek/infra/ui"
 	"mousek/infra/util"
 	"time"
 )
@@ -12,6 +13,7 @@ import (
 func ToggleControlMode() {
 	base.SetMode(1 - base.GetMode())
 	fmt.Printf("toggle mode to:%d\n", base.GetMode())
+	ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
 }
 
 func StartControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
@@ -22,6 +24,7 @@ func StartControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		base.SetMode(base.ModeControl)
 		fmt.Println("change to control mode", time.Now())
 	}
+	ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
 	return 1
 }
 
@@ -34,6 +37,7 @@ func QuitControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	} else {
 		fmt.Println("already in normal mode", time.Now())
 	}
+	ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
 	return 0
 }
 

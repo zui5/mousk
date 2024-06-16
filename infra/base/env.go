@@ -40,6 +40,17 @@ func GetScrollSpeedLevel() int {
 func SetMode(modeArg int) {
 	mode = modeArg
 }
+
 func GetMode() int {
 	return mode
+}
+
+func GetModeDesc() string {
+	switch mode {
+	case 0:
+		return "control"
+	case 1:
+		return "normal"
+	}
+	return ""
 }
