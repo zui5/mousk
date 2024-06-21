@@ -2,7 +2,9 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"mousek/infra/keyboardctl"
@@ -50,12 +52,21 @@ func main() {
 
 	tray := app.NewSystemTray()
 	tray.SetLabel("systemtray test")
+	trayMenu := application.NewMenu()
+	exitMenuItem := trayMenu.Add("Exit")
+	exitMenuItem.OnClick(func(ctx *application.Context) {
+		fmt.Printf("tray menu exit\n")
+		os.Exit(0)
+	})
+	optionMenu := trayMenu.Add("Options")
+	optionMenu.OnClick(func(ctx *application.Context) {
+		fmt.Printf("enter option menu \n")
+
+	})
+
+	tray.SetMenu(trayMenu)
 	tray.OnClick(func() {
 		ToggleControlMode()
-
-		// var dlog = application.InfoDialog().SetTitle("123").SetMessage("hello world")
-		// . AttachToWindow(application.NewWindow(*application.WebviewWindowDefaults))
-		// dlog.Show()
 
 		// fmt.Println("on click system tray")
 		// fmt.Println(app.CurrentWindow().IsVisible())
@@ -72,7 +83,7 @@ func main() {
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
 	app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
-		Title: "Window 1",
+		Title: "Options",
 		Mac: application.MacWindow{
 			InvisibleTitleBarHeight: 50,
 			Backdrop:                application.MacBackdropTranslucent,

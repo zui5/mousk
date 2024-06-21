@@ -38,6 +38,7 @@ func initPureTextDialogWindow() *application.WebviewWindow {
 		Windows: application.WindowsWindow{
 			DisableMinimiseButton:             true,
 			DisableMaximiseButton:             true,
+			WebviewGpuIsDisabled:              true,
 			DisableIcon:                       true,
 			DisableMenu:                       true,
 			DisableFramelessWindowDecorations: true,
