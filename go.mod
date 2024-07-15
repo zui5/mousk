@@ -12,7 +12,6 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
-	github.com/BurntSushi/toml v1.4.0
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
@@ -43,16 +42,20 @@ require (
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/skeema/knownhosts v1.2.1 // indirect
 	github.com/wailsapp/go-webview2 v1.0.9 // indirect
-	github.com/wailsapp/mimetype v1.4.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	golang.org/x/crypto v0.23.0 // indirect
 	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df // indirect
 	golang.org/x/mod v0.17.0 // indirect
-	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.21.0
 	golang.org/x/tools v0.21.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
+)
+
+require (
+	github.com/BurntSushi/toml v1.4.0
+	github.com/wailsapp/mimetype v1.4.1 // indirect
+	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/sys v0.21.0
 )
 
 replace github.com/wailsapp/wails/v3 => ../../../../../Users/x/tmp/wails/v3

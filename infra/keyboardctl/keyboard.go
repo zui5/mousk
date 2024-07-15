@@ -136,7 +136,7 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			return 1
 		}
 		if base.GetMode() != base.ModeControl && !ShouldSetToControlMode() {
-			fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+			fmt.Printf("%d not in control mode, mode:%d, keystatus:%d\n", time.Now().UnixMilli(), base.GetMode(), wParam)
 			return 0
 		}
 
