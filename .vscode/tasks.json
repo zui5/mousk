@@ -2,6 +2,30 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "wails dev",
+      "type": "process",
+      "command": [
+        "wails3",
+      ],
+      "args": [
+        "dev",
+        "-port",
+        "10001"
+      ],
+      "dependsOn": [
+        "cleanup"
+      ]
+    },
+    {
+      "label": "cleanup",
+      "type": "process",
+      "command": "rm",
+      "args": [
+        "-rf",
+        "${workspaceFolder}/frontend/pkg",
+      ]
+    },
+    {
       "label": "npm install",
       "type": "process",
       "command": "pnpm",
@@ -15,7 +39,7 @@
         "reveal": "always",
         "echo": true,
         "focus": true,
-        "panel": "sharedd",
+        "panel": "shared",
         "showReuseMessage": true,
         "clear": true
       }
@@ -97,7 +121,7 @@
         "build/bin/mousek.exe"
       ],
       "dependsOn": [
-        "npm install",
+        // "npm install",
         "npm run build"
       ],
       "presentation": {

@@ -1,22 +1,6 @@
 {
   "version": "0.2.0",
   "configurations": [
-   {
-    "name": "Launch",
-    "type": "go",
-    "request": "launch",
-    "program": "${workspaceFolder}/main.go",
-   } ,
-    
-    {
-      "name": "Wails: Production mousek",
-      "type": "go",
-      "request": "launch",
-      "mode": "exec",
-      "program": "${workspaceFolder}/build/bin/mousek.exe",
-      "preLaunchTask": "build",
-      "cwd": "${workspaceFolder}"
-    },
     {
       "name": "Wails: Debug mousek",
       "type": "go",
@@ -24,7 +8,39 @@
       "console": "internalConsole",
       "mode": "exec",
       "program": "${workspaceFolder}/build/bin/mousek.exe",
-      "preLaunchTask": "build debug",
+      // "preLaunchTask": "build debug",
+      "preLaunchTask": "wails dev",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Attach to running Go process",
+      "type": "go",
+      "debugAdapter": "dlv-dap",
+      "request": "attach",
+      "processId": "mousek.exe",
+      // "preLaunchTask": "wails dev"
+    },
+    // {
+    //   "name": "Wails: Dev",
+    //   "request": "launch",
+    //   "console": "internalConsole",
+    //   "mode": "exec",
+    //   "program": "${workspaceFolder}/build/bin/mousek.exe",
+    //   "cwd": "${workspaceFolder}"
+    // },
+    {
+      "name": "Launch",
+      "type": "go",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.go",
+    },
+    {
+      "name": "Wails: Production mousek",
+      "type": "go",
+      "request": "launch",
+      "mode": "exec",
+      "program": "${workspaceFolder}/build/bin/mousek.exe",
+      "preLaunchTask": "build",
       "cwd": "${workspaceFolder}"
     },
     {

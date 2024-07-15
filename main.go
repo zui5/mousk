@@ -11,6 +11,7 @@ import (
 	"mousek/infra/mousectl"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/plugins/experimental/start_at_login"
 )
 
 // Wails uses Go's `embed` package to embed the frontend files into the binary.
@@ -32,7 +33,7 @@ func main() {
 	// Variables 'Name' and 'Description' are for application metadata.
 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
 	// 'Bind' is a list of Go struct instances. The frontend has access to the methods of these instances.
-	// 'Mac' options tailor the application when running an macOS.
+	// 'Mac888898888' options tailor the application when running an macOS.
 	app := application.New(application.Options{
 		Name: "mousek",
 		Windows: application.WindowsOptions{
@@ -48,20 +49,34 @@ func main() {
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
+		// Plugins: map[string]application.Plugin{
+		// 	"start_at_login": start_at_login.NewPlugin(),
+		// },
 	})
+	start_at_login := start_at_login.NewPlugin(start_at_login.Config{
+		RegistryKey: "mousek.exe",
+	})
+	start_at_login.StartAtLogin(true)
+
+	InitAppWraper(app)
 
 	tray := app.NewSystemTray()
 	tray.SetLabel("systemtray test")
 	trayMenu := application.NewMenu()
+
+	// TODO remove it
+	StartOptionView()
+
+	optionMenu := trayMenu.Add("Options")
+	optionMenu.OnClick(func(ctx *application.Context) {
+		fmt.Printf("enter option menu \n")
+		StartOptionView()
+	})
+
 	exitMenuItem := trayMenu.Add("Exit")
 	exitMenuItem.OnClick(func(ctx *application.Context) {
 		fmt.Printf("tray menu exit\n")
 		os.Exit(0)
-	})
-	optionMenu := trayMenu.Add("Options")
-	optionMenu.OnClick(func(ctx *application.Context) {
-		fmt.Printf("enter option menu \n")
-
 	})
 
 	tray.SetMenu(trayMenu)
@@ -82,16 +97,16 @@ func main() {
 	// 'Mac' options tailor the window when running on macOS.
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
-	app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
-		Title: "Options",
-		Mac: application.MacWindow{
-			InvisibleTitleBarHeight: 50,
-			Backdrop:                application.MacBackdropTranslucent,
-			TitleBar:                application.MacTitleBarHiddenInset,
-		},
-		BackgroundColour: application.NewRGB(27, 38, 54),
-		URL:              "/",
-	})
+	// app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
+	// 	Title: "Options",
+	// 	Mac: application.MacWindow{
+	// 		InvisibleTitleBarHeight: 50,
+	// 		Backdrop:                application.MacBackdropTranslucent,
+	// 		TitleBar:                application.MacTitleBarHiddenInset,
+	// 	},
+	// 	BackgroundColour: application.NewRGB(27, 38, 54),
+	// 	URL:              "/",
+	// })
 
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
