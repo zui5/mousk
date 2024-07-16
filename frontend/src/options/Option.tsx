@@ -1,12 +1,13 @@
+
 import { Events, WML } from "@wailsio/runtime";
 import { Layout, Menu, theme, type MenuProps } from 'antd';
 import { Content, Footer, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import React, { useEffect, useState } from 'react';
 import About from "../about/About";
+import General from "../general/OptionGeneral";
 
 type MenuItem = Required<MenuProps>['items'][number];
-
 
 const items: MenuItem[] = [
   { key: 'General', label: 'General' },
@@ -14,35 +15,22 @@ const items: MenuItem[] = [
   { key: 'About', label: 'About' },
 ];
 
-const contentsMap: object = {
+const contentsMap: { [key: string]: React.FC } = {
+  "General": General,
   "About": About,
-  "_Default": <div>not complete yet!</div>
+};
+
+function GetCurrentComponent(key: string): React.FC {
+  return contentsMap[key] || (() => <div>not complete yet!</div>);
 }
 
-function GetCurrentMap(key: string): any{
-  return contentsMap.hasOwnProperty(key) ? contentsMap[key]() : contentsMap["_Default"]
-}
-
-const Option: React.FC = (props) => {
+const Option: React.FC = () => {
   const [, setTime] = useState<string>('Listening for Time event...');
-  // const [theme, setTheme] = useState<MenuTheme>('dark');
-  const [current, setCurrent] = useState('1');
-
-  // const changeTheme = (value: boolean) => {
-  //   setTheme(value ? 'dark' : 'light');
-  // };
-
-  // const optionMap: { [key: string]: any } = {
-  //   "general": General,
-  //   "anothergeneral": General,
-  // };
-  // const optionNames = Object.keys(optionMap)
-
+  const [current, setCurrent] = useState('General');
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-
 
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
@@ -53,26 +41,20 @@ const Option: React.FC = (props) => {
     Events.On('time', (timeValue: any) => {
       setTime(timeValue.data);
     });
-    // Reload WML so it picks up the wml tags
     WML.Reload();
   }, []);
 
-
+  const CurrentComponent = GetCurrentComponent(current);
 
   return (
     <Layout className="h-screen" style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={['1']} onClick={onClick} mode="inline" items={items} />
-        {/* <Footer>fuck</Footer> */}
+        <Menu theme="dark" defaultSelectedKeys={['General']} onClick={onClick} mode="inline" items={items} />
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: '0 16px' }}>
-          {/* <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb> */}
           <div
             style={{
               padding: 24,
@@ -81,8 +63,7 @@ const Option: React.FC = (props) => {
               borderRadius: borderRadiusLG,
             }}
           >
-            {/* Bill is a cat. */}
-            {GetCurrentMap(current)}
+            <CurrentComponent />
           </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}>
@@ -93,4 +74,4 @@ const Option: React.FC = (props) => {
   );
 }
 
-export default Option
+export default Option;
