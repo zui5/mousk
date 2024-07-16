@@ -1,7 +1,10 @@
 import { Events, WML } from "@wailsio/runtime";
 import { useEffect } from "react";
 
-function General() {
+function setTime(data: any) {
+    throw new Error("Function not implemented.");
+}
+const General: React.FC = (props) => {
 
     useEffect(() => {
         Events.On('time', (timeValue: any) => {
@@ -19,6 +22,3 @@ function General() {
 
 export default General
 
-function setTime(data: any) {
-    throw new Error("Function not implemented.");
-}
