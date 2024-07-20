@@ -23,30 +23,23 @@ func Message(text string) {
 }
 
 func initPureTextDialogWindow() *application.WebviewWindow {
-	return application.NewWindow(application.WebviewWindowOptions{
-		Name:                    "111",
-		Width:                   200,
-		Height:                  50,
-		AlwaysOnTop:             true,
-		DisableResize:           true,
-		Frameless:               true,
-		HTML:                    "<div style=\"background-color:yellow\">fucking text</div>",
-		Centered:                true,
-		BackgroundType:          application.BackgroundTypeTransparent,
-		BackgroundColour:        application.RGBA{},
-		FullscreenButtonEnabled: false,
-		Windows: application.WindowsWindow{
-			DisableMinimiseButton:             true,
-			DisableMaximiseButton:             true,
-			WebviewGpuIsDisabled:              true,
-			DisableIcon:                       true,
-			DisableMenu:                       true,
-			DisableFramelessWindowDecorations: true,
-			HiddenOnTaskbar:                   true,
+	diaglogView := application.NewWindow(application.WebviewWindowOptions{
+		Name:           "dialog",
+		Width:          200,
+		Height:         40,
+		AlwaysOnTop:    true,
+		DisableResize:  true,
+		Frameless:      true,
+		Centered:       true,
+		BackgroundType: application.BackgroundTypeSolid,
+		BackgroundColour: application.RGBA{
+			Red:   255,
+			Green: 255,
+			Blue:  255,
+			Alpha: 1,
 		},
-		// DevToolsEnabled: true,
-		// OpenInspectorOnStartup:     true,
-		Linux:                      application.LinuxWindow{},
-		DefaultContextMenuDisabled: true,
+		FullscreenButtonEnabled: false,
 	})
+	fmt.Printf("fuck notificationview：%+v\n", diaglogView)
+	return diaglogView
 }

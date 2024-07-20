@@ -16,6 +16,15 @@ func ToggleControlMode() {
 	ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
 }
 
+func ToggleOptionView(wParam uintptr, vkCode, scanCode uint32) uintptr {
+	if base.ToggleOptionViewState() {
+		StartOptionView()
+	} else {
+		HideOptionView()
+	}
+	return 1
+}
+
 func StartControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	fmt.Printf("current mode:%d\n", base.GetMode())
 	if base.GetMode() == base.ModeControl {

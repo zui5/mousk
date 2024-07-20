@@ -65,7 +65,7 @@ func main() {
 	trayMenu := application.NewMenu()
 
 	// TODO remove it
-	StartOptionView()
+	// StartOptionView()
 
 	optionMenu := trayMenu.Add("Options")
 	optionMenu.OnClick(func(ctx *application.Context) {
@@ -139,6 +139,9 @@ func keyboardProcess() {
 	vkCodesTabSpace := []uint32{keyboardctl.VK_TAB, keyboardctl.VK_SPACE}
 	keyboardctl.RegisterOne(StartControlMode, vkCodesTabSpace...)
 	// keyboardctl.RegisterOne(StartControlMode, vkCodesWinSpace...)
+
+	vkCodesSpaceComma := []uint32{keyboardctl.VK_SPACE, keyboardctl.VK_OEM_COMMA}
+	keyboardctl.RegisterOne(ToggleOptionView, vkCodesSpaceComma...)
 
 	// space+esc : quit control mode
 	vkCodesEsc := []uint32{keyboardctl.VK_ESCAPE, keyboardctl.VK_ESCAPE}

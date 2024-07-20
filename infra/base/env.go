@@ -5,15 +5,21 @@ import (
 )
 
 var (
-	mode             = 0 // 0:normal, 1:control
-	moveSpeedLevel   = 1 // the speed of you mouse movement
-	scrollSpeedLevel = 1 // the speed of you mouse scroll
+	mode              = 0 // 0:normal, 1:control
+	moveSpeedLevel    = 1 // the speed of you mouse movement
+	scrollSpeedLevel  = 1 // the speed of you mouse scroll
+	optionViewVisable = false
 )
 
 const (
 	ModeNormal  = 0
 	ModeControl = 1
 )
+
+func ToggleOptionViewState() bool {
+	optionViewVisable = !optionViewVisable
+	return optionViewVisable
+}
 
 func SetMoveSpeedLevel(speedLevelArg int) {
 	// speedLevel = speedLevelArg
