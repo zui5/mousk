@@ -7,5 +7,4 @@ func TestInit(t *testing.T) {
 	settingsVar.Mouse.Fast.Speed = 1000
 	WriteSettings()
 	RestoreSettings()
-
 }

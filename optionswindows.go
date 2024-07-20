@@ -61,7 +61,6 @@ func StartOptionView() {
 			// Linux:                   application.LinuxWindow{},
 			ShouldClose: func(window *application.WebviewWindow) bool {
 				window.Hide()
-
 				fmt.Printf("view show close\n")
 				return false
 			},
@@ -70,7 +69,18 @@ func StartOptionView() {
 			// KeyBindings:                map[string]func(window *application.WebviewWindow){},
 			// IgnoreMouseEvents:          false,
 		})
+		fmt.Printf("fuck optionview：%+v\n", optionsView)
 	}
-
 	optionsView.Show()
+}
+
+func HideOptionView() {
+	if appWraper == nil {
+		fmt.Printf("appwraper not initialized\n")
+		return
+	}
+	if optionsView == nil {
+		return
+	}
+	optionsView.Hide()
 }
