@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"mousek/infra/config"
 	"mousek/infra/keyboardctl"
 	"mousek/infra/mousectl"
 
@@ -133,19 +134,23 @@ func main() {
 }
 
 func keyboardProcess() {
+	// load config
+	config.Init()
+	var ts = keyboardctl.GetCodesByNames
+	var ta = keyboardctl.GetCodeByName
+	settings := config.GetSettings()
 
 	// win+space : activate control mode
-	// vkCodesWinSpace := []uint32{keyboardctl.VK_LWIN, keyboardctl.VK_SPACE}
-	vkCodesTabSpace := []uint32{keyboardctl.VK_TAB, keyboardctl.VK_SPACE}
-	keyboardctl.RegisterOne(StartControlMode, vkCodesTabSpace...)
-	// keyboardctl.RegisterOne(StartControlMode, vkCodesWinSpace...)
-
-	vkCodesSpaceComma := []uint32{keyboardctl.VK_SPACE, keyboardctl.VK_OEM_COMMA}
-	keyboardctl.RegisterOne(ToggleOptionView, vkCodesSpaceComma...)
+	vkCodesStartControlMode := ts(settings.PresetFunc.ActiveMode)
+	keyboardctl.RegisterOne(StartControlMode, vkCodesStartControlMode...)
 
 	// space+esc : quit control mode
-	vkCodesEsc := []uint32{keyboardctl.VK_ESCAPE, keyboardctl.VK_ESCAPE}
-	keyboardctl.RegisterOne(QuitControlMode, vkCodesEsc...)
+	vkCodesQuitControlMode := ts(settings.PresetFunc.QuitMode)
+	keyboardctl.RegisterOne(QuitControlMode, vkCodesQuitControlMode...)
+
+	// space+comma : open setting panel
+	vkCodesOpenSetting := ts(settings.PresetFunc.OpenSetting)
+	keyboardctl.RegisterOne(ToggleOptionView, vkCodesOpenSetting...)
 
 	// shift + 1\2\3\4\5 : in ModeControl ,control the speed of your mouse scroll
 	vkCodesMulitiScrollSpeedLevel := [][]uint32{{keyboardctl.VK_LSHIFT, keyboardctl.VK_1}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_2}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_3}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_4}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_5}}
@@ -157,14 +162,14 @@ func keyboardProcess() {
 
 	// H\J\K\L : in ModeControl, control the mouse movement like vim
 	// W\A\S\D : in ModeControl, control the mouse movement like fps game
-	vkCodesSetMousePosUpFast := []uint32{keyboardctl.VK_K}
-	vkCodesSetMousePosDownFast := []uint32{keyboardctl.VK_J}
-	vkCodesSetMousePosLeftFast := []uint32{keyboardctl.VK_H}
-	vkCodesSetMousePosRightFast := []uint32{keyboardctl.VK_L}
-	vkCodesSetMousePosUpSlow := []uint32{keyboardctl.VK_W}
-	vkCodesSetMousePosDownSlow := []uint32{keyboardctl.VK_S}
-	vkCodesSetMousePosLeftSlow := []uint32{keyboardctl.VK_A}
-	vkCodesSetMousePosRightSlow := []uint32{keyboardctl.VK_D}
+	vkCodesSetMousePosUpFast := ts(settings.PresetFunc.MouseMove.Fast.Up)
+	vkCodesSetMousePosDownFast := ts(settings.PresetFunc.MouseMove.Fast.Down)
+	vkCodesSetMousePosLeftFast := ts(settings.PresetFunc.MouseMove.Fast.Left)
+	vkCodesSetMousePosRightFast := ts(settings.PresetFunc.MouseMove.Fast.Right)
+	vkCodesSetMousePosUpSlow := ts(settings.PresetFunc.MouseMove.Slow.Up)
+	vkCodesSetMousePosDownSlow := ts(settings.PresetFunc.MouseMove.Slow.Down)
+	vkCodesSetMousePosLeftSlow := ts(settings.PresetFunc.MouseMove.Slow.Left)
+	vkCodesSetMousePosRightSlow := ts(settings.PresetFunc.MouseMove.Slow.Right)
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionDown, mousectl.SpeedFast), vkCodesSetMousePosDownFast...)
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionUp, mousectl.SpeedFast), vkCodesSetMousePosUpFast...)
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionLeft, mousectl.SpeedFast), vkCodesSetMousePosLeftFast...)
@@ -175,27 +180,37 @@ func keyboardProcess() {
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionRight, mousectl.SpeedSlow), vkCodesSetMousePosRightSlow...)
 
 	// I\R : in ModeControl, simulate mouse left button click
-	vkCodesMouseLeftClick := [][]uint32{{keyboardctl.VK_I}, {keyboardctl.VK_R}}
+	// vkCodesMouseLeftClick := [][]uint32{{keyboardctl.VK_I}, {keyboardctl.VK_R}}
+	vkCodesMouseLeftClick := [][]uint32{{ta(settings.PresetFunc.MouseLeftButtonClick.Primary)}, {ta(settings.PresetFunc.MouseLeftButtonClick.Secondary)}}
 	keyboardctl.RegisterMulti(MouseLeftClick, vkCodesMouseLeftClick...)
 
 	// O\T : in ModeControl, simulate mouse right button click
-	vkCodesMouseRightClick := [][]uint32{{keyboardctl.VK_O}, {keyboardctl.VK_T}}
+	// vkCodesMouseRightClick := [][]uint32{{keyboardctl.VK_O}, {keyboardctl.VK_T}}
+	vkCodesMouseRightClick := [][]uint32{{ta(settings.PresetFunc.MouseRightButtonClick.Primary)}, {ta(settings.PresetFunc.MouseRightButtonClick.Secondary)}}
 	keyboardctl.RegisterMulti(MouseRightClick, vkCodesMouseRightClick...)
 
 	// C\N : in ModeControl, simulate mouse left button hold
-	vkCoodesLeftDown := [][]uint32{{keyboardctl.VK_C}, {keyboardctl.VK_N}}
+	// vkCoodesLeftDown := [][]uint32{{keyboardctl.VK_C}, {keyboardctl.VK_N}}
+	vkCoodesLeftDown := [][]uint32{{ta(settings.PresetFunc.MouseLeftButtonHold.Primary)}, {ta(settings.PresetFunc.MouseLeftButtonHold.Secondary)}}
 	keyboardctl.RegisterWithReleaseEventMulti(MouseLeftDown, vkCoodesLeftDown...)
 
 	// shift + H\J\K\L : in ModeControl, control the mouse scroll like vim
 	// shift + W\A\S\D : in ModeControl, control the mouse scroll like fps game
-	vkCodesMouseVerticalScrollDownFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_J}
-	vkCodesMouseVerticalScrollUpFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_K}
-	vkCodesMouseHorizontalScrollLeftFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_H}
-	vkCodesMouseHorizontalScrollRightFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_L}
-	vkCodesMouseVerticalScrollDownSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_S}
-	vkCodesMouseVerticalScrollUpSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_W}
-	vkCodesMouseHorizontalScrollLeftSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_A}
-	vkCodesMouseHorizontalScrollRightSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_D}
+	vkCodesMouseVerticalScrollDownFast := ts(settings.PresetFunc.MouseScroll.Fast.Down)
+	vkCodesMouseVerticalScrollUpFast := ts(settings.PresetFunc.MouseScroll.Fast.Up)
+	vkCodesMouseHorizontalScrollLeftFast := ts(settings.PresetFunc.MouseScroll.Fast.Left)
+	vkCodesMouseHorizontalScrollRightFast := ts(settings.PresetFunc.MouseScroll.Fast.Right)
+	vkCodesMouseVerticalScrollDownSlow := ts(settings.PresetFunc.MouseScroll.Slow.Down)
+	vkCodesMouseVerticalScrollUpSlow := ts(settings.PresetFunc.MouseScroll.Slow.Up)
+	vkCodesMouseHorizontalScrollLeftSlow := ts(settings.PresetFunc.MouseScroll.Slow.Left)
+	vkCodesMouseHorizontalScrollRightSlow := ts(settings.PresetFunc.MouseScroll.Slow.Right)
+	// vkCodesMouseVerticalScrollUpFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_K}
+	// vkCodesMouseHorizontalScrollLeftFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_H}
+	// vkCodesMouseHorizontalScrollRightFast := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_L}
+	// vkCodesMouseVerticalScrollDownSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_S}
+	// vkCodesMouseVerticalScrollUpSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_W}
+	// vkCodesMouseHorizontalScrollLeftSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_A}
+	// vkCodesMouseHorizontalScrollRightSlow := []uint32{keyboardctl.VK_LSHIFT, keyboardctl.VK_D}
 	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalDown, mousectl.SpeedFast), vkCodesMouseVerticalScrollDownFast...)
 	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalUp, mousectl.SpeedFast), vkCodesMouseVerticalScrollUpFast...)
 	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedFast), vkCodesMouseHorizontalScrollLeftFast...)
