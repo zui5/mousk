@@ -17,19 +17,57 @@ var filePath = "../../confs.toml"
 // var filePath = "./confs.toml"
 
 const defaultSettings = `
-[Mouse]
-  [Mouse.Slow]
-    Speed = 4
-    Up = "k"
-    Down = "j"
-    Left = "h"
-    Right = "l"
-  [Mouse.Fast]
-    Speed = 20
-    Up = "w"
-    Down = "s"
-    Left = "a"
-    Right = "d"
+StartOnSystemUp = true
+
+[PresetFunc]
+ChangeMode =["space","tab"]
+OpenSetting = ["space",","]
+  
+[PresetFunc.MouseMove]
+  [PresetFunc.MouseMove.Fast]
+  Down =["j"]
+  Left =["h"]
+  Right =["l"]
+  Up =["k"]
+  [PresetFunc.MouseMove.Slow]
+  Down =["s"]
+  Left =["a"]
+  Right =["d"]
+  Up =["w"]
+  [PresetFunc.MouseMove.SpeedLevel]
+  Level1 = 1
+  Level2 = 2
+  Level3 = 3
+  Level4 = 4
+  Level5 = 5
+
+[PresetFunc.MouseScroll]
+  [PresetFunc.MouseScroll.Fast]
+  Down =["shift","j"]
+  Left =["shift","h"]
+  Right =["shift","l"]
+  Up =["shift","k"]
+  [PresetFunc.MouseScroll.Slow]
+  Down =["shift","s"]
+  Left =["shift","a"]
+  Right =["shift","d"]
+  Up =["shift","w"]
+  [PresetFunc.MouseScroll.SpeedLevel]
+  Level1 = 1
+  Level2 = 2
+  Level3 = 3
+  Level4 = 4
+  Level5 = 5
+
+[PresetFunc.MouseLeftButtonClick]
+  Primary = "i"
+  Secondary = ""
+[PresetFunc.MouseRightButtonClick]
+  Primary = "o"
+  Secondary = ""
+[PresetFunc.MouseLeftButtonHold]
+  Primary = "c"
+  Secondary = ""
 `
 
 // 配置项枚举
@@ -68,11 +106,73 @@ type MouseConfig struct {
 	Right string
 }
 
+// type Settings struct {
+// 	Mouse struct {
+// 		Fast MouseConfig
+// 		Slow MouseConfig
+// 	}
+// }
+
 type Settings struct {
-	Mouse struct {
-		Fast MouseConfig
-		Slow MouseConfig
-	}
+	StartOnSystemUp bool `toml:"StartOnSystemUp"`
+	PresetFunc      struct {
+		ChangeMode  []string `toml:"ChangeMode"`
+		OpenSetting []string `toml:"OpenSetting"`
+		MouseMove   struct {
+			Fast struct {
+				Down  []string `toml:"Down"`
+				Left  []string `toml:"Left"`
+				Right []string `toml:"Right"`
+				Up    []string `toml:"Up"`
+			} `toml:"Fast"`
+			Slow struct {
+				Down  []string `toml:"Down"`
+				Left  []string `toml:"Left"`
+				Right []string `toml:"Right"`
+				Up    []string `toml:"Up"`
+			} `toml:"Slow"`
+			SpeedLevel struct {
+				Level1 int `toml:"Level1"`
+				Level2 int `toml:"Level2"`
+				Level3 int `toml:"Level3"`
+				Level4 int `toml:"Level4"`
+				Level5 int `toml:"Level5"`
+			} `toml:"SpeedLevel"`
+		} `toml:"MouseMove"`
+		MouseScroll struct {
+			Fast struct {
+				Down  []string `toml:"Down"`
+				Left  []string `toml:"Left"`
+				Right []string `toml:"Right"`
+				Up    []string `toml:"Up"`
+			} `toml:"Fast"`
+			Slow struct {
+				Down  []string `toml:"Down"`
+				Left  []string `toml:"Left"`
+				Right []string `toml:"Right"`
+				Up    []string `toml:"Up"`
+			} `toml:"Slow"`
+			SpeedLevel struct {
+				Level1 int `toml:"Level1"`
+				Level2 int `toml:"Level2"`
+				Level3 int `toml:"Level3"`
+				Level4 int `toml:"Level4"`
+				Level5 int `toml:"Level5"`
+			} `toml:"SpeedLevel"`
+		} `toml:"MouseScroll"`
+		MouseLeftButtonClick struct {
+			Primary   string `toml:"Primary"`
+			Secondary string `toml:"Secondary"`
+		} `toml:"MouseLeftButtonClick"`
+		MouseRightButtonClick struct {
+			Primary   string `toml:"Primary"`
+			Secondary string `toml:"Secondary"`
+		} `toml:"MouseRightButtonClick"`
+		MouseLeftButtonHold struct {
+			Primary   string `toml:"Primary"`
+			Secondary string `toml:"Secondary"`
+		} `toml:"MouseLeftButtonHold"`
+	} `toml:"PresetFunc"`
 }
 
 func Init() {
