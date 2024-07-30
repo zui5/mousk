@@ -21,7 +21,7 @@ const defaultSettings = `
 StartOnSystemUp = true
 [PresetFunc]
   ActiveMode = ["SPACE", "TAB"]
-  QuitMode = ["SPACE", "ESC"]
+  QuitMode = ["SPACE", "ESCAPE"]
   OpenSetting = ["SPACE", "COMMA"]
   [PresetFunc.MouseMove]
     [PresetFunc.MouseMove.Fast]

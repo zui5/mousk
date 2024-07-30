@@ -4,11 +4,7 @@ go 1.22
 
 toolchain go1.22.0
 
-require (
-	github.com/vcaesar/keycode v0.10.1
-	github.com/vcaesar/tt v0.20.1
-	github.com/wailsapp/wails/v3 v3.0.0-alpha.0
-)
+require github.com/wailsapp/wails/v3 v3.0.0-alpha.0
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
@@ -55,7 +51,7 @@ require (
 	github.com/BurntSushi/toml v1.4.0
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	golang.org/x/net v0.25.0 // indirect
-	golang.org/x/sys v0.21.0
+	golang.org/x/sys v0.21.0 // indirect
 )
 
 replace github.com/wailsapp/wails/v3 => ../../../../../Users/x/tmp/wails/v3

@@ -8,10 +8,22 @@
       "console": "internalConsole",
       "mode": "exec",
       "program": "${workspaceFolder}/build/bin/mousek.exe",
+      "preLaunchTask": "build debug",
+      // "preLaunchTask": "wails dev",
+      "cwd": "${workspaceFolder}"
+    },
+  {
+      "name": "Wails3 Dev",
+      "type": "go",
+      "request": "launch",
+      "console": "internalConsole",
+      "mode": "exec",
+      "program": "${workspaceFolder}/build/bin/mousek.exe",
       // "preLaunchTask": "build debug",
       "preLaunchTask": "wails dev",
       "cwd": "${workspaceFolder}"
     },
+
     {
       "name": "Attach to running Go process",
       "type": "go",
