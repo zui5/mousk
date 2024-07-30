@@ -25,7 +25,7 @@ func Message(text string) {
 func initPureTextDialogWindow() *application.WebviewWindow {
 	diaglogView := application.NewWindow(application.WebviewWindowOptions{
 		Name:           "dialog",
-		Width:          200,
+		Width:          300,
 		Height:         40,
 		AlwaysOnTop:    true,
 		DisableResize:  true,

@@ -142,11 +142,11 @@ func keyboardProcess() {
 
 	// win+space : activate control mode
 	vkCodesStartControlMode := ts(settings.PresetFunc.ActiveMode)
-	keyboardctl.RegisterOne(StartControlMode, vkCodesStartControlMode...)
+	keyboardctl.RegisterNormal(StartControlMode, vkCodesStartControlMode...)
 
 	// space+esc : quit control mode
 	vkCodesQuitControlMode := ts(settings.PresetFunc.QuitMode)
-	keyboardctl.RegisterOne(QuitControlMode, vkCodesQuitControlMode...)
+	keyboardctl.RegisterNormal(QuitControlMode, vkCodesQuitControlMode...)
 
 	// space+comma : open setting panel
 	vkCodesOpenSetting := ts(settings.PresetFunc.OpenSetting)

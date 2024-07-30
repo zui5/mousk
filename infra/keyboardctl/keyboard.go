@@ -1,6 +1,7 @@
 package keyboardctl
 
 import (
+	"encoding/json"
 	"fmt"
 	"mousek/infra/base"
 	"os"
@@ -33,11 +34,12 @@ type KeyReference struct {
 }
 
 type KeyCallback struct {
-	LastTriggerTime  time.Time
-	FirstClickKeys   []uint32 // for example. []{"ctrl","a"}
-	SecondClickKeys  []uint32 // for example. []{"ctrl","a"}
-	Cb               Callback2
-	withReleaseEvent bool
+	LastTriggerTime    time.Time
+	FirstClickKeys     []uint32  // for example. []{"ctrl","a"}
+	SecondClickKeys    []uint32  // for example. []{"ctrl","a"}
+	Cb                 Callback2 `json:"-"`
+	withReleaseEvent   bool
+	effectOnNormalMode bool
 }
 
 type Callback HookProc
@@ -46,17 +48,18 @@ type Callback HookProc
 type Callback2 func(wParam uintptr, vkCode, scanCode uint32) uintptr
 type HookProc func(nCode int, wParam uintptr, lParam uintptr) uintptr
 
-func registerKeyListening(cb Callback2, withReleaseEvent bool, firstClickVkCodes []uint32, secondClickVkCodes []uint32) {
+func registerKeyListening(cb Callback2, effectOnNormal bool, withReleaseEvent bool, firstClickVkCodes []uint32, secondClickVkCodes []uint32) {
 	for _, v := range firstClickVkCodes {
 		if listeningKeyReference[v] == nil {
 			listeningKeyReference[v] = &KeyReference{}
 		}
 		listeningKeyReference[v].Count += 1
 		listeningKeyReference[v].KeyCombinations = append(listeningKeyReference[v].KeyCombinations, KeyCallback{
-			FirstClickKeys:   firstClickVkCodes,
-			SecondClickKeys:  secondClickVkCodes,
-			Cb:               cb,
-			withReleaseEvent: withReleaseEvent,
+			FirstClickKeys:     firstClickVkCodes,
+			SecondClickKeys:    secondClickVkCodes,
+			Cb:                 cb,
+			withReleaseEvent:   withReleaseEvent,
+			effectOnNormalMode: effectOnNormal,
 		})
 	}
 	for _, v := range secondClickVkCodes {
@@ -65,14 +68,16 @@ func registerKeyListening(cb Callback2, withReleaseEvent bool, firstClickVkCodes
 		}
 		listeningKeyReference[v].Count += 1
 		listeningKeyReference[v].KeyCombinations = append(listeningKeyReference[v].KeyCombinations, KeyCallback{
-			FirstClickKeys:   firstClickVkCodes,
-			SecondClickKeys:  secondClickVkCodes,
-			Cb:               cb,
-			withReleaseEvent: withReleaseEvent,
+			FirstClickKeys:     firstClickVkCodes,
+			SecondClickKeys:    secondClickVkCodes,
+			Cb:                 cb,
+			withReleaseEvent:   withReleaseEvent,
+			effectOnNormalMode: effectOnNormal,
 		})
 	}
 }
 
+//lint:ignore U1000 Ignore unused function temporarily for debugging
 func unRegisterKeyListening(vkCodes ...uint32) {
 	for _, v := range vkCodes {
 		listeningKeyReference[v].Count -= 1
@@ -93,16 +98,20 @@ func RegisterMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 	// 	return
 	// }
 	for _, vkCodes := range mulitiVkCodes {
-		registerKeyListening(cb, false, vkCodes, nil)
+		registerKeyListening(cb, false, false, vkCodes, nil)
 	}
 }
 
+func RegisterNormal(cb Callback2, vkCodes ...uint32) {
+	registerKeyListening(cb, true, false, vkCodes, nil)
+}
+
 func RegisterOne(cb Callback2, vkCodes ...uint32) {
-	registerKeyListening(cb, false, vkCodes, nil)
+	registerKeyListening(cb, false, false, vkCodes, nil)
 }
 
 func RegisterDoubleClick(cb Callback2, firstClick []uint32, secondClick []uint32) {
-	registerKeyListening(cb, false, firstClick, secondClick)
+	registerKeyListening(cb, false, false, firstClick, secondClick)
 }
 
 func ShouldSetToControlMode() bool {
@@ -135,6 +144,7 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			os.Exit(0)
 			return 1
 		}
+
 		if base.GetMode() != base.ModeControl && !ShouldSetToControlMode() {
 			fmt.Printf("%d not in control mode, mode:%d, keystatus:%d\n", time.Now().UnixMilli(), base.GetMode(), wParam)
 			return 0
@@ -158,7 +168,7 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			// return 1 is importantA
 			// 如果没有匹配的快捷键，返回1
 			if len(satisfiedCallback) == 0 {
-				return 1
+				return 0
 			}
 
 			mostKeyNumCallback := satisfiedCallback[0]
@@ -257,6 +267,7 @@ func Pressed(vkCode uint32) bool {
 	return keyPressedStates[vkCode].Pressed
 }
 
+// TODO 要设置两个按键的点击间隔过滤
 func AllPressed(vkCodes ...uint32) bool {
 	if vkCodes == nil {
 		return true
@@ -295,7 +306,7 @@ func RegisterWithReleaseEventMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 	// 	return
 	// }
 	for _, vkCodes := range mulitiVkCodes {
-		registerKeyListening(cb, true, vkCodes, nil)
+		registerKeyListening(cb, false, true, vkCodes, nil)
 	}
 }
 
@@ -335,4 +346,9 @@ func AllReleased(durationBetween time.Duration, vkCodes ...uint32) bool {
 		return false
 	}
 	return true
+}
+
+func PrintAllKeys() string {
+	keysRaw, _ := json.Marshal(listeningKeyReference)
+	return string(keysRaw)
 }

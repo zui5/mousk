@@ -54,9 +54,9 @@ func GetMode() int {
 func GetModeDesc() string {
 	switch mode {
 	case 0:
-		return "control"
-	case 1:
 		return "normal"
+	case 1:
+		return "control"
 	}
 	return ""
 }
