@@ -60,7 +60,7 @@ var validKeycodeNameMap = map[uint32]string{
 	// 8:  "BACK",     //Backspace
 	// 12: "CLEAR",    //Clear
 	// 13: "RETURN",   //Enter
-	// 18: "MENU",     //ALt
+	// 18: "ALT", //ALt
 	// 19: "PAUSE",    //Pause
 	// 21:  "KANA",       //IME假名模式
 	// 21:  "HANGUL",     //IME Hanguel模式（保持兼容性；使用"HANGUL",）
@@ -134,8 +134,8 @@ var validKeycodeNameMap = map[uint32]string{
 	// 135: "F24",
 	// 144: "MUMLOCK",             //Num Lock
 	// 145: "SCROLL",              //Scroll
-	// 164: "LMENU",               //左MENU键
-	// 165: "RMENU",               //右MENU键
+	164: "LALT", //左ALT键
+	165: "RALT", //右ALT键
 	// 166: "BROWSER_BACK",        //浏览器后退键
 	// 167: "BROWSER_FORWARD",     //浏览器前进键
 	// 168: "BROWSER_REFRESH",     //浏览器刷新键
@@ -208,7 +208,7 @@ var validNameKeycodeMap = map[string]uint32{
 	"RETURN":              13, //Enter
 	"SHIFT":               16, //Shift
 	"CONTROL":             17, //Ctrl
-	"MENU":                18, //ALt
+	"ALT":                 18, //ALt
 	"PAUSE":               19, //Pause
 	"CAPITAL":             20, //Caps Lock
 	"KANA":                21, //IME假名模式
@@ -325,8 +325,8 @@ var validNameKeycodeMap = map[string]uint32{
 	"RSHIFT":              161, //右SHIFT键
 	"LCONTROL":            162, //左CONTROL键
 	"RCONTROL":            163, //右CONTROL键
-	"LMENU":               164, //左MENU键
-	"RMENU":               165, //右MENU键
+	"LALT":                164, //左ALT键
+	"RALT":                165, //右ALT键
 	"BROWSER_BACK":        166, //浏览器后退键
 	"BROWSER_FORWARD":     167, //浏览器前进键
 	"BROWSER_REFRESH":     168, //浏览器刷新键

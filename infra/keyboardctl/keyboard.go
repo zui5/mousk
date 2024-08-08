@@ -114,13 +114,28 @@ func RegisterDoubleClick(cb Callback2, firstClick []uint32, secondClick []uint32
 	registerKeyListening(cb, false, false, firstClick, secondClick)
 }
 
-func ShouldSetToControlMode() bool {
-	if AllPressed(VK_LWIN, VK_SPACE) {
-		return true
+func EffectOnNormalMode(vkCode uint32) bool {
+	if listeningKeyReference[vkCode] != nil {
+		ref := listeningKeyReference[vkCode]
+		for _, v := range ref.KeyCombinations {
+			if !v.effectOnNormalMode {
+				continue
+			}
+			fmt.Printf("11111:%+v, %t", v.FirstClickKeys, AllPressed(v.FirstClickKeys...))
+			if AllPressed(v.FirstClickKeys...) {
+				return true
+			}
+		}
 	}
-	if AllPressed(VK_TAB, VK_SPACE) {
-		return true
-	}
+	// if AllPressed(VK_LWIN, VK_SPACE) {
+	// 	return true
+	// }
+	// if AllPressed(VK_LALT, VK_0) {
+	// 	return true
+	// }
+	// if AllPressed(VK_TAB, VK_SPACE) {
+	// 	return true
+	// }
 	return false
 }
 
@@ -130,10 +145,11 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 		scanCode := kbdStruct.ScanCode
 		vkCode := kbdStruct.VkCode
 
-		if wParam == WM_KEYDOWN {
+		if wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN {
+			// TODO
 			SetPressed(vkCode)
 			fmt.Printf("Key pressed (VK code): %d, Scan code: %d\n", vkCode, scanCode)
-		} else if wParam == WM_KEYUP {
+		} else if wParam == WM_KEYUP || wParam == WM_SYSKEYUP {
 			SetReleased(vkCode)
 			fmt.Printf("Key released (VK code): %d, Scan code: %d\n", vkCode, scanCode)
 		}
@@ -145,7 +161,7 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			return 1
 		}
 
-		if base.GetMode() != base.ModeControl && !ShouldSetToControlMode() {
+		if base.GetMode() == base.ModeNormal && !EffectOnNormalMode(vkCode) {
 			fmt.Printf("%d not in control mode, mode:%d, keystatus:%d\n", time.Now().UnixMilli(), base.GetMode(), wParam)
 			return 0
 		}
@@ -274,6 +290,7 @@ func AllPressed(vkCodes ...uint32) bool {
 	}
 	allPressed := true
 	for _, v := range vkCodes {
+		fmt.Printf("keys %d , %t\n", v, Pressed(v))
 		allPressed = allPressed && Pressed(v)
 	}
 	return allPressed

@@ -110,7 +110,7 @@
           "CGO_ENABLED": "1"
         }
       },
-      "command": "C:\\Users\\x\\.g\\go\\bin\\go.exe",
+      "command": "go",
       "args": [
         "build",
         "-tags",

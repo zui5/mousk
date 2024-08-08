@@ -20,8 +20,10 @@ const defaultSettings = `
 
 StartOnSystemUp = true
 [PresetFunc]
-  ActiveMode = ["SPACE", "TAB"]
-  QuitMode = ["SPACE", "ESCAPE"]
+  ActiveMode = ["LALT", "0"]
+  QuitMode = ["LALT", "0"]
+  ToggleControlMode = ["LALT", "0"]
+  TmpQuitMode = ["Q"]
   OpenSetting = ["SPACE", "COMMA"]
   [PresetFunc.MouseMove]
     [PresetFunc.MouseMove.Fast]
@@ -119,10 +121,12 @@ type MouseConfig struct {
 type Settings struct {
 	StartOnSystemUp bool `toml:"StartOnSystemUp"`
 	PresetFunc      struct {
-		ActiveMode  []string `toml:"ActiveMode"`
-		QuitMode    []string `toml:"QuitMode"`
-		OpenSetting []string `toml:"OpenSetting"`
-		MouseMove   struct {
+		ActiveMode        []string `toml:"ActiveMode"`
+		ToggleControlMode []string `toml:"ToggleControlMode"`
+		TmpQuitMode       []string `toml:"TmpQuitMode"`
+		QuitMode          []string `toml:"QuitMode"`
+		OpenSetting       []string `toml:"OpenSetting"`
+		MouseMove         struct {
 			Fast struct {
 				Down  []string `toml:"Down"`
 				Left  []string `toml:"Left"`
