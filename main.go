@@ -150,7 +150,7 @@ func keyboardProcess() {
 
 	// Q : tmp quit
 	vkCodesTmpQuitMode := ts(settings.PresetFunc.TmpQuitMode)
-	keyboardctl.RegisterNormal(TmpQuitControlMode, vkCodesTmpQuitMode...)
+	keyboardctl.RegisterOne(TmpQuitControlMode, vkCodesTmpQuitMode...)
 
 	// space+esc : quit control mode
 	vkCodesQuitControlMode := ts(settings.PresetFunc.QuitMode)
