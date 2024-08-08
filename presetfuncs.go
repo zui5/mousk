@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func ToggleControlMode() {
+func toggleControlMode() {
 	base.SetMode(1 - base.GetMode())
 	fmt.Printf("toggle mode to:%d\n", base.GetMode())
 	ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
@@ -131,4 +131,22 @@ func ScrollMouseFunc(direction mousectl.ScrollDirection, speed mousectl.MoveSpee
 		mousectl.ScrollMouseCtrl(direction, speed)
 		return 1
 	}
+}
+
+func TmpQuitControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
+	fmt.Printf("current mode:%d\n", base.GetMode())
+	fmt.Println()
+	if base.GetMode() == base.ModeControl {
+		fmt.Println("change to normal mode", time.Now())
+		base.SetMode(base.ModeNormal)
+	} else {
+		fmt.Println("already in normal mode", time.Now())
+	}
+	ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
+	return 0
+}
+
+func ToggleControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
+	toggleControlMode()
+	return 1
 }

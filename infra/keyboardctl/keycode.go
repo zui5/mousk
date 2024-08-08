@@ -3,7 +3,9 @@ package keyboardctl
 const (
 	WH_KEYBOARD_LL = 13
 	WM_KEYDOWN     = 0x0100
+	WM_SYSKEYDOWN  = 0x0104
 	WM_KEYUP       = 0x0101
+	WM_SYSKEYUP    = 0x0105
 	// VK_SHIFT       = 0xa0
 	// VK_CONTROL     = 0xa2
 )
@@ -175,8 +177,8 @@ const (
 // 	VK_HELP       = 0x2F + 0xFFF
 
 // 	VK_SCROLL              = 0x91 + 0xFFF
-// 	VK_LMENU               = 0xA4 + 0xFFF
-// 	VK_RMENU               = 0xA5 + 0xFFF
+// 	VK_LALT               = 0xA4 + 0xFFF
+// 	VK_RALT               = 0xA5 + 0xFFF
 // 	VK_BROWSER_BACK        = 0xA6 + 0xFFF
 // 	VK_BROWSER_FORWARD     = 0xA7 + 0xFFF
 // 	VK_BROWSER_REFRESH     = 0xA8 + 0xFFF
@@ -235,7 +237,7 @@ const (
 	VK_RETURN              = 13 //Enter
 	VK_SHIFT               = 16 //Shift
 	VK_CONTROL             = 17 //Ctrl
-	VK_MENU                = 18 //ALt
+	VK_ALT                 = 18 //ALt
 	VK_PAUSE               = 19 //Pause
 	VK_CAPITAL             = 20 //Caps Lock
 	VK_KANA                = 21 //IME假名模式
@@ -352,8 +354,8 @@ const (
 	VK_RSHIFT              = 161 //右SHIFT键
 	VK_LCONTROL            = 162 //左CONTROL键
 	VK_RCONTROL            = 163 //右CONTROL键
-	VK_LMENU               = 164 //左MENU键
-	VK_RMENU               = 165 //右MENU键
+	VK_LALT                = 164 //左ALT键
+	VK_RALT                = 165 //右ALT键
 	VK_BROWSER_BACK        = 166 //浏览器后退键
 	VK_BROWSER_FORWARD     = 167 //浏览器前进键
 	VK_BROWSER_REFRESH     = 168 //浏览器刷新键
@@ -372,7 +374,7 @@ const (
 	VK_LAUNCH_MEDIA_SELECT = 181 //选择媒体密钥
 	VK_LAUNCH_APP1         = 182 //启动应用程序1键
 	VK_LAUNCH_APP2         = 183 //启动应用程序2键
-	VK_OEM_1               = 186 //;:
+	VK_OEM_1               = 186 //;
 	VK_OEM_PLUS            = 187 //=+
 	VK_OEM_COMMA           = 188
 	VK_OEM_MINUS           = 189 //-_

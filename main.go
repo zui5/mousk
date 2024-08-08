@@ -82,7 +82,7 @@ func main() {
 
 	tray.SetMenu(trayMenu)
 	tray.OnClick(func() {
-		ToggleControlMode()
+		toggleControlMode()
 
 		// fmt.Println("on click system tray")
 		// fmt.Println(app.CurrentWindow().IsVisible())
@@ -143,6 +143,14 @@ func keyboardProcess() {
 	// win+space : activate control mode
 	vkCodesStartControlMode := ts(settings.PresetFunc.ActiveMode)
 	keyboardctl.RegisterNormal(StartControlMode, vkCodesStartControlMode...)
+
+	// alt+0 : toggle control mode
+	vkCodesToggleControlMode := ts(settings.PresetFunc.ToggleControlMode)
+	keyboardctl.RegisterNormal(ToggleControlMode, vkCodesToggleControlMode...)
+
+	// Q : tmp quit
+	vkCodesTmpQuitMode := ts(settings.PresetFunc.TmpQuitMode)
+	keyboardctl.RegisterNormal(TmpQuitControlMode, vkCodesTmpQuitMode...)
 
 	// space+esc : quit control mode
 	vkCodesQuitControlMode := ts(settings.PresetFunc.QuitMode)

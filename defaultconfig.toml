@@ -1,0 +1,51 @@
+StartOnSystemUp = true
+[PresetFunc]
+  ActiveMode = ["SPACE", "TAB"]
+  QuitMode = ["SPACE", "ESCAPE"]
+  TmpQuitMode = ["Q"]
+  OpenSetting = ["SPACE", "COMMA"]
+  [PresetFunc.MouseMove]
+    [PresetFunc.MouseMove.Fast]
+      Down = ["J"]
+      Left = ["H"]
+      Right = ["L"]
+      Up = ["K"]
+    [PresetFunc.MouseMove.Slow]
+      Down = ["S"]
+      Left = ["A"]
+      Right = ["D"]
+      Up = ["W"]
+    [PresetFunc.MouseMove.SpeedLevel]
+      Level1 = 1
+      LevelSwitch = [["1","2","3","4","5"]]
+      Level2 = 2
+      Level3 = 3
+      Level4 = 4
+      Level5 = 5
+  [PresetFunc.MouseScroll]
+    [PresetFunc.MouseScroll.Fast]
+      Down = ["SHIFT", "J"]
+      Left = ["SHIFT", "H"]
+      Right = ["SHIFT", "L"]
+      Up = ["SHIFT", "K"]
+    [PresetFunc.MouseScroll.Slow]
+      Down = ["SHIFT", "S"]
+      Left = ["SHIFT", "A"]
+      Right = ["SHIFT", "D"]
+      Up = ["SHIFT", "W"]
+    [PresetFunc.MouseScroll.SpeedLevel]
+      LevelSwitch = [["SHIFT","1"],["SHIFT","2"],["SHIFT","3"],["SHIFT","4"],["SHIFT","5"]]
+      Level1 = 1
+      Level2 = 2
+      Level3 = 3
+      Level4 = 4
+      Level5 = 5
+  [PresetFunc.MouseLeftButtonClick]
+    Primary = "I"
+    Secondary = "R"
+  [PresetFunc.MouseRightButtonClick]
+    Primary = "O"
+    Secondary = "T"
+  [PresetFunc.MouseLeftButtonHold]
+    Primary = "C"
+    Secondary = "N"
