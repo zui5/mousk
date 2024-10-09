@@ -12,7 +12,7 @@
       // "preLaunchTask": "wails dev",
       "cwd": "${workspaceFolder}"
     },
-  {
+    {
       "name": "Wails3 Dev",
       "type": "go",
       "request": "launch",
@@ -23,7 +23,6 @@
       "preLaunchTask": "wails dev",
       "cwd": "${workspaceFolder}"
     },
-
     {
       "name": "Attach to running Go process",
       "type": "go",
