@@ -1,18 +1,9 @@
 package main
 
 import (
-	"embed"
-	"fmt"
-	"log"
-	"os"
-	"time"
-
 	"mousek/infra/config"
 	"mousek/infra/keyboardctl"
 	"mousek/infra/mousectl"
-
-	"github.com/wailsapp/wails/v3/pkg/application"
-	"github.com/wailsapp/wails/v3/plugins/experimental/start_at_login"
 )
 
 // Wails uses Go's `embed` package to embed the frontend files into the binary.
@@ -20,118 +11,123 @@ import (
 // made available to the frontend.
 // See https://pkg.go.dev/embed for more information.
 
-//go:embed frontend/dist
-var assets embed.FS
+// 1go:embed frontend/dist
+// var assets embed.FS
 
 var vkCodesMulitiSpeedLevelArr = []uint32{keyboardctl.VK_1, keyboardctl.VK_2, keyboardctl.VK_3, keyboardctl.VK_4, keyboardctl.VK_5}
+
+func main() {
+
+	keyboardProcess()
+}
 
 // main function serves as the application's entry point. It initializes the application, creates a window,
 // and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
 // logs any error that might occur.
-func main() {
+// func main2() {
 
-	// Create a new Wails application by providing the necessary options.
-	// Variables 'Name' and 'Description' are for application metadata.
-	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
-	// 'Bind' is a list of Go struct instances. The frontend has access to the methods of these instances.
-	// 'Mac888898888' options tailor the application when running an macOS.
-	app := application.New(application.Options{
-		Name: "mousek",
-		Windows: application.WindowsOptions{
-			DisableQuitOnLastWindowClosed: true,
-		},
-		Description: "A demo of using raw HTML & CSS",
-		Services: []application.Service{
-			application.NewService(&GreetService{}),
-		},
-		Assets: application.AssetOptions{
-			Handler: application.AssetFileServerFS(assets),
-		},
-		Mac: application.MacOptions{
-			ApplicationShouldTerminateAfterLastWindowClosed: true,
-		},
-		// Plugins: map[string]application.Plugin{
-		// 	"start_at_login": start_at_login.NewPlugin(),
-		// },
-	})
-	start_at_login := start_at_login.NewPlugin(start_at_login.Config{
-		RegistryKey: "mousek.exe",
-	})
-	start_at_login.StartAtLogin(true)
+// 	// Create a new Wails application by providing the necessary options.
+// 	// Variables 'Name' and 'Description' are for application metadata.
+// 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
+// 	// 'Bind' is a list of Go struct instances. The frontend has access to the methods of these instances.
+// 	// 'Mac888898888' options tailor the application when running an macOS.
+// 	app := application.New(application.Options{
+// 		Name: "mousek",
+// 		Windows: application.WindowsOptions{
+// 			DisableQuitOnLastWindowClosed: true,
+// 		},
+// 		Description: "A demo of using raw HTML & CSS",
+// 		Services: []application.Service{
+// 			application.NewService(&GreetService{}),
+// 		},
+// 		Assets: application.AssetOptions{
+// 			Handler: application.AssetFileServerFS(assets),
+// 		},
+// 		Mac: application.MacOptions{
+// 			ApplicationShouldTerminateAfterLastWindowClosed: true,
+// 		},
+// 		// Plugins: map[string]application.Plugin{
+// 		// 	"start_at_login": start_at_login.NewPlugin(),
+// 		// },
+// 	})
+// 	start_at_login := start_at_login.NewPlugin(start_at_login.Config{
+// 		RegistryKey: "mousek.exe",
+// 	})
+// 	start_at_login.StartAtLogin(true)
 
-	InitAppWraper(app)
+// 	InitAppWraper(app)
 
-	tray := app.NewSystemTray()
-	tray.SetLabel("systemtray test")
-	trayMenu := application.NewMenu()
+// 	tray := app.NewSystemTray()
+// 	tray.SetLabel("systemtray test")
+// 	trayMenu := application.NewMenu()
 
-	// TODO remove it
-	// StartOptionView()
+// 	// TODO remove it
+// 	// StartOptionView()
 
-	optionMenu := trayMenu.Add("Options")
-	optionMenu.OnClick(func(ctx *application.Context) {
-		fmt.Printf("enter option menu \n")
-		StartOptionView()
-	})
+// 	optionMenu := trayMenu.Add("Options")
+// 	optionMenu.OnClick(func(ctx *application.Context) {
+// 		fmt.Printf("enter option menu \n")
+// 		StartOptionView()
+// 	})
 
-	exitMenuItem := trayMenu.Add("Exit")
-	exitMenuItem.OnClick(func(ctx *application.Context) {
-		fmt.Printf("tray menu exit\n")
-		os.Exit(0)
-	})
+// 	exitMenuItem := trayMenu.Add("Exit")
+// 	exitMenuItem.OnClick(func(ctx *application.Context) {
+// 		fmt.Printf("tray menu exit\n")
+// 		os.Exit(0)
+// 	})
 
-	tray.SetMenu(trayMenu)
-	tray.OnClick(func() {
-		toggleControlMode()
+// 	tray.SetMenu(trayMenu)
+// 	tray.OnClick(func() {
+// 		toggleControlMode()
 
-		// fmt.Println("on click system tray")
-		// fmt.Println(app.CurrentWindow().IsVisible())
-		// if app.CurrentWindow().IsVisible() {
-		// 	app.Hide()
-		// } else {
-		// 	app.Show()
-		// }
-	})
+// 		// fmt.Println("on click system tray")
+// 		// fmt.Println(app.CurrentWindow().IsVisible())
+// 		// if app.CurrentWindow().IsVisible() {
+// 		// 	app.Hide()
+// 		// } else {
+// 		// 	app.Show()
+// 		// }
+// 	})
 
-	// Create a new window with the necessary options.
-	// 'Title' is the title of the window.
-	// 'Mac' options tailor the window when running on macOS.
-	// 'BackgroundColour' is the background colour of the window.
-	// 'URL' is the URL that will be loaded into the webview.
-	// app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
-	// 	Title: "Options",
-	// 	Mac: application.MacWindow{
-	// 		InvisibleTitleBarHeight: 50,
-	// 		Backdrop:                application.MacBackdropTranslucent,
-	// 		TitleBar:                application.MacTitleBarHiddenInset,
-	// 	},
-	// 	BackgroundColour: application.NewRGB(27, 38, 54),
-	// 	URL:              "/",
-	// })
+// 	// Create a new window with the necessary options.
+// 	// 'Title' is the title of the window.
+// 	// 'Mac' options tailor the window when running on macOS.
+// 	// 'BackgroundColour' is the background colour of the window.
+// 	// 'URL' is the URL that will be loaded into the webview.
+// 	// app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
+// 	// 	Title: "Options",
+// 	// 	Mac: application.MacWindow{
+// 	// 		InvisibleTitleBarHeight: 50,
+// 	// 		Backdrop:                application.MacBackdropTranslucent,
+// 	// 		TitleBar:                application.MacTitleBarHiddenInset,
+// 	// 	},
+// 	// 	BackgroundColour: application.NewRGB(27, 38, 54),
+// 	// 	URL:              "/",
+// 	// })
 
-	// Create a goroutine that emits an event containing the current time every second.
-	// The frontend can listen to this event and update the UI accordingly.
-	go func() {
-		for {
-			now := time.Now().Format(time.RFC1123)
-			app.Events.Emit(&application.WailsEvent{
-				Name: "time",
-				Data: now,
-			})
-			time.Sleep(time.Second)
-		}
-	}()
+// 	// Create a goroutine that emits an event containing the current time every second.
+// 	// The frontend can listen to this event and update the UI accordingly.
+// 	go func() {
+// 		for {
+// 			now := time.Now().Format(time.RFC1123)
+// 			app.Events.Emit(&application.WailsEvent{
+// 				Name: "time",
+// 				Data: now,
+// 			})
+// 			time.Sleep(time.Second)
+// 		}
+// 	}()
 
-	go keyboardProcess()
+// 	go keyboardProcess()
 
-	// Run the application. This blocks until the application has been exited.
-	err := app.Run()
+// 	// Run the application. This blocks until the application has been exited.
+// 	err := app.Run()
 
-	// If an error occurred while running the application, log it and exit.
-	if err != nil {
-		log.Fatal(err)
-	}
-}
+// 	// If an error occurred while running the application, log it and exit.
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// }
 
 func keyboardProcess() {
 	// load config
