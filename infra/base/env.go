@@ -1,13 +1,11 @@
 package base
 
-import (
-	"math"
-)
+import "mousek/infra/config"
 
 var (
 	mode              = 0 // 0:normal, 1:control
-	moveSpeedLevel    = 1 // the speed of you mouse movement
-	scrollSpeedLevel  = 1 // the speed of you mouse scroll
+	moveSpeedLevel    = 3 // the speed of you mouse movement
+	scrollSpeedLevel  = 3 // the speed of you mouse scroll
 	optionViewVisable = false
 )
 
@@ -25,7 +23,8 @@ func SetMoveSpeedLevel(speedLevelArg int) {
 	// speedLevel = speedLevelArg
 	// speedLevel = int(math.Round(math.Log10(1000 * math.Pow(float64(speedLevelArg), 10))))
 	// speedLevel = int(math.Log(1000 * math.Pow(float64(speedLevelArg), 5)))
-	moveSpeedLevel = int(math.Pow(float64(speedLevelArg), 2))
+	// moveSpeedLevel = int(math.Pow(float64(speedLevelArg), 2))
+	moveSpeedLevel = speedLevelArg
 }
 
 func SetScrollSpeedLevel(speedLevelArg int) {
@@ -39,8 +38,16 @@ func GetMoveSpeedLevel() int {
 	return moveSpeedLevel
 }
 
+func GetMoveSpeed() int {
+	return config.GetSettings().PresetFunc.MouseMove.SpeedLevel.LevelSwitch[moveSpeedLevel-1]
+}
+
 func GetScrollSpeedLevel() int {
 	return scrollSpeedLevel
+}
+
+func GetScrollSpeed() int {
+	return config.GetSettings().PresetFunc.MouseScroll.SpeedLevel.LevelSwitch[scrollSpeedLevel-1]
 }
 
 func SetMode(modeArg int) {

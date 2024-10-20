@@ -40,8 +40,8 @@ func ScrollHorizontally(amount int) {
 }
 
 func ScrollMouseCtrl(direction ScrollDirection, speedType MoveSpeedType) {
-	speed := int(speedType) * base.GetScrollSpeedLevel()
-	fmt.Printf("speedType:%d, speedLevel:%d, direction:%s\n", speedType, base.GetMoveSpeedLevel(), direction)
+	speed := int(speedType) * base.GetScrollSpeed()
+	fmt.Printf("speedType:%d, speedLevel:%d, direction:%s\n", speedType, base.GetScrollSpeed(), direction)
 	switch direction {
 	case DirectionHorizontalLeft:
 		ScrollHorizontally(-1 * speed)

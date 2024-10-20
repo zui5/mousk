@@ -412,3 +412,15 @@ func GetNameByCode(code uint32) string {
 	}
 	return ""
 }
+
+func GetNamesByCodes(codes []uint32) []string {
+	names := make([]string, 0)
+	for _, v := range codes {
+		name := GetNameByCode(v)
+		if name == "" {
+			return nil
+		}
+		names = append(names, name)
+	}
+	return names
+}
