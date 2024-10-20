@@ -6,7 +6,6 @@ import (
 	"mousek/infra/config"
 	"mousek/infra/keyboardctl"
 	"mousek/infra/mousectl"
-	"mousek/infra/ui"
 	"mousek/infra/util"
 	"time"
 )
@@ -142,8 +141,12 @@ func keyboardProcess() {
 	settings := config.GetSettings()
 
 	// win+space : activate control mode
-	vkCodesStartControlMode := ts(settings.PresetFunc.ActiveMode)
-	keyboardctl.RegisterNormal(StartControlMode, vkCodesStartControlMode...)
+	// vkCodesStartControlMode := ts(settings.PresetFunc.ActiveMode)
+	// keyboardctl.RegisterNormal(StartControlMode, vkCodesStartControlMode...)
+
+	// alt+r: reset setting
+	vkCodesResetSetting := ts(settings.PresetFunc.ResetSetting)
+	keyboardctl.RegisterNormal(ResetSetting, vkCodesResetSetting...)
 
 	// alt+0 : toggle control mode
 	vkCodesToggleControlMode := ts(settings.PresetFunc.ToggleControlMode)
@@ -154,8 +157,8 @@ func keyboardProcess() {
 	keyboardctl.RegisterOne(TmpQuitControlMode, vkCodesTmpQuitMode...)
 
 	// space+esc : quit control mode
-	vkCodesQuitControlMode := ts(settings.PresetFunc.QuitMode)
-	keyboardctl.RegisterNormal(QuitControlMode, vkCodesQuitControlMode...)
+	// vkCodesQuitControlMode := ts(settings.PresetFunc.QuitMode)
+	// keyboardctl.RegisterNormal(QuitControlMode, vkCodesQuitControlMode...)
 
 	// space+comma : open setting panel
 	// vkCodesOpenSetting := ts(settings.PresetFunc.OpenSetting)
@@ -295,7 +298,14 @@ func StartControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		base.SetMode(base.ModeControl)
 		fmt.Println("change to control mode", time.Now())
 	}
-	ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
+	// ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
+	return 1
+}
+
+func ResetSetting(wParam uintptr, vkCode, scanCode uint32) uintptr {
+
+	fmt.Printf("user restore setting\n")
+	config.RestoreSettings()
 	return 1
 }
 
@@ -308,7 +318,7 @@ func QuitControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	} else {
 		fmt.Println("already in normal mode", time.Now())
 	}
-	ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
+	// ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
 	return 0
 }
 
@@ -319,9 +329,9 @@ func ScrollSpeedLevelSwitch(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	// 	return 0
 	// }
 	if util.Contains[uint32](vkCodesMulitiSpeedLevelArr, uint32(vkCode)) {
-		speedLevel := int(vkCode) - keyboardctl.VK_0 + 1
+		speedLevel := int(vkCode) - keyboardctl.VK_1 + 1
 		base.SetScrollSpeedLevel(speedLevel)
-		fmt.Printf("change speed to :%d\n", base.GetScrollSpeedLevel())
+		fmt.Printf("change speed to :%d\n", base.GetScrollSpeed())
 	}
 	return 1
 }
@@ -333,7 +343,7 @@ func SpeedLevelSwitch(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	// 	return 0
 	// }
 	if util.Contains[uint32](vkCodesMulitiSpeedLevelArr, uint32(vkCode)) {
-		speedLevel := int(vkCode) - keyboardctl.VK_0 + 1
+		speedLevel := int(vkCode) - keyboardctl.VK_1 + 1
 		base.SetMoveSpeedLevel(speedLevel)
 		fmt.Printf("change speed to :%d\n", base.GetMoveSpeedLevel())
 	}
@@ -404,7 +414,7 @@ func TmpQuitControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	} else {
 		fmt.Println("already in normal mode", time.Now())
 	}
-	ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
+	// ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
 	return 0
 }
 

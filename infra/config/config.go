@@ -12,68 +12,16 @@ import (
 
 var settingsVar Settings
 
-var filePath = "../../confs.toml"
+type Mode int
+
+var (
+	ModeLoadFromDefault Mode = Mode(0)
+	ModeLoadFromUser    Mode = Mode(1)
+)
+
+var defaultFilePath = "./conf/default.toml"
 
 // var filePath = "./confs.toml"
-
-const defaultSettings = `
-
-StartOnSystemUp = true
-[PresetFunc]
-  ActiveMode = ["LALT", "0"]
-  QuitMode = ["LALT", "0"]
-  ToggleControlMode = ["LALT", "0"]
-  TmpQuitMode = ["Q"]
-  OpenSetting = ["SPACE", "COMMA"]
-  [PresetFunc.MouseMove]
-    [PresetFunc.MouseMove.Fast]
-      Down = ["J"]
-      Left = ["H"]
-      Right = ["L"]
-      Up = ["K"]
-    [PresetFunc.MouseMove.Slow]
-      Down = ["S"]
-      Left = ["A"]
-      Right = ["D"]
-      Up = ["W"]
-    [PresetFunc.MouseMove.SpeedLevel]
-      Level1 = 1
-      LevelSwitch = [["1","2","3","4","5"]]
-      Level2 = 2
-      Level3 = 3
-      Level4 = 4
-      Level5 = 5
-  [PresetFunc.MouseScroll]
-    [PresetFunc.MouseScroll.Fast]
-      Down = ["SHIFT", "J"]
-      Left = ["SHIFT", "H"]
-      Right = ["SHIFT", "L"]
-      Up = ["SHIFT", "K"]
-    [PresetFunc.MouseScroll.Slow]
-      Down = ["SHIFT", "S"]
-      Left = ["SHIFT", "A"]
-      Right = ["SHIFT", "D"]
-      Up = ["SHIFT", "W"]
-    [PresetFunc.MouseScroll.SpeedLevel]
-      LevelSwitch = [["SHIFT","1"],["SHIFT","2"],["SHIFT","3"],["SHIFT","4"],["SHIFT","5"]]
-      Level1 = 1
-      Level2 = 2
-      Level3 = 3
-      Level4 = 4
-      Level5 = 5
-  [PresetFunc.MouseLeftButtonClick]
-    Primary = "I"
-    Secondary = "R"
-  [PresetFunc.MouseRightButtonClick]
-    Primary = "O"
-    Secondary = "T"
-  [PresetFunc.MouseLeftButtonHold]
-    Primary = "C"
-    Secondary = "N"
-
-
-
-`
 
 // 配置项枚举
 const (
@@ -103,14 +51,6 @@ const (
 	WheelDown
 )
 
-type MouseConfig struct {
-	Speed int
-	Up    string
-	Down  string
-	Left  string
-	Right string
-}
-
 // type Settings struct {
 // 	Mouse struct {
 // 		Fast MouseConfig
@@ -122,6 +62,7 @@ type Settings struct {
 	StartOnSystemUp bool `toml:"StartOnSystemUp"`
 	PresetFunc      struct {
 		ActiveMode        []string `toml:"ActiveMode"`
+		ResetSetting      []string `toml:"ResetSetting"`
 		ToggleControlMode []string `toml:"ToggleControlMode"`
 		TmpQuitMode       []string `toml:"TmpQuitMode"`
 		QuitMode          []string `toml:"QuitMode"`
@@ -140,12 +81,7 @@ type Settings struct {
 				Up    []string `toml:"Up"`
 			} `toml:"Slow"`
 			SpeedLevel struct {
-				Level1      int        `toml:"Level1"`
-				LevelSwitch [][]string `toml:"LevelSwitch"`
-				Level2      int        `toml:"Level2"`
-				Level3      int        `toml:"Level3"`
-				Level4      int        `toml:"Level4"`
-				Level5      int        `toml:"Level5"`
+				LevelSwitch []int `toml:"LevelSwitch"`
 			} `toml:"SpeedLevel"`
 		} `toml:"MouseMove"`
 		MouseScroll struct {
@@ -162,12 +98,7 @@ type Settings struct {
 				Up    []string `toml:"Up"`
 			} `toml:"Slow"`
 			SpeedLevel struct {
-				LevelSwitch [][]string `toml:"LevelSwitch"`
-				Level1      int        `toml:"Level1"`
-				Level2      int        `toml:"Level2"`
-				Level3      int        `toml:"Level3"`
-				Level4      int        `toml:"Level4"`
-				Level5      int        `toml:"Level5"`
+				LevelSwitch []int `toml:"LevelSwitch"`
 			} `toml:"SpeedLevel"`
 		} `toml:"MouseScroll"`
 		MouseLeftButtonClick struct {
@@ -191,14 +122,20 @@ func Init() {
 		return
 	}
 
-	if LoadSettingsFromFile() != nil {
+	if LoadSettingsFromFile(ModeLoadFromUser) != nil {
 		log.Fatalf("load config file error")
 		return
 	}
 }
 
-func LoadSettingsFromFile() error {
-	_, filePath, err := getConfigPath()
+func LoadSettingsFromFile(mode Mode) error {
+	var filePath string
+	var err error
+	if mode == 0 {
+		filePath = getEmbededConfigPath()
+	} else if mode == 1 {
+		_, filePath, err = getUserConfigPath()
+	}
 	if err != nil {
 		return err
 	}
@@ -215,13 +152,8 @@ func GetSettings() *Settings {
 	return &settingsVar
 }
 
-// TODO
-func ChangeSettings() {
-
-}
-
 func WriteSettings() error {
-	_, filePath, err := getConfigPath()
+	_, filePath, err := getUserConfigPath()
 	if err != nil {
 		return err
 	}
@@ -238,7 +170,11 @@ func WriteSettings() error {
 	return nil
 }
 
-func getConfigPath() (string, string, error) {
+func getEmbededConfigPath() string {
+	return defaultFilePath
+}
+
+func getUserConfigPath() (string, string, error) {
 	// 获取当前用户的主目录
 	usr, err := user.Current()
 	if err != nil {
@@ -253,7 +189,7 @@ func getConfigPath() (string, string, error) {
 
 func InitConfigFile() error {
 	// 构建文件路径
-	configDir, filePath, err := getConfigPath()
+	configDir, filePath, err := getUserConfigPath()
 	if err != nil {
 		return err
 	}
@@ -278,7 +214,7 @@ func InitConfigFile() error {
 		}
 		fmt.Println("Config file created at:", filePath)
 	} else {
-		err = LoadSettingsFromFile()
+		err = LoadSettingsFromFile(ModeLoadFromUser)
 		if err != nil {
 			return err
 		}
@@ -288,11 +224,12 @@ func InitConfigFile() error {
 }
 
 func RestoreSettings() error {
-	if _, err := toml.Decode(defaultSettings, &settingsVar); err != nil {
+
+	if err := LoadSettingsFromFile(ModeLoadFromDefault); err != nil {
 		return fmt.Errorf("decoding TOML:%+v", err)
 	}
 	// 输出生成的结构体
-	fmt.Printf("%#v\n", settingsVar)
+	fmt.Printf("restore setting:%#v\n", settingsVar)
 	if err := WriteSettings(); err != nil {
 		return err
 	}

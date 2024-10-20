@@ -22,8 +22,11 @@ var (
 type KeyState struct {
 	Pressed            bool
 	LastReleased       *time.Time
+	LastPressed        *time.Time
 	SecondLastReleased *time.Time
+	SecondLastPressed  *time.Time
 }
+
 type KBDLLHOOKSTRUCT struct {
 	VkCode   uint32
 	ScanCode uint32
@@ -121,8 +124,10 @@ func EffectOnNormalMode(vkCode uint32) bool {
 			if !v.effectOnNormalMode {
 				continue
 			}
-			fmt.Printf("11111:%+v, %t", v.FirstClickKeys, AllPressed(v.FirstClickKeys...))
-			if AllPressed(v.FirstClickKeys...) {
+			// fmt.Printf("11111:%+v, %t", v.FirstClickKeys, AllPressed(v.FirstClickKeys...))
+			fmt.Printf("11111:%+v, %t", v.FirstClickKeys, StatusCheck(v.FirstClickKeys, 1, time.Second))
+			// if AllPressed(v.FirstClickKeys...) {
+			if StatusCheck(v.FirstClickKeys, 1, time.Second) {
 				return true
 			}
 		}
@@ -146,7 +151,6 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 		vkCode := kbdStruct.VkCode
 
 		if wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN {
-			// TODO
 			SetPressed(vkCode)
 			fmt.Printf("Key pressed (VK code): %d, Scan code: %d\n", vkCode, scanCode)
 		} else if wParam == WM_KEYUP || wParam == WM_SYSKEYUP {
@@ -173,10 +177,11 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 
 			satisfiedCallback := make([]KeyCallback, 0)
 			for _, v := range ref.KeyCombinations {
-				if AllPressed(v.FirstClickKeys...) {
+				// if AllPressed(v.FirstClickKeys...) {
+				if StatusCheck(v.FirstClickKeys, 1, time.Second) {
 					satisfiedCallback = append(satisfiedCallback, v)
 				}
-				if v.withReleaseEvent && AllReleased(time.Second, v.FirstClickKeys...) {
+				if v.withReleaseEvent && StatusCheck(v.FirstClickKeys, 0, time.Second) {
 					satisfiedCallback = append(satisfiedCallback, v)
 				}
 			}
@@ -189,10 +194,11 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 
 			mostKeyNumCallback := satisfiedCallback[0]
 			for _, v := range satisfiedCallback {
-				if len(v.FirstClickKeys) >= len(mostKeyNumCallback.FirstClickKeys) {
+				if len(v.FirstClickKeys) > len(mostKeyNumCallback.FirstClickKeys) {
 					mostKeyNumCallback = v
 				}
 			}
+			fmt.Printf("most keycallback:%+v\n", GetNamesByCodes(mostKeyNumCallback.FirstClickKeys))
 			return mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
 
 			// for _, v := range ref.KeyCombinations {
@@ -278,12 +284,12 @@ func RawKeyboardListener(cb Callback) {
 func Pressed(vkCode uint32) bool {
 	// fmt.Println(vkCode, keyPressedStates[vkCode])
 	if keyPressedStates[vkCode] == nil {
-		keyPressedStates[vkCode] = &KeyState{false, nil, nil}
+		keyPressedStates[vkCode] = nilKeyState()
 	}
 	return keyPressedStates[vkCode].Pressed
 }
 
-// TODO 要设置两个按键的点击间隔过滤
+// deprecated
 func AllPressed(vkCodes ...uint32) bool {
 	if vkCodes == nil {
 		return true
@@ -298,14 +304,28 @@ func AllPressed(vkCodes ...uint32) bool {
 
 func SetPressed(vkCode uint32) {
 	if keyPressedStates[vkCode] == nil {
-		keyPressedStates[vkCode] = &KeyState{false, nil, nil}
+		keyPressedStates[vkCode] = nilKeyState()
 	}
 	keyPressedStates[vkCode].Pressed = true
+
+	currTime := time.Now()
+	keyPressedStates[vkCode].LastPressed = &currTime
+	keyPressedStates[vkCode].SecondLastPressed = keyPressedStates[vkCode].LastPressed
+}
+
+func nilKeyState() *KeyState {
+	return &KeyState{
+		Pressed:            false,
+		LastReleased:       nil,
+		LastPressed:        nil,
+		SecondLastPressed:  nil,
+		SecondLastReleased: nil,
+	}
 }
 
 func SetReleased(vkCode uint32) {
 	if keyPressedStates[vkCode] == nil {
-		keyPressedStates[vkCode] = &KeyState{false, nil, nil}
+		keyPressedStates[vkCode] = nilKeyState()
 	}
 	keyPressedStates[vkCode].Pressed = false
 	currTime := time.Now()
@@ -327,41 +347,83 @@ func RegisterWithReleaseEventMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 	}
 }
 
-func AllReleased(durationBetween time.Duration, vkCodes ...uint32) bool {
+func StatusCheck(vkCodes []uint32, pressed int, durationBetween time.Duration) bool {
+	fmt.Printf("key status check param:%+v\n", GetNamesByCodes(vkCodes))
 	if vkCodes == nil {
 		return true
 	}
 
 	var maxLastReleasedTime *time.Time = nil
 	var minLastReleasedTime *time.Time = nil
+	var maxLastPressedTime *time.Time = nil
+	var minLastPressedTime *time.Time = nil
 	for _, v := range vkCodes {
-		keyState := keyPressedStates[v]
-		if keyState.Pressed || keyState.LastReleased == nil {
-			return false
+		keyState, ok := keyPressedStates[v]
+		fmt.Printf("key status check param:%+v, key:%s, keystate:%+v\n", GetNamesByCodes(vkCodes), GetNameByCode(v), keyState)
+		if !ok {
+			keyState = nilKeyState()
+		}
+		if pressed == 1 {
+			if !keyState.Pressed || keyState.LastPressed == nil {
+				return false
+			}
+
+			if maxLastPressedTime == nil {
+				maxLastPressedTime = keyState.LastPressed
+			} else {
+				if maxLastPressedTime.Sub(*keyState.LastPressed) < 0 {
+					maxLastPressedTime = keyState.LastPressed
+				}
+			}
+			if minLastPressedTime == nil {
+				minLastPressedTime = keyState.LastPressed
+			} else {
+				if minLastPressedTime.Sub(*keyState.LastPressed) > 0 {
+					minLastPressedTime = keyState.LastPressed
+				}
+			}
+		} else {
+			if keyState.Pressed || keyState.LastReleased == nil {
+				return false
+			}
+
+			if maxLastReleasedTime == nil {
+				maxLastReleasedTime = keyState.LastReleased
+			} else {
+				if maxLastReleasedTime.Sub(*keyState.LastReleased) < 0 {
+					maxLastReleasedTime = keyState.LastReleased
+				}
+			}
+			if minLastReleasedTime == nil {
+				minLastReleasedTime = keyState.LastReleased
+			} else {
+				if minLastReleasedTime.Sub(*keyState.LastReleased) > 0 {
+					minLastReleasedTime = keyState.LastReleased
+				}
+			}
 		}
 
-		if maxLastReleasedTime == nil {
-			maxLastReleasedTime = keyState.LastReleased
-		} else {
-			if maxLastReleasedTime.Sub(*keyState.LastReleased) < 0 {
-				maxLastReleasedTime = keyState.LastReleased
-			}
+	}
+	if pressed == 1 {
+		durationPressedVal := minLastPressedTime.Sub(*maxLastPressedTime)
+		if durationPressedVal < 0 {
+			durationPressedVal = -1 * durationPressedVal
 		}
-		if minLastReleasedTime == nil {
-			minLastReleasedTime = keyState.LastReleased
-		} else {
-			if minLastReleasedTime.Sub(*keyState.LastReleased) > 0 {
-				minLastReleasedTime = keyState.LastReleased
-			}
+		if durationPressedVal > durationBetween {
+			return false
+		}
+	} else {
+
+		durationReleasedVal := minLastReleasedTime.Sub(*maxLastReleasedTime)
+		if durationReleasedVal < 0 {
+			durationReleasedVal = -1 * durationReleasedVal
+		}
+		if durationReleasedVal > durationBetween {
+			return false
 		}
 	}
-	durationVal := minLastReleasedTime.Sub(*maxLastReleasedTime)
-	if durationVal < 0 {
-		durationVal = -1 * durationVal
-	}
-	if durationVal > durationBetween {
-		return false
-	}
+
+	fmt.Printf("key status check:%+v\n", GetNamesByCodes(vkCodes))
 	return true
 }
 

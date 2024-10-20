@@ -1,9 +1,11 @@
 StartOnSystemUp = true
 [PresetFunc]
-  ActiveMode = ["SPACE", "TAB"]
-  QuitMode = ["SPACE", "ESCAPE"]
+  ActiveMode = ["LALT", "0"]
+  QuitMode = ["LALT", "0"]
+  ToggleControlMode = ["LALT", "0"]
   TmpQuitMode = ["Q"]
   OpenSetting = ["SPACE", "COMMA"]
+  ResetSetting = ["LALT","R"]
   [PresetFunc.MouseMove]
     [PresetFunc.MouseMove.Fast]
       Down = ["J"]
@@ -16,30 +18,20 @@ StartOnSystemUp = true
       Right = ["D"]
       Up = ["W"]
     [PresetFunc.MouseMove.SpeedLevel]
-      Level1 = 1
-      LevelSwitch = [["1","2","3","4","5"]]
-      Level2 = 2
-      Level3 = 3
-      Level4 = 4
-      Level5 = 5
+      LevelSwitch = [1,8,24,48,64]
   [PresetFunc.MouseScroll]
     [PresetFunc.MouseScroll.Fast]
-      Down = ["SHIFT", "J"]
-      Left = ["SHIFT", "H"]
-      Right = ["SHIFT", "L"]
-      Up = ["SHIFT", "K"]
+      Down = ["LSHIFT", "J"]
+      Left = ["LSHIFT", "H"]
+      Right = ["LSHIFT", "L"]
+      Up = ["LSHIFT", "K"]
     [PresetFunc.MouseScroll.Slow]
-      Down = ["SHIFT", "S"]
-      Left = ["SHIFT", "A"]
-      Right = ["SHIFT", "D"]
-      Up = ["SHIFT", "W"]
+      Down = ["LSHIFT", "S"]
+      Left = ["LSHIFT", "A"]
+      Right = ["LSHIFT", "D"]
+      Up = ["LSHIFT", "W"]
     [PresetFunc.MouseScroll.SpeedLevel]
-      LevelSwitch = [["SHIFT","1"],["SHIFT","2"],["SHIFT","3"],["SHIFT","4"],["SHIFT","5"]]
-      Level1 = 1
-      Level2 = 2
-      Level3 = 3
-      Level4 = 4
-      Level5 = 5
+      LevelSwitch = [1,8,24,48,64]
   [PresetFunc.MouseLeftButtonClick]
     Primary = "I"
     Secondary = "R"
