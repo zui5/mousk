@@ -30,6 +30,7 @@ require (
 	github.com/lmittmann/tint v1.0.4 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/pjbgf/sha1cd v0.3.0 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -39,6 +40,8 @@ require (
 	github.com/skeema/knownhosts v1.2.1 // indirect
 	github.com/wailsapp/go-webview2 v1.0.9 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
+	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.23.0 // indirect
 	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df // indirect
 	golang.org/x/mod v0.17.0 // indirect
