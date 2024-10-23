@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"mousek/common/logger"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -144,7 +145,7 @@ func LoadSettingsFromFile(mode Mode) error {
 	}
 
 	// 输出生成的结构体
-	fmt.Printf("%#v\n", settingsVar)
+	logger.Infof("", "%#v", settingsVar)
 	return nil
 }
 
@@ -212,13 +213,13 @@ func InitConfigFile() error {
 		if err != nil {
 			return err
 		}
-		fmt.Println("Config file created at:", filePath)
+		logger.Infof("", "Config file created at:", filePath)
 	} else {
 		err = LoadSettingsFromFile(ModeLoadFromUser)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Config file already exists at:", filePath)
+		logger.Infof("", "Config file already exists at:", filePath)
 	}
 	return nil
 }
@@ -229,7 +230,7 @@ func RestoreSettings() error {
 		return fmt.Errorf("decoding TOML:%+v", err)
 	}
 	// 输出生成的结构体
-	fmt.Printf("restore setting:%#v\n", settingsVar)
+	logger.Infof("", "restore setting:%#v", settingsVar)
 	if err := WriteSettings(); err != nil {
 		return err
 	}

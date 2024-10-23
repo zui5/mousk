@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"mousek/common/logger"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -22,7 +22,7 @@ func InitAppWraper(app *application.App) {
 
 func StartOptionView() {
 	if appWraper == nil {
-		fmt.Printf("appwraper not initialized\n")
+		logger.Infof("", "appwraper not initialized")
 		return
 	}
 	if optionsView == nil {
@@ -61,7 +61,7 @@ func StartOptionView() {
 			// Linux:                   application.LinuxWindow{},
 			ShouldClose: func(window *application.WebviewWindow) bool {
 				window.Hide()
-				fmt.Printf("view show close\n")
+				logger.Infof("", "view show close")
 				return false
 			},
 			// DevToolsEnabled:            false,
@@ -69,14 +69,14 @@ func StartOptionView() {
 			// KeyBindings:                map[string]func(window *application.WebviewWindow){},
 			// IgnoreMouseEvents:          false,
 		})
-		fmt.Printf("fuck optionview：%+v\n", optionsView)
+		logger.Infof("", "fuck optionview：%+v", optionsView)
 	}
 	optionsView.Show()
 }
 
 func HideOptionView() {
 	if appWraper == nil {
-		fmt.Printf("appwraper not initialized\n")
+		logger.Infof("", "appwraper not initialized")
 		return
 	}
 	if optionsView == nil {
