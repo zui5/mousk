@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"mousek/common/logger"
 	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -40,6 +41,6 @@ func initPureTextDialogWindow() *application.WebviewWindow {
 		},
 		FullscreenButtonEnabled: false,
 	})
-	fmt.Printf("fuck notificationview：%+v\n", diaglogView)
+	logger.Infof("", "fuck notificationview：%+v", diaglogView)
 	return diaglogView
 }

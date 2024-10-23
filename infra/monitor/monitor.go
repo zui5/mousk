@@ -1,7 +1,7 @@
 package monitor
 
 import (
-	"fmt"
+	"mousek/common/logger"
 	"mousek/infra/base"
 	"syscall"
 	"unsafe"
@@ -51,18 +51,18 @@ func GetMonitors() []MONITORINFOEX {
 
 	// 调用 EnumDisplayMonitors 函数
 	if ret, _, _ := enumDisplayMonitors.Call(0, 0, callback, 0); ret == 0 {
-		fmt.Println("EnumDisplayMonitors failed")
+		logger.Infof("", "EnumDisplayMonitors failed")
 		return nil
 	}
 
 	// 输出显示器数量和范围信息
-	fmt.Printf("Number of monitors: %d\n", len(monitors))
+	logger.Infof("", "Number of monitors: %d", len(monitors))
 	for i, monitor := range monitors {
-		fmt.Printf("Monitor %d:\n", i+1)
-		fmt.Printf("    Left:   %d\n", monitor.Monitor.Left)
-		fmt.Printf("    Top:    %d\n", monitor.Monitor.Top)
-		fmt.Printf("    Right:  %d\n", monitor.Monitor.Right)
-		fmt.Printf("    Bottom: %d\n", monitor.Monitor.Bottom)
+		logger.Infof("", "Monitor %d:", i+1)
+		logger.Infof("", "    Left:   %d", monitor.Monitor.Left)
+		logger.Infof("", "    Top:    %d", monitor.Monitor.Top)
+		logger.Infof("", "    Right:  %d", monitor.Monitor.Right)
+		logger.Infof("", "    Bottom: %d", monitor.Monitor.Bottom)
 	}
 	return monitors
 

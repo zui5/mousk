@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"mousek/common/logger"
 	"mousek/infra/base"
 	"mousek/infra/config"
 	"mousek/infra/keyboardctl"
@@ -70,13 +70,13 @@ func main() {
 
 // 	optionMenu := trayMenu.Add("Options")
 // 	optionMenu.OnClick(func(ctx *application.Context) {
-// 		fmt.Printf("enter option menu \n")
+// 		logger.Infof("","enter option menu ")
 // 		StartOptionView()
 // 	})
 
 // 	exitMenuItem := trayMenu.Add("Exit")
 // 	exitMenuItem.OnClick(func(ctx *application.Context) {
-// 		fmt.Printf("tray menu exit\n")
+// 		logger.Infof("","tray menu exit")
 // 		os.Exit(0)
 // 	})
 
@@ -84,8 +84,8 @@ func main() {
 // 	tray.OnClick(func() {
 // 		toggleControlMode()
 
-// 		// fmt.Println("on click system tray")
-// 		// fmt.Println(app.CurrentWindow().IsVisible())
+// 		// logger.Infof("","on click system tray")
+// 		// logger.Infof("",app.CurrentWindow().IsVisible())
 // 		// if app.CurrentWindow().IsVisible() {
 // 		// 	app.Hide()
 // 		// } else {
@@ -277,7 +277,7 @@ func keyboardProcess() {
 
 func toggleControlMode() {
 	base.SetMode(1 - base.GetMode())
-	fmt.Printf("toggle mode to:%d\n", base.GetMode())
+	logger.Infof("", "toggle mode to:%d", base.GetMode())
 	// ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
 }
 
@@ -291,12 +291,12 @@ func toggleControlMode() {
 // }
 
 func StartControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
-	fmt.Printf("current mode:%d\n", base.GetMode())
+	logger.Infof("", "current mode:%d", base.GetMode())
 	if base.GetMode() == base.ModeControl {
-		fmt.Println("already in control mode", time.Now())
+		logger.Infof("", "already in control mode", time.Now())
 	} else {
 		base.SetMode(base.ModeControl)
-		fmt.Println("change to control mode", time.Now())
+		logger.Infof("", "change to control mode", time.Now())
 	}
 	// ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
 	return 1
@@ -304,80 +304,79 @@ func StartControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 
 func ResetSetting(wParam uintptr, vkCode, scanCode uint32) uintptr {
 
-	fmt.Printf("user restore setting\n")
+	logger.Infof("", "user restore setting")
 	config.RestoreSettings()
 	return 1
 }
 
 func QuitControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
-	fmt.Printf("current mode:%d\n", base.GetMode())
-	fmt.Println()
+	logger.Infof("", "current mode:%d", base.GetMode())
 	if base.GetMode() == base.ModeControl {
-		fmt.Println("change to normal mode", time.Now())
+		logger.Infof("", "change to normal mode", time.Now())
 		base.SetMode(base.ModeNormal)
 	} else {
-		fmt.Println("already in normal mode", time.Now())
+		logger.Infof("", "already in normal mode", time.Now())
 	}
 	// ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
 	return 0
 }
 
 func ScrollSpeedLevelSwitch(wParam uintptr, vkCode, scanCode uint32) uintptr {
-	fmt.Printf("current mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+	logger.Infof("", "current mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
 	// if base.GetMode() != base.ModeControl {
-	// 	fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+	// 	logger.Infof("","not in control mode, can not switch speed,mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
 	// 	return 0
 	// }
 	if util.Contains[uint32](vkCodesMulitiSpeedLevelArr, uint32(vkCode)) {
 		speedLevel := int(vkCode) - keyboardctl.VK_1 + 1
 		base.SetScrollSpeedLevel(speedLevel)
-		fmt.Printf("change speed to :%d\n", base.GetScrollSpeed())
+		logger.Infof("", "change speed to :%d", base.GetScrollSpeed())
 	}
 	return 1
 }
 
 func SpeedLevelSwitch(wParam uintptr, vkCode, scanCode uint32) uintptr {
-	fmt.Printf("current mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+	logger.Infof("", "current mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
 	// if base.GetMode() != base.ModeControl {
-	// 	fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+	// 	logger.Infof("","not in control mode, can not switch speed,mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
 	// 	return 0
 	// }
 	if util.Contains[uint32](vkCodesMulitiSpeedLevelArr, uint32(vkCode)) {
 		speedLevel := int(vkCode) - keyboardctl.VK_1 + 1
 		base.SetMoveSpeedLevel(speedLevel)
-		fmt.Printf("change speed to :%d\n", base.GetMoveSpeedLevel())
+		logger.Infof("", "change speed to :%d", base.GetMoveSpeedLevel())
 	}
 	return 1
 }
 
 func MouseLeftClick(wParam uintptr, vkCode, scanCode uint32) uintptr {
-	fmt.Printf("current mode:%d\n", base.GetMode())
+	logger.Infof("", "current mode:%d", base.GetMode())
 	// if base.GetMode() != base.ModeControl {
-	// 	fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+	// 	logger.Infof("","not in control mode, can not switch speed,mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
 	// 	return 0
 	// }
 	mousectl.LeftClick()
-	fmt.Printf("mouse left click\n")
+	logger.Infof("", "mouse left click")
 	return 1
 }
 
 func MouseRightClick(wParam uintptr, vkCode, scanCode uint32) uintptr {
-	fmt.Printf("current mode:%d\n", base.GetMode())
+	logger.Infof("", "current mode:%d", base.GetMode())
 	// if base.GetMode() != base.ModeControl {
-	// 	fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+	// 	logger.Infof("","not in control mode, can not switch speed,mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
 	// 	return 0
 	// }
 	mousectl.RightClick()
-	fmt.Printf("mouse right click\n")
+	logger.Infof("", "mouse right click")
 	return 1
 }
 
 func MouseLeftDown(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	if wParam == keyboardctl.WM_KEYDOWN {
-		fmt.Printf("mouse left button down\n")
+		logger.Infof("", "mouse left button down")
 		mousectl.MouseLeftDown()
 	} else if wParam == keyboardctl.WM_KEYUP {
-		fmt.Printf("mouse left button up\n")
+		logger.Infof("", "mouse left button up")
 		mousectl.MouseLeftUp()
 	}
 	return 1
@@ -386,7 +385,7 @@ func MouseLeftDown(wParam uintptr, vkCode, scanCode uint32) uintptr {
 func MoveMouseFunc(direction mousectl.MoveDirection, speedType mousectl.MoveSpeedType) keyboardctl.Callback2 {
 	return func(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		// if base.GetMode() != base.ModeControl {
-		// 	fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+		// 	logger.Infof("","not in control mode, can not switch speed,mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
 		// 	return 0
 		// }
 		mousectl.MoveMouseCtrl(direction, speedType)
@@ -397,7 +396,7 @@ func MoveMouseFunc(direction mousectl.MoveDirection, speedType mousectl.MoveSpee
 func ScrollMouseFunc(direction mousectl.ScrollDirection, speed mousectl.MoveSpeedType) keyboardctl.Callback2 {
 	return func(wParam uintptr, vkCode, scanCode uint32) uintptr {
 		// if base.GetMode() != base.ModeControl {
-		// 	fmt.Printf("not in control mode, can not switch speed,mode:%d,current speed:%d\n", base.GetMode(), base.GetMoveSpeedLevel())
+		// 	logger.Infof("","not in control mode, can not switch speed,mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
 		// 	return 0
 		// }
 		mousectl.ScrollMouseCtrl(direction, speed)
@@ -406,13 +405,12 @@ func ScrollMouseFunc(direction mousectl.ScrollDirection, speed mousectl.MoveSpee
 }
 
 func TmpQuitControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
-	fmt.Printf("current mode:%d\n", base.GetMode())
-	fmt.Println()
+	logger.Infof("", "current mode:%d", base.GetMode())
 	if base.GetMode() == base.ModeControl {
-		fmt.Println("change to normal mode", time.Now())
+		logger.Infof("", "change to normal mode", time.Now())
 		base.SetMode(base.ModeNormal)
 	} else {
-		fmt.Println("already in normal mode", time.Now())
+		logger.Infof("", "already in normal mode", time.Now())
 	}
 	// ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
 	return 0

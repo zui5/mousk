@@ -1,7 +1,7 @@
 package mousectl
 
 import (
-	"fmt"
+	"mousek/common/logger"
 	"time"
 	"unsafe"
 )
@@ -30,7 +30,7 @@ func LeftClick() {
 	)
 
 	if ret == 0 {
-		fmt.Printf("SendInput failed: %v\n", err)
+		logger.Infof("", "SendInput failed: %v", err)
 	}
 }
 
@@ -58,7 +58,7 @@ func RightClick() {
 	)
 
 	if ret == 0 {
-		fmt.Printf("SendInput failed: %v\n", err)
+		logger.Infof("", "SendInput failed: %v", err)
 	}
 }
 
@@ -79,7 +79,7 @@ func LeftClickLongPress(duration time.Duration) {
 	)
 
 	if ret == 0 {
-		fmt.Printf("SendInput failed: %v\n", err)
+		logger.Infof("", "SendInput failed: %v", err)
 	}
 
 	time.Sleep(duration)
@@ -93,7 +93,7 @@ func LeftClickLongPress(duration time.Duration) {
 	)
 
 	if ret == 0 {
-		fmt.Printf("SendInput failed: %v\n", err)
+		logger.Infof("", "SendInput failed: %v", err)
 	}
 }
 
@@ -113,7 +113,7 @@ func RightClickLongPress(duration time.Duration) {
 	)
 
 	if ret == 0 {
-		fmt.Printf("SendInput failed: %v\n", err)
+		logger.Infof("", "SendInput failed: %v", err)
 	}
 
 	time.Sleep(duration)
@@ -127,6 +127,6 @@ func RightClickLongPress(duration time.Duration) {
 	)
 
 	if ret == 0 {
-		fmt.Printf("SendInput failed: %v\n", err)
+		logger.Infof("", "SendInput failed: %v", err)
 	}
 }

@@ -1,7 +1,7 @@
 package mousectl
 
 import (
-	"fmt"
+	"mousek/common/logger"
 	"syscall"
 	"unsafe"
 )
@@ -32,6 +32,6 @@ func sendMouseInput(flags uint32) {
 		unsafe.Sizeof(input),
 	)
 	if err != syscall.Errno(0) {
-		fmt.Printf("Error calling SendInput: %v\n", err)
+		logger.Infof("", "Error calling SendInput: %v", err)
 	}
 }

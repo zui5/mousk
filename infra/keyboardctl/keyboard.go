@@ -2,7 +2,7 @@ package keyboardctl
 
 import (
 	"encoding/json"
-	"fmt"
+	"mousek/common/logger"
 	"mousek/infra/base"
 	"os"
 	"syscall"
@@ -97,7 +97,7 @@ func RegisterMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 
 	// 	break
 	// default:
-	// 	fmt.Println("method not develop yet")
+	// 	logger.Infof("","method not develop yet")
 	// 	return
 	// }
 	for _, vkCodes := range mulitiVkCodes {
@@ -124,8 +124,8 @@ func EffectOnNormalMode(vkCode uint32) bool {
 			if !v.effectOnNormalMode {
 				continue
 			}
-			// fmt.Printf("11111:%+v, %t", v.FirstClickKeys, AllPressed(v.FirstClickKeys...))
-			fmt.Printf("11111:%+v, %t", v.FirstClickKeys, StatusCheck(v.FirstClickKeys, 1, time.Second))
+			// logger.Infof("","11111:%+v, %t", v.FirstClickKeys, AllPressed(v.FirstClickKeys...))
+			logger.Infof("", "11111:%+v, %t", v.FirstClickKeys, StatusCheck(v.FirstClickKeys, 1, time.Second))
 			// if AllPressed(v.FirstClickKeys...) {
 			if StatusCheck(v.FirstClickKeys, 1, time.Second) {
 				return true
@@ -152,21 +152,21 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 
 		if wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN {
 			SetPressed(vkCode)
-			fmt.Printf("Key pressed (VK code): %d, Scan code: %d\n", vkCode, scanCode)
+			logger.Infof("", "Key pressed (VK code): %d, Scan code: %d", vkCode, scanCode)
 		} else if wParam == WM_KEYUP || wParam == WM_SYSKEYUP {
 			SetReleased(vkCode)
-			fmt.Printf("Key released (VK code): %d, Scan code: %d\n", vkCode, scanCode)
+			logger.Infof("", "Key released (VK code): %d, Scan code: %d", vkCode, scanCode)
 		}
 
 		// 检查是否同时按下了 Ctrl、Shift 和 A 键
 		if Pressed(VK_LCONTROL) && Pressed(VK_LSHIFT) && Pressed(VK_A) {
-			fmt.Println("Ctrl+Shift+A keys pressed simultaneously")
+			logger.Infof("", "Ctrl+Shift+A keys pressed simultaneously")
 			os.Exit(0)
 			return 1
 		}
 
 		if base.GetMode() == base.ModeNormal && !EffectOnNormalMode(vkCode) {
-			fmt.Printf("%d not in control mode, mode:%d, keystatus:%d\n", time.Now().UnixMilli(), base.GetMode(), wParam)
+			logger.Infof("", "%d not in control mode, mode:%d, keystatus:%d", time.Now().UnixMilli(), base.GetMode(), wParam)
 			return 0
 		}
 
@@ -198,7 +198,7 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 					mostKeyNumCallback = v
 				}
 			}
-			fmt.Printf("most keycallback:%+v\n", GetNamesByCodes(mostKeyNumCallback.FirstClickKeys))
+			logger.Infof("", "most keycallback:%+v", GetNamesByCodes(mostKeyNumCallback.FirstClickKeys))
 			return mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
 
 			// for _, v := range ref.KeyCombinations {
@@ -232,15 +232,15 @@ func KeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr {
 
 		if wParam == WM_KEYDOWN {
 			SetPressed(vkCode)
-			fmt.Printf("Key pressed (VK code): %d\n", vkCode)
+			logger.Infof("", "Key pressed (VK code): %d", vkCode)
 		} else if wParam == WM_KEYUP {
 			SetReleased(vkCode)
-			fmt.Printf("Key released (VK code): %d\n", vkCode)
+			logger.Infof("", "Key released (VK code): %d", vkCode)
 		}
 
 		// 检查是否同时按下了 Ctrl、Shift 和 A 键
 		if Pressed(VK_LCONTROL) && Pressed(VK_LSHIFT) && Pressed(VK_A) {
-			fmt.Println("Ctrl+Shift+A keys pressed simultaneously")
+			logger.Infof("", "Ctrl+Shift+A keys pressed simultaneously")
 		}
 
 		// 如果按下了 'Q' 键，退出程序
@@ -266,11 +266,11 @@ func RawKeyboardListener(cb Callback) {
 	)
 
 	if hookID == 0 {
-		fmt.Println("Failed to set hook")
+		logger.Infof("", "Failed to set hook")
 		return
 	}
 
-	fmt.Println("Hook set, waiting for events...")
+	logger.Infof("", "Hook set, waiting for events...")
 
 	defer unhookWindowsHookEx.Call(hookID)
 
@@ -282,7 +282,7 @@ func RawKeyboardListener(cb Callback) {
 }
 
 func Pressed(vkCode uint32) bool {
-	// fmt.Println(vkCode, keyPressedStates[vkCode])
+	// logger.Infof("",vkCode, keyPressedStates[vkCode])
 	if keyPressedStates[vkCode] == nil {
 		keyPressedStates[vkCode] = nilKeyState()
 	}
@@ -296,7 +296,7 @@ func AllPressed(vkCodes ...uint32) bool {
 	}
 	allPressed := true
 	for _, v := range vkCodes {
-		fmt.Printf("keys %d , %t\n", v, Pressed(v))
+		logger.Infof("", "keys %d , %t", v, Pressed(v))
 		allPressed = allPressed && Pressed(v)
 	}
 	return allPressed
@@ -339,7 +339,7 @@ func RegisterWithReleaseEventMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 
 	// 	break
 	// default:
-	// 	fmt.Println("method not develop yet")
+	// 	logger.Infof("","method not develop yet")
 	// 	return
 	// }
 	for _, vkCodes := range mulitiVkCodes {
@@ -348,7 +348,7 @@ func RegisterWithReleaseEventMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 }
 
 func StatusCheck(vkCodes []uint32, pressed int, durationBetween time.Duration) bool {
-	fmt.Printf("key status check param:%+v\n", GetNamesByCodes(vkCodes))
+	logger.Infof("", "key status check param:%+v", GetNamesByCodes(vkCodes))
 	if vkCodes == nil {
 		return true
 	}
@@ -359,7 +359,7 @@ func StatusCheck(vkCodes []uint32, pressed int, durationBetween time.Duration) b
 	var minLastPressedTime *time.Time = nil
 	for _, v := range vkCodes {
 		keyState, ok := keyPressedStates[v]
-		fmt.Printf("key status check param:%+v, key:%s, keystate:%+v\n", GetNamesByCodes(vkCodes), GetNameByCode(v), keyState)
+		logger.Infof("", "key status check param:%+v, key:%s, keystate:%+v", GetNamesByCodes(vkCodes), GetNameByCode(v), keyState)
 		if !ok {
 			keyState = nilKeyState()
 		}
@@ -423,7 +423,7 @@ func StatusCheck(vkCodes []uint32, pressed int, durationBetween time.Duration) b
 		}
 	}
 
-	fmt.Printf("key status check:%+v\n", GetNamesByCodes(vkCodes))
+	logger.Infof("", "key status check:%+v", GetNamesByCodes(vkCodes))
 	return true
 }
 

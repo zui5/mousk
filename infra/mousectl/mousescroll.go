@@ -1,7 +1,7 @@
 package mousectl
 
 import (
-	"fmt"
+	"mousek/common/logger"
 	"mousek/infra/base"
 )
 
@@ -41,7 +41,8 @@ func ScrollHorizontally(amount int) {
 
 func ScrollMouseCtrl(direction ScrollDirection, speedType MoveSpeedType) {
 	speed := int(speedType) * base.GetScrollSpeed()
-	fmt.Printf("speedType:%d, speedLevel:%d, direction:%s\n", speedType, base.GetScrollSpeed(), direction) switch direction {
+	logger.Infof("", "speedType:%d, speedLevel:%d, direction:%s", speedType, base.GetScrollSpeed(), direction)
+	switch direction {
 	case DirectionHorizontalLeft:
 		ScrollHorizontally(-1 * speed)
 	case DirectionHorizontalRight:
@@ -51,6 +52,6 @@ func ScrollMouseCtrl(direction ScrollDirection, speedType MoveSpeedType) {
 	case DirectionVerticalUp:
 		ScrollVertically(1 * speed)
 	default:
-		fmt.Printf("scroll direction undefined:%s\n", direction)
+		logger.Infof("", "scroll direction undefined:%s", direction)
 	}
 }

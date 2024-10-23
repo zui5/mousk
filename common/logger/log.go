@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
@@ -38,6 +39,7 @@ func init() {
 		// zapcore.NewCore(fileEncoder, zapcore.AddSync(logFile), zap.DebugLevel),
 		// zapcore.NewCore(fileEncoder, zapcore.AddSync(errFile), zap.ErrorLevel),
 		zapcore.NewCore(fileEncoder, zapcore.AddSync(lumberjacklogger), zap.DebugLevel),
+		zapcore.NewCore(fileEncoder, zapcore.AddSync(os.Stdout), zap.DebugLevel),
 	)
 
 	instance = zap.New(teecore, zap.AddCaller(), zap.AddCallerSkip(1)).Sugar()
@@ -56,4 +58,16 @@ func init() {
 
 func Infof(header, template string, args ...interface{}) {
 	instance.Debugf(fmt.Sprintf("%s %s", header, template), args...)
+}
+
+func Warnf(header, template string, args ...interface{}) {
+	instance.Warnf(fmt.Sprintf("%s %s", header, template), args...)
+}
+
+func Errorf(header, template string, args ...interface{}) {
+	instance.Errorf(fmt.Sprintf("%s %s", header, template), args...)
+}
+
+func Fatalf(header, template string, args ...interface{}) {
+	instance.Fatalf(fmt.Sprintf("%s %s", header, template), args...)
 }
