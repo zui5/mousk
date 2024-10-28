@@ -62,6 +62,7 @@ const (
 type Settings struct {
 	StartOnSystemUp bool `toml:"StartOnSystemUp"`
 	PresetFunc      struct {
+		ForceQuit         []string `toml:"ForceQuit"`
 		ActiveMode        []string `toml:"ActiveMode"`
 		ResetSetting      []string `toml:"ResetSetting"`
 		ToggleControlMode []string `toml:"ToggleControlMode"`

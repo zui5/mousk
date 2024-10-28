@@ -6,6 +6,7 @@ StartOnSystemUp = true
   TmpQuitMode = ["Q"]
   OpenSetting = ["SPACE", "COMMA"]
   ResetSetting = ["LALT","R"]
+  ForceQuit = ["LCONTROL","LSHIFT","A"]
   [PresetFunc.MouseMove]
     [PresetFunc.MouseMove.Fast]
       Down = ["J"]
