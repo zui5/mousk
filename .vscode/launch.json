@@ -2,6 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Launch",
+      "type": "go",
+      "request": "launch",
+      "console": "internalConsole",
+      "program": "${workspaceFolder}/main.go",
+    },
+    {
       "name": "Wails: Debug mousek",
       "type": "go",
       "request": "launch",
@@ -39,12 +46,6 @@
     //   "program": "${workspaceFolder}/build/bin/mousek.exe",
     //   "cwd": "${workspaceFolder}"
     // },
-    {
-      "name": "Launch",
-      "type": "go",
-      "request": "launch",
-      "program": "${workspaceFolder}/main.go",
-    },
     {
       "name": "Wails: Production mousek",
       "type": "go",

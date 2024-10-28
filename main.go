@@ -7,6 +7,7 @@ import (
 	"mousek/infra/keyboardctl"
 	"mousek/infra/mousectl"
 	"mousek/infra/util"
+	"os"
 	"time"
 )
 
@@ -143,6 +144,9 @@ func keyboardProcess() {
 	// win+space : activate control mode
 	// vkCodesStartControlMode := ts(settings.PresetFunc.ActiveMode)
 	// keyboardctl.RegisterNormal(StartControlMode, vkCodesStartControlMode...)
+
+	vkCodesForceQuit := ts(settings.PresetFunc.ForceQuit)
+	keyboardctl.RegisterNormal(ForceQuit, vkCodesForceQuit...)
 
 	// alt+r: reset setting
 	vkCodesResetSetting := ts(settings.PresetFunc.ResetSetting)
@@ -303,7 +307,6 @@ func StartControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 }
 
 func ResetSetting(wParam uintptr, vkCode, scanCode uint32) uintptr {
-
 	logger.Infof("", "user restore setting")
 	config.RestoreSettings()
 	return 1
@@ -418,5 +421,11 @@ func TmpQuitControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 
 func ToggleControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	toggleControlMode()
+	return 1
+}
+
+func ForceQuit(wParam uintptr, vkCode, scanCode uint32) uintptr {
+	logger.Infof("", "force quit")
+	os.Exit(0)
 	return 1
 }

@@ -119,13 +119,14 @@ func RegisterDoubleClick(cb Callback2, firstClick []uint32, secondClick []uint32
 
 func EffectOnNormalMode(vkCode uint32) bool {
 	if listeningKeyReference[vkCode] != nil {
+		logger.Infof("", "effect on normal check:%+v, current:%d", listeningKeyReference[vkCode], vkCode)
 		ref := listeningKeyReference[vkCode]
 		for _, v := range ref.KeyCombinations {
+			logger.Infof("", "effect on normal check:%+v, %t", v.FirstClickKeys, StatusCheck(v.FirstClickKeys, 1, time.Second))
 			if !v.effectOnNormalMode {
 				continue
 			}
 			// logger.Infof("","11111:%+v, %t", v.FirstClickKeys, AllPressed(v.FirstClickKeys...))
-			logger.Infof("", "11111:%+v, %t", v.FirstClickKeys, StatusCheck(v.FirstClickKeys, 1, time.Second))
 			// if AllPressed(v.FirstClickKeys...) {
 			if StatusCheck(v.FirstClickKeys, 1, time.Second) {
 				return true
@@ -158,15 +159,15 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			logger.Infof("", "Key released (VK code): %d, Scan code: %d", vkCode, scanCode)
 		}
 
-		// 检查是否同时按下了 Ctrl、Shift 和 A 键
-		if Pressed(VK_LCONTROL) && Pressed(VK_LSHIFT) && Pressed(VK_A) {
-			logger.Infof("", "Ctrl+Shift+A keys pressed simultaneously")
-			os.Exit(0)
-			return 1
-		}
+		// // 检查是否同时按下了 Ctrl、Shift 和 A 键
+		// if Pressed(VK_LCONTROL) && Pressed(VK_LSHIFT) && Pressed(VK_A) {
+		// 	logger.Infof("", "Ctrl+Shift+A keys pressed simultaneously")
+		// 	os.Exit(0)
+		// 	return 1
+		// }
 
 		if base.GetMode() == base.ModeNormal && !EffectOnNormalMode(vkCode) {
-			logger.Infof("", "%d not in control mode, mode:%d, keystatus:%d", time.Now().UnixMilli(), base.GetMode(), wParam)
+			logger.Infof("", "%d not in control mode, mode:%d, keystatus:%d", time.Now().UnixMilli(), base.GetMode(), vkCode)
 			return 0
 		}
 

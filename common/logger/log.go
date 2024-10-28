@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	fileName = "./log"
+	fileName = "./dist/app.log"
 )
 
 var (
@@ -60,7 +60,7 @@ func init() {
 }
 
 func Infof(header, template string, args ...interface{}) {
-	instance.Debugf(fmt.Sprintf("%s %s", header, template), args...)
+	instance.Infof(fmt.Sprintf("%s %s", header, template), args...)
 }
 
 func Warnf(header, template string, args ...interface{}) {
