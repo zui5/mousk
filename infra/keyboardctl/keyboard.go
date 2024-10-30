@@ -119,10 +119,10 @@ func RegisterDoubleClick(cb Callback2, firstClick []uint32, secondClick []uint32
 
 func EffectOnNormalMode(vkCode uint32) bool {
 	if listeningKeyReference[vkCode] != nil {
-		logger.Infof("", "effect on normal check:%+v, current:%d", listeningKeyReference[vkCode], vkCode)
+		// logger.Infof("", "effect on normal check:%+v, current:%d", listeningKeyReference[vkCode], vkCode)
 		ref := listeningKeyReference[vkCode]
 		for _, v := range ref.KeyCombinations {
-			logger.Infof("", "effect on normal check:%+v, %t", v.FirstClickKeys, StatusCheck(v.FirstClickKeys, 1, time.Second))
+			// logger.Infof("", "effect on normal check:%+v, %t", v.FirstClickKeys, StatusCheck(v.FirstClickKeys, 1, time.Second))
 			if !v.effectOnNormalMode {
 				continue
 			}
@@ -194,35 +194,20 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			}
 
 			mostKeyNumCallback := satisfiedCallback[0]
+
 			for _, v := range satisfiedCallback {
+				logger.Infof("", "all keycallback:%+v", GetNamesByCodes(v.FirstClickKeys))
 				if len(v.FirstClickKeys) > len(mostKeyNumCallback.FirstClickKeys) {
 					mostKeyNumCallback = v
 				}
 			}
 			logger.Infof("", "most keycallback:%+v", GetNamesByCodes(mostKeyNumCallback.FirstClickKeys))
-			return mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
-
-			// for _, v := range ref.KeyCombinations {
-			// 	if AllPressed(v.Keys...) {
-			// 		v.Cb(wParam, vkCode, scanCode)
-			// 	}
-			// 	if v.withReleaseEvent && AllReleased(time.Second, v.Keys...) {
-			// 		v.Cb(wParam, vkCode, scanCode)
-			// 	}
-			// }
+			// return mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
+			mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
+			return 1
 		}
 		return 0
-
-		// // 如果按下了 'Q' 键，退出程序
-		// if Pressed(VK_Q) {
-		// 	os.Exit(0)
-		// }
-
-		// 在这里添加你的其他逻辑
-
-		// return CallNextHookEx(0, nCode, wParam, lParam)
 	}
-	// return CallNextHookEx(0, nCode, wParam, lParam)
 	return 0
 }
 
@@ -349,7 +334,7 @@ func RegisterWithReleaseEventMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 }
 
 func StatusCheck(vkCodes []uint32, pressed int, durationBetween time.Duration) bool {
-	logger.Infof("", "key status check param:%+v", GetNamesByCodes(vkCodes))
+	// logger.Infof("", "key status check param:%+v", GetNamesByCodes(vkCodes))
 	if vkCodes == nil {
 		return true
 	}
@@ -360,7 +345,7 @@ func StatusCheck(vkCodes []uint32, pressed int, durationBetween time.Duration) b
 	var minLastPressedTime *time.Time = nil
 	for _, v := range vkCodes {
 		keyState, ok := keyPressedStates[v]
-		logger.Infof("", "key status check param:%+v, key:%s, keystate:%+v", GetNamesByCodes(vkCodes), GetNameByCode(v), keyState)
+		// logger.Infof("", "key status check param:%+v, key:%s, keystate:%+v", GetNamesByCodes(vkCodes), GetNameByCode(v), keyState)
 		if !ok {
 			keyState = nilKeyState()
 		}

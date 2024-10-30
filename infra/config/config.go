@@ -119,12 +119,13 @@ type Settings struct {
 }
 
 func Init() {
-	if InitConfigFile() != nil {
-		log.Fatalf("init config file error")
-		return
-	}
+	// TODO
+	// if InitConfigFile() != nil {
+	// 	log.Fatalf("init config file error")
+	// 	return
+	// }
 
-	if LoadSettingsFromFile(ModeLoadFromUser) != nil {
+	if LoadSettingsFromFile(ModeLoadFromDefault) != nil {
 		log.Fatalf("load config file error")
 		return
 	}

@@ -41,7 +41,7 @@ func ScrollHorizontally(amount int) {
 
 func ScrollMouseCtrl(direction ScrollDirection, speedType MoveSpeedType) {
 	speed := int(speedType) * base.GetScrollSpeed()
-	logger.Infof("", "speedType:%d, speedLevel:%d, direction:%s", speedType, base.GetScrollSpeed(), direction)
+	logger.Infof("", "mouse scroll speedType:%d, speedLevel:%d, direction:%s", speedType, base.GetScrollSpeed(), direction)
 	switch direction {
 	case DirectionHorizontalLeft:
 		ScrollHorizontally(-1 * speed)
@@ -52,6 +52,6 @@ func ScrollMouseCtrl(direction ScrollDirection, speedType MoveSpeedType) {
 	case DirectionVerticalUp:
 		ScrollVertically(1 * speed)
 	default:
-		logger.Infof("", "scroll direction undefined:%s", direction)
+		logger.Infof("", "mouse scroll scroll direction undefined:%s", direction)
 	}
 }

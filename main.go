@@ -144,6 +144,9 @@ func keyboardProcess() {
 	// win+space : activate control mode
 	// vkCodesStartControlMode := ts(settings.PresetFunc.ActiveMode)
 	// keyboardctl.RegisterNormal(StartControlMode, vkCodesStartControlMode...)
+	// TODO 屏蔽部分按键
+	vkCodesBlockSpace := ts([]string{"LSHIFT"})
+	keyboardctl.RegisterOne(BlockSpace, vkCodesBlockSpace...)
 
 	vkCodesForceQuit := ts(settings.PresetFunc.ForceQuit)
 	keyboardctl.RegisterNormal(ForceQuit, vkCodesForceQuit...)
@@ -239,6 +242,10 @@ func keyboardProcess() {
 	// _____________________________________________________________________________________________________________________________11111111111111111111111111222222222222222222222222222222222223333333333333333
 	// main keyboard event listener
 	keyboardctl.RawKeyboardListener(keyboardctl.LowLevelKeyboardCallback)
+
+}
+
+func void() {
 
 }
 
@@ -397,11 +404,7 @@ func MoveMouseFunc(direction mousectl.MoveDirection, speedType mousectl.MoveSpee
 }
 
 func ScrollMouseFunc(direction mousectl.ScrollDirection, speed mousectl.MoveSpeedType) keyboardctl.Callback2 {
-	return func(wParam uintptr, vkCode, scanCode uint32) uintptr {
-		// if base.GetMode() != base.ModeControl {
-		// 	logger.Infof("","not in control mode, can not switch speed,mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
-		// 	return 0
-		// }
+	return func(wParam uintptr, vkCode, scanCode uint32) uintptr { // if base.GetMode() != base.ModeControl { logger.Infof("","not in control mode, can not switch speed,mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel()) return 0 }
 		mousectl.ScrollMouseCtrl(direction, speed)
 		return 1
 	}
@@ -427,5 +430,10 @@ func ToggleControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 func ForceQuit(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	logger.Infof("", "force quit")
 	os.Exit(0)
+	return 1
+}
+
+func BlockSpace(wParam uintptr, vkCode, scanCode uint32) uintptr {
+	logger.Infof("", "block space")
 	return 1
 }
