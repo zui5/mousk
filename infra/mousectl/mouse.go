@@ -91,7 +91,7 @@ func MoveMouseCtrl(direction MoveDirection, speedType MoveSpeedType) {
 	dx := 0
 	dy := 0
 	speed := int(speedType) * base.GetMoveSpeed()
-	logger.Infof("", "speedType:%d, speedLevel:%d, direction:%s", speedType, base.GetMoveSpeed(), direction)
+	logger.Infof("", "mouse move speedType:%d, speedLevel:%d, direction:%s", speedType, base.GetMoveSpeed(), direction)
 	switch direction {
 	case DirectionUp:
 		dx, dy = 0, -1*speed
@@ -102,7 +102,7 @@ func MoveMouseCtrl(direction MoveDirection, speedType MoveSpeedType) {
 	case DirectionRight:
 		dx, dy = 1*speed, 0
 	default:
-		logger.Infof("", "move direction undefined:%s", direction)
+		logger.Infof("", "mouse move move direction undefined:%s", direction)
 	}
 	MoveMouse(int32(dx), int32(dy))
 }
