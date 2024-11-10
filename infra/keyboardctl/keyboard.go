@@ -128,7 +128,7 @@ func EffectOnNormalMode(vkCode uint32) bool {
 			}
 			// logger.Infof("","11111:%+v, %t", v.FirstClickKeys, AllPressed(v.FirstClickKeys...))
 			// if AllPressed(v.FirstClickKeys...) {
-			if StatusCheck(v.FirstClickKeys, 1, time.Second) {
+			if StatusCheckNew(v.FirstClickKeys, 1) {
 				return true
 			}
 		}
@@ -153,10 +153,11 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 
 		if wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN {
 			SetPressed(vkCode)
-			logger.Infof("", "Key pressed (VK code): %d, Scan code: %d", vkCode, scanCode)
 		} else if wParam == WM_KEYUP || wParam == WM_SYSKEYUP {
 			SetReleased(vkCode)
-			logger.Infof("", "Key released (VK code): %d, Scan code: %d", vkCode, scanCode)
+			if vkCode == 160 {
+				logger.Infof("", "shift dectect:%t", IsShiftPressed())
+			}
 		}
 
 		// // 检查是否同时按下了 Ctrl、Shift 和 A 键
@@ -179,10 +180,10 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			satisfiedCallback := make([]KeyCallback, 0)
 			for _, v := range ref.KeyCombinations {
 				// if AllPressed(v.FirstClickKeys...) {
-				if StatusCheck(v.FirstClickKeys, 1, time.Second) {
+				if StatusCheckNew(v.FirstClickKeys, 1) {
 					satisfiedCallback = append(satisfiedCallback, v)
 				}
-				if v.withReleaseEvent && StatusCheck(v.FirstClickKeys, 0, time.Second) {
+				if v.withReleaseEvent && StatusCheckNew(v.FirstClickKeys, 0) {
 					satisfiedCallback = append(satisfiedCallback, v)
 				}
 			}
@@ -297,6 +298,7 @@ func SetPressed(vkCode uint32) {
 	currTime := time.Now()
 	keyPressedStates[vkCode].LastPressed = &currTime
 	keyPressedStates[vkCode].SecondLastPressed = keyPressedStates[vkCode].LastPressed
+	logger.Infof("", "Key pressed (VK code): %d, last pressed: %s", vkCode, currTime)
 }
 
 func nilKeyState() *KeyState {
@@ -317,6 +319,7 @@ func SetReleased(vkCode uint32) {
 	currTime := time.Now()
 	keyPressedStates[vkCode].SecondLastReleased = keyPressedStates[vkCode].LastReleased
 	keyPressedStates[vkCode].LastReleased = &currTime
+	logger.Infof("", "Key released (VK code): %d, last released: %s", vkCode, currTime)
 }
 
 func RegisterWithReleaseEventMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
@@ -333,6 +336,29 @@ func RegisterWithReleaseEventMulti(cb Callback2, mulitiVkCodes ...[]uint32) {
 	}
 }
 
+func StatusCheckNew(vkCodes []uint32, pressed int) bool {
+	// logger.Infof("", "key status check param:%+v", GetNamesByCodes(vkCodes))
+	if vkCodes == nil {
+		return true
+	}
+	for _, v := range vkCodes {
+		keyState, ok := keyPressedStates[v]
+		// logger.Infof("", "key status check param:%+v, key:%s, keystate:%+v", GetNamesByCodes(vkCodes), GetNameByCode(v), keyState)
+		if !ok {
+			keyState = nilKeyState()
+		}
+		if pressed == 1 && !keyState.Pressed {
+			return false
+		}
+		if pressed == 0 && keyState.Pressed {
+			return false
+		}
+	}
+	logger.Infof("", "key status check:%+v", GetNamesByCodes(vkCodes))
+	return true
+}
+
+// Deprecated!!!
 func StatusCheck(vkCodes []uint32, pressed int, durationBetween time.Duration) bool {
 	// logger.Infof("", "key status check param:%+v", GetNamesByCodes(vkCodes))
 	if vkCodes == nil {
@@ -399,7 +425,6 @@ func StatusCheck(vkCodes []uint32, pressed int, durationBetween time.Duration) b
 			return false
 		}
 	} else {
-
 		durationReleasedVal := minLastReleasedTime.Sub(*maxLastReleasedTime)
 		if durationReleasedVal < 0 {
 			durationReleasedVal = -1 * durationReleasedVal
