@@ -1,14 +1,19 @@
 package main
 
 import (
+	"embed"
+	"log"
 	"mousk/common/logger"
 	"mousk/infra/base"
 	"mousk/infra/config"
 	"mousk/infra/keyboardctl"
 	"mousk/infra/mousectl"
+	"mousk/infra/ui"
 	"mousk/infra/util"
 	"os"
 	"time"
+
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // Wails uses Go's `embed` package to embed the frontend files into the binary.
@@ -16,12 +21,110 @@ import (
 // made available to the frontend.
 // See https://pkg.go.dev/embed for more information.
 
-// 1go:embed frontend/dist
-// var assets embed.FS
+//go:embed frontend/dist
+var assets embed.FS
 
 var vkCodesMulitiSpeedLevelArr = []uint32{keyboardctl.VK_1, keyboardctl.VK_2, keyboardctl.VK_3, keyboardctl.VK_4, keyboardctl.VK_5}
 
 func main() {
+	app := application.New(application.Options{
+		Name: "mousk",
+		Windows: application.WindowsOptions{
+			DisableQuitOnLastWindowClosed: true,
+		},
+		Description: "A demo of using raw HTML & CSS",
+		Services: []application.Service{
+			application.NewService(&GreetService{}),
+		},
+		Assets: application.AssetOptions{
+			Handler: application.AssetFileServerFS(assets),
+		},
+		Mac: application.MacOptions{
+			ApplicationShouldTerminateAfterLastWindowClosed: true,
+		},
+		// Plugins: map[string]application.Plugin{
+		// 	"start_at_login": start_at_login.NewPlugin(),
+		// },
+	})
+	// start_at_login := start_at_login.NewPlugin(start_at_login.Config{
+	// 	RegistryKey: "mousk.exe",
+	// })
+	// start_at_login.StartAtLogin(true)
+
+	InitAppWraper(app)
+
+	tray := app.NewSystemTray()
+	// tray.SetIcon(ui.GetTrayIcon(base.GetMode()))
+	tray.SetLabel("systemtray test")
+	// tray.SetTemplateIcon(ui.GetTrayIcon(base.GetMode()))
+	// tray.SetIcon([]byte(""))
+	trayMenu := application.NewMenu()
+
+	// TODO remove it
+	// StartOptionView()
+
+	optionMenu := trayMenu.Add("Options")
+	optionMenu.OnClick(func(ctx *application.Context) {
+		logger.Infof("", "enter option menu ")
+		StartOptionView()
+	})
+
+	exitMenuItem := trayMenu.Add("Exit")
+	exitMenuItem.OnClick(func(ctx *application.Context) {
+		logger.Infof("", "tray menu exit")
+		os.Exit(0)
+	})
+
+	tray.SetMenu(trayMenu)
+	tray.OnClick(func() {
+		toggleControlMode()
+		tray.SetIcon(ui.GetTrayIcon(base.GetMode()))
+		tray.SetTemplateIcon(ui.GetTrayIcon(base.GetMode()))
+
+		// logger.Infof("","on click system tray")
+		// logger.Infof("",app.CurrentWindow().IsVisible())
+		// if app.CurrentWindow().IsVisible() {
+		// 	app.Hide()
+		// } else {
+		// 	app.Show()
+		// }
+	})
+
+	// Create a new window with the necessary options.
+	// 'Title' is the title of the window.
+	// 'Mac' options tailor the window when running on macOS.
+	// 'BackgroundColour' is the background colour of the window.
+	// 'URL' is the URL that will be loaded into the webview.
+	// app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
+	// 	Title: "Options",
+	// 	Mac: application.MacWindow{
+	// 		InvisibleTitleBarHeight: 50,
+	// 		Backdrop:                application.MacBackdropTranslucent,
+	// 		TitleBar:                application.MacTitleBarHiddenInset,
+	// 	},
+	// 	BackgroundColour: application.NewRGB(27, 38, 54),
+	// 	URL:              "/",
+	// })
+
+	// Create a goroutine that emits an event containing the current time every second.
+	// The frontend can listen to this event and update the UI accordingly.
+	go func() {
+		for {
+			now := time.Now().Format(time.RFC1123)
+			app.EmitEvent("time", now)
+			time.Sleep(time.Second)
+		}
+	}()
+
+	go keyboardProcess()
+
+	// Run the application. This blocks until the application has been exited.
+	err := app.Run()
+
+	// If an error occurred while running the application, log it and exit.
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	keyboardProcess()
 }
