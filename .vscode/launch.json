@@ -16,7 +16,6 @@
       "mode": "exec",
       "program": "${workspaceFolder}/build/bin/mousk.exe",
       "preLaunchTask": "build debug",
-      // "preLaunchTask": "wails dev",
       "cwd": "${workspaceFolder}"
     },
     {

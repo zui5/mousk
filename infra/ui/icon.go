@@ -19,10 +19,13 @@ var (
 //go:embed icons/iconwhite.png
 var iconwhite embed.FS
 
+//go:embed icons/iconwhite.png
+var DefaultWindowsIcon []byte
+
 func init() {
 	// 打开PNG文件
-	blueIconBytes = readIcon("./build/icons/iconcircle.ico")
-	whiteIconBytes = readIcon("./build/icons/iconcircle.ico")
+	blueIconBytes = readIcon("./build/icons/icon.ico")
+	whiteIconBytes = readIcon("./build/icons/icon.ico")
 }
 
 func readIcon(path string) []byte {

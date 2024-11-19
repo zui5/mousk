@@ -54,10 +54,11 @@ func main() {
 	InitAppWraper(app)
 
 	tray := app.NewSystemTray()
-	// tray.SetIcon(ui.GetTrayIcon(base.GetMode()))
+	// tray.SetIcon(ui.DefaultWindowsIcon)
 	tray.SetLabel("systemtray test")
+	// tray.SetDarkModeIcon(ui.DefaultWindowsIcon)
 	// tray.SetTemplateIcon(ui.GetTrayIcon(base.GetMode()))
-	// tray.SetIcon([]byte(""))
+	// tray.SetIcon(ui.GetTrayIcon(base.GetMode()))
 	trayMenu := application.NewMenu()
 
 	// TODO remove it
@@ -78,8 +79,8 @@ func main() {
 	tray.SetMenu(trayMenu)
 	tray.OnClick(func() {
 		toggleControlMode()
-		tray.SetIcon(ui.GetTrayIcon(base.GetMode()))
-		tray.SetTemplateIcon(ui.GetTrayIcon(base.GetMode()))
+		tray.SetIcon(ui.DefaultWindowsIcon)
+		tray.SetDarkModeIcon(ui.DefaultWindowsIcon)
 
 		// logger.Infof("","on click system tray")
 		// logger.Infof("",app.CurrentWindow().IsVisible())
