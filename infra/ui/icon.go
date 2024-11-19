@@ -2,30 +2,28 @@ package ui
 
 import (
 	"bytes"
-	"embed"
+	_ "embed"
 	"fmt"
 	"os"
-)
-
-var (
-	blueIconBytes  []byte
-	whiteIconBytes []byte
 )
 
 // //go:embed ../../build/icons/iconwhite.png
 // var assets2 embed.FS
 //
 
-//go:embed icons/iconwhite.png
-var iconwhite embed.FS
+// //go:embed icons/iconwhite.png
+// var iconwhite embed.FS
 
 //go:embed icons/iconwhite.png
-var DefaultWindowsIcon []byte
+var whiteIconBytes []byte
+
+//go:embed icons/iconblue.png
+var blueIconBytes []byte
 
 func init() {
 	// 打开PNG文件
-	blueIconBytes = readIcon("./build/icons/icon.ico")
-	whiteIconBytes = readIcon("./build/icons/icon.ico")
+	// blueIconBytes = readIcon("../../build/icons/iconblue.png")
+	// whiteIconBytes = readIcon("../../build/icons/iconwhite.png")
 }
 
 func readIcon(path string) []byte {
@@ -110,9 +108,9 @@ func fileToBytes(file *os.File) ([]byte, error) {
 
 func GetTrayIcon(mode int) []byte {
 	if mode == 0 {
-		return getBlueTrayIcon()
+		return getWhiteTrayIcon()
 	}
-	return getWhiteTrayIcon()
+	return getBlueTrayIcon()
 
 }
 
