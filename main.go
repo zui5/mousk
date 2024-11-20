@@ -84,6 +84,16 @@ func main() {
 		tray.SetIcon(ui.GetTrayIcon(base.GetMode()))
 		tray.SetDarkModeIcon(ui.GetTrayIcon(base.GetMode()))
 
+		// app.ShowAboutDialog()
+
+		dialog := application.InfoDialog()
+		dialog.Buttons = nil
+		dialog.SetMessage("hell world")
+		dialog.SetTitle("")
+		dialog.SetIcon(nil)
+		dialog.Show()
+		time.Sleep(time.Second)
+		dialog.Show()
 		// logger.Infof("","on click system tray")
 		// logger.Infof("",app.CurrentWindow().IsVisible())
 		// if app.CurrentWindow().IsVisible() {
