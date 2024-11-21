@@ -16,9 +16,32 @@ func Message(text string) {
 		// pureTextDialogWindow.Hide()
 	}
 	go func() {
-		pureTextDialogWindow.SetHTML(fmt.Sprintf("<div style=\"background-color:white\">%s</div>", text))
+		// pureTextDialogWindow.SetHTML(fmt.Sprintf("<div style=\"background-color:white\">%s</div>", text))
+		html := fmt.Sprintf(`
+			<html>
+			<head>
+				<style>
+					body {
+						margin: 0;
+						padding: 0;
+						background-color: rgba(0, 0, 0, 0.7);
+						color: white;
+						font-size: 20px;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						height: 100%%;
+					}
+				</style>
+			</head>
+			<body>
+				%s
+			</body>
+			</html>`, text)
+
+		pureTextDialogWindow.SetHTML(html)
 		pureTextDialogWindow.Show()
-		time.Sleep(2 * time.Second)
+		time.Sleep(500 * time.Millisecond)
 		pureTextDialogWindow.Hide()
 	}()
 }
@@ -27,8 +50,8 @@ func initPureTextDialogWindow() *application.WebviewWindow {
 
 	diaglogView := application.NewWindow(application.WebviewWindowOptions{
 		Name:           "dialog",
-		Width:          300,
-		Height:         40,
+		Width:          350,
+		Height:         50,
 		AlwaysOnTop:    true,
 		DisableResize:  true,
 		Frameless:      true,

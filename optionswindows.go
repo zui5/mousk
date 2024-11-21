@@ -2,31 +2,21 @@ package main
 
 import (
 	"mousk/common/logger"
+	"mousk/infra/ui"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
-// var optionView string
-var appWraper *AppWrapper
-
 // var
 var optionsView *application.WebviewWindow
 
-type AppWrapper struct{ *application.App }
-
-func InitAppWraper(app *application.App) {
-	appWraper = &AppWrapper{
-		App: app,
-	}
-}
-
 func StartOptionView() {
-	if appWraper == nil {
+	if ui.AppInstance == nil {
 		logger.Infof("", "appwraper not initialized")
 		return
 	}
 	if optionsView == nil {
-		optionsView = appWraper.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
+		optionsView = ui.AppInstance.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
 			Name:              "Options",
 			Title:             "Options",
 			Width:             800,
@@ -75,7 +65,7 @@ func StartOptionView() {
 }
 
 func HideOptionView() {
-	if appWraper == nil {
+	if ui.AppInstance == nil {
 		logger.Infof("", "appwraper not initialized")
 		return
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
 	"mousk/common/logger"
 	"mousk/infra/base"
@@ -25,6 +26,10 @@ import (
 var assets embed.FS
 
 var vkCodesMulitiSpeedLevelArr = []uint32{keyboardctl.VK_1, keyboardctl.VK_2, keyboardctl.VK_3, keyboardctl.VK_4, keyboardctl.VK_5}
+
+func init() {
+
+}
 
 func main() {
 	app := application.New(application.Options{
@@ -51,16 +56,10 @@ func main() {
 	// })
 	// start_at_login.StartAtLogin(true)
 
-	InitAppWraper(app)
+	ui.InitWrapper(app)
 
-	tray := app.NewSystemTray()
+	tray := ui.TrayInstance
 	// tray.SetIcon(ui.DefaultWindowsIcon)
-	tray.SetLabel("systemtray test")
-	tray.SetDarkModeIcon(ui.GetTrayIcon(base.GetMode()))
-	tray.SetIcon(ui.GetTrayIcon(base.GetMode()))
-	// tray.SetDarkModeIcon(ui.DefaultWindowsIcon)
-	// tray.SetTemplateIcon(ui.GetTrayIcon(base.GetMode()))
-	// tray.SetIcon(ui.GetTrayIcon(base.GetMode()))
 	trayMenu := application.NewMenu()
 
 	// TODO remove it
@@ -81,26 +80,6 @@ func main() {
 	tray.SetMenu(trayMenu)
 	tray.OnClick(func() {
 		toggleControlMode()
-		tray.SetIcon(ui.GetTrayIcon(base.GetMode()))
-		tray.SetDarkModeIcon(ui.GetTrayIcon(base.GetMode()))
-
-		// app.ShowAboutDialog()
-
-		dialog := application.InfoDialog()
-		dialog.Buttons = nil
-		dialog.SetMessage("hell world")
-		dialog.SetTitle("")
-		dialog.SetIcon(nil)
-		dialog.Show()
-		time.Sleep(time.Second)
-		dialog.Show()
-		// logger.Infof("","on click system tray")
-		// logger.Infof("",app.CurrentWindow().IsVisible())
-		// if app.CurrentWindow().IsVisible() {
-		// 	app.Hide()
-		// } else {
-		// 	app.Show()
-		// }
 	})
 
 	// Create a new window with the necessary options.
@@ -139,7 +118,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	keyboardProcess()
 }
 
 // main function serves as the application's entry point. It initializes the application, creates a window,
@@ -389,7 +367,8 @@ func void() {
 func toggleControlMode() {
 	base.SetMode(1 - base.GetMode())
 	logger.Infof("", "toggle mode to:%d", base.GetMode())
-	// ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
+	ui.Message(fmt.Sprintf("change to: %s mode", base.GetModeDesc()))
+	ui.ToggleTrayIcon()
 }
 
 // func ToggleOptionView(wParam uintptr, vkCode, scanCode uint32) uintptr {
