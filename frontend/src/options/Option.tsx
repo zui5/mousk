@@ -1,7 +1,7 @@
 
 import { Events, WML } from "@wailsio/runtime";
 import { Layout, Menu, theme, type MenuProps } from 'antd';
-import { Content, Footer, Header } from "antd/es/layout/layout";
+import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import React, { useEffect, useState } from 'react';
 import About from "../about/About";
@@ -47,28 +47,21 @@ const Option: React.FC = () => {
   const CurrentComponent = GetCurrentComponent(current);
 
   return (
-    <Layout className="h-screen" style={{ minHeight: '100vh' }}>
+    <Layout className="h-screen " >
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-        <div className="demo-logo-vertical" />
+        {/* <div className="bg-red-500" /> */}
         <Menu theme="dark" defaultSelectedKeys={['General']} onClick={onClick} mode="inline" items={items} />
       </Sider>
-      <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
-        <Content style={{ margin: '0 16px' }}>
-          <div
-            style={{
-              padding: 24,
-              minHeight: 360,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
+      <Layout className="h-full w-full">
+        {/* <Header className="bg-red-800"/> */}
+        <Content  className = "w-full h-full" >
+          <div className="w-full h-full" >
             <CurrentComponent />
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>
+        {/* <Footer className="bg-purple-500" style={{ textAlign: 'center' }}>
           Ant Design ©{new Date().getFullYear()} Created by Ant UED
-        </Footer>
+        </Footer> */}
       </Layout>
     </Layout>
   );

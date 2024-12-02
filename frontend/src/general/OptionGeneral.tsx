@@ -15,7 +15,7 @@ const General: React.FC = (props) => {
     }, []);
 
     return (
-        <div>fuck general content</div>
+        <div className="w-full h-full">fuck general content1a12123123---123123i</div>
     )
 
 }

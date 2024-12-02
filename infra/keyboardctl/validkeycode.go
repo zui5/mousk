@@ -347,44 +347,45 @@ var validNameKeycodeMap = map[string]uint32{
 	"LAUNCH_APP2":         183, //启动应用程序2键
 	"OEM_1":               186, //;:
 	"OEM_PLUS":            187, //:+
-	"OEM_COMMA":           188,
-	"OEM_MINUS":           189, //-_
-	"OEM_PERIOD":          190,
-	"OEM_2":               191, ///?
-	"OEM_3":               192, //`~
-	"OEM_4":               219, //[{
-	"OEM_5":               220, //\ |
-	"OEM_6":               221, //]}
-	"OEM_7":               222, //'"
-	"OEM_8":               223,
-	"OEM_102":             226,
-	"ICO_HELP":            227,
-	"ICO_00":              228,
-	"PROCESSKEY":          229,
-	"ICO_CLEAR":           230,
-	"PACKET":              231,
-	"OEM_RESET":           233,
-	"OEM_JUMP":            234,
-	"OEM_PA1":             235,
-	"OEM_PA2":             236,
-	"OEM_PA3":             237,
-	"OEM_WSCTRL":          238,
-	"OEM_CUSEL":           239,
-	"OEM_ATTN":            240,
-	"OEM_FINISH":          241,
-	"OEM_COPY":            242,
-	"OEM_AUTO":            243,
-	"OEM_ENLW":            244,
-	"OEM_BACKTAB":         245,
-	"ATTN":                246,
-	"CRSEL":               247,
-	"EXSEL":               248,
-	"EREOF":               249,
-	"PLAY":                250,
-	"ZOOM":                251,
-	"NONAME":              252,
-	"PA1":                 253,
-	"OEM_CLEAR":           254,
+	// "OEM_COMMA":           188,
+	"COMMA":       188,
+	"OEM_MINUS":   189, //-_
+	"OEM_PERIOD":  190,
+	"OEM_2":       191, ///?
+	"OEM_3":       192, //`~
+	"OEM_4":       219, //[{
+	"OEM_5":       220, //\ |
+	"OEM_6":       221, //]}
+	"OEM_7":       222, //'"
+	"OEM_8":       223,
+	"OEM_102":     226,
+	"ICO_HELP":    227,
+	"ICO_00":      228,
+	"PROCESSKEY":  229,
+	"ICO_CLEAR":   230,
+	"PACKET":      231,
+	"OEM_RESET":   233,
+	"OEM_JUMP":    234,
+	"OEM_PA1":     235,
+	"OEM_PA2":     236,
+	"OEM_PA3":     237,
+	"OEM_WSCTRL":  238,
+	"OEM_CUSEL":   239,
+	"OEM_ATTN":    240,
+	"OEM_FINISH":  241,
+	"OEM_COPY":    242,
+	"OEM_AUTO":    243,
+	"OEM_ENLW":    244,
+	"OEM_BACKTAB": 245,
+	"ATTN":        246,
+	"CRSEL":       247,
+	"EXSEL":       248,
+	"EREOF":       249,
+	"PLAY":        250,
+	"ZOOM":        251,
+	"NONAME":      252,
+	"PA1":         253,
+	"OEM_CLEAR":   254,
 }
 
 func GetCodeByName(name string) uint32 {

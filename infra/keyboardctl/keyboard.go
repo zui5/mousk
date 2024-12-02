@@ -352,7 +352,7 @@ func StatusCheckNew(vkCodes []uint32, pressed int) bool {
 	}
 	for _, v := range vkCodes {
 		keyState, ok := keyPressedStates[v]
-		// logger.Infof("", "key status check param:%+v, key:%s, keystate:%+v", GetNamesByCodes(vkCodes), GetNameByCode(v), keyState)
+		logger.Infof("", "key status check param:%+v, key:%s, keystate:%+v", GetNamesByCodes(vkCodes), GetNameByCode(v), keyState)
 		if !ok {
 			keyState = nilKeyState()
 		}

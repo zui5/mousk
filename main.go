@@ -58,13 +58,7 @@ func main() {
 
 	ui.InitWrapper(app)
 
-	tray := ui.TrayInstance
-	// tray.SetIcon(ui.DefaultWindowsIcon)
 	trayMenu := application.NewMenu()
-
-	// TODO remove it
-	// StartOptionView()
-
 	optionMenu := trayMenu.Add("Options")
 	optionMenu.OnClick(func(ctx *application.Context) {
 		logger.Infof("", "enter option menu ")
@@ -76,7 +70,7 @@ func main() {
 		logger.Infof("", "tray menu exit")
 		os.Exit(0)
 	})
-
+	tray := ui.TrayInstance
 	tray.SetMenu(trayMenu)
 	tray.OnClick(func() {
 		toggleControlMode()
@@ -253,9 +247,9 @@ func keyboardProcess() {
 	vkCodesTmpQuitMode := ts(settings.PresetFunc.TmpQuitMode)
 	keyboardctl.RegisterOne(TmpQuitControlMode, 0, vkCodesTmpQuitMode...)
 
-	// space+comma : open setting panel
-	// vkCodesOpenSetting := ts(settings.PresetFunc.OpenSetting)
-	// keyboardctl.RegisterOne(ToggleOptionView,0, vkCodesOpenSetting...)
+	// alt+comma : open setting panel
+	vkCodesOpenSetting := ts(settings.PresetFunc.OpenSetting)
+	keyboardctl.RegisterNormal(ToggleOptionView, 0, vkCodesOpenSetting...)
 
 	// 1\2\3\4\5 : in ModeControl, control the speed of your mouse move
 	vkCodesMulitiSpeedLevel := [][]uint32{{keyboardctl.VK_1}, {keyboardctl.VK_2}, {keyboardctl.VK_3}, {keyboardctl.VK_4}, {keyboardctl.VK_5}}
@@ -371,14 +365,14 @@ func toggleControlMode() {
 	ui.ToggleTrayIcon()
 }
 
-// func ToggleOptionView(wParam uintptr, vkCode, scanCode uint32) uintptr {
-// 	if base.ToggleOptionViewState() {
-// 		StartOptionView()
-// 	} else {
-// 		HideOptionView()
-// 	}
-// 	return 1
-// }
+func ToggleOptionView(wParam uintptr, vkCode, scanCode uint32) uintptr {
+	if base.ToggleOptionViewState() {
+		StartOptionView()
+	} else {
+		HideOptionView()
+	}
+	return 1
+}
 
 func StartControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	logger.Infof("", "current mode:%d", base.GetMode())
