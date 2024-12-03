@@ -11,6 +11,7 @@ import (
 	"mousk/infra/mousectl"
 	"mousk/infra/ui"
 	"mousk/infra/util"
+	"mousk/service"
 	"os"
 	"time"
 
@@ -40,6 +41,7 @@ func main() {
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
 			application.NewService(&GreetService{}),
+			application.NewService(&service.StartupService{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -47,14 +49,7 @@ func main() {
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
-		// Plugins: map[string]application.Plugin{
-		// 	"start_at_login": start_at_login.NewPlugin(),
-		// },
 	})
-	// start_at_login := start_at_login.NewPlugin(start_at_login.Config{
-	// 	RegistryKey: "mousk.exe",
-	// })
-	// start_at_login.StartAtLogin(true)
 
 	ui.InitWrapper(app)
 

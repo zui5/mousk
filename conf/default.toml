@@ -1,12 +1,13 @@
 StartOnSystemUp = true
+
 [PresetFunc]
+  ForceQuit = ["LCONTROL", "LSHIFT", "A"]
   ActiveMode = ["LALT", "0"]
-  QuitMode = ["LALT", "0"]
+  ResetSetting = ["LALT", "R"]
   ToggleControlMode = ["LALT", "0"]
   TmpQuitMode = ["Q"]
+  QuitMode = ["LALT", "0"]
   OpenSetting = ["LALT", "COMMA"]
-  ResetSetting = ["LALT","R"]
-  ForceQuit = ["LCONTROL","LSHIFT","A"]
   [PresetFunc.MouseMove]
     [PresetFunc.MouseMove.Fast]
       Down = ["J"]
@@ -19,7 +20,7 @@ StartOnSystemUp = true
       Right = ["D"]
       Up = ["W"]
     [PresetFunc.MouseMove.SpeedLevel]
-      LevelSwitch = [1,8,24,48,64]
+      LevelSwitch = [1, 8, 24, 48, 64]
   [PresetFunc.MouseScroll]
     [PresetFunc.MouseScroll.Fast]
       Down = ["LSHIFT", "J"]
@@ -32,7 +33,7 @@ StartOnSystemUp = true
       Right = ["LSHIFT", "D"]
       Up = ["LSHIFT", "W"]
     [PresetFunc.MouseScroll.SpeedLevel]
-      LevelSwitch = [1,8,24,48,64]
+      LevelSwitch = [1, 8, 24, 48, 64]
   [PresetFunc.MouseLeftButtonClick]
     Primary = "I"
     Secondary = "R"

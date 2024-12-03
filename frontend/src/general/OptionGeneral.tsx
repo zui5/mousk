@@ -1,6 +1,7 @@
 import { Events, WML } from "@wailsio/runtime";
 import { Card, Input, Radio, Typography } from "antd";
 import { useEffect, useState } from "react";
+import { StartupService } from "../../bindings/mousk/service";
 
 function setTime(data: any) {
     throw new Error("Function not implemented.");
@@ -11,14 +12,20 @@ const General: React.FC = (props) => {
         Events.On('time', (timeValue: any) => {
             setTime(timeValue.data);
         });
+
+        const loadData = async () => {
+            setAutoStart(await StartupService.StartupState())
+        };
+        loadData();
         // Reload WML so it picks up the wml tags
         WML.Reload();
     }, []);
 
-    const [autoStart, setAutoStart] = useState('');
+    const [autoStart, setAutoStart] = useState(false);
 
     const handleAutoStartChange = (e) => {
-        console.log("auto start",e)
+        console.log("auto start", e.target.value)
+        StartupService.Startup(e.target.value)
         setAutoStart(e.target.value);
     };
     return (
@@ -30,8 +37,8 @@ const General: React.FC = (props) => {
                 <div className="mt-6 text-left">
                     <Paragraph strong>是否随系统启动</Paragraph>
                     <Radio.Group onChange={handleAutoStartChange} value={autoStart} className="block mt-2">
-                        <Radio value={'yes'}>是</Radio>
-                        <Radio value={'no'} className="ml-6">否</Radio>
+                        <Radio value={true}>是</Radio>
+                        <Radio value={false} className="ml-6">否</Radio>
                     </Radio.Group>
                 </div>
 
