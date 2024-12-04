@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"mousk/infra/base"
 	"os"
 
 	"github.com/natefinch/lumberjack"
@@ -35,16 +36,15 @@ func init() {
 	// logFile, _ := os.OpenFile("./log-debug-zap.json", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666) //日志记录debug信息
 	// errFile, _ := os.OpenFile("./log-err-zap.json", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666) //日志记录error信息
 	fileCore := zapcore.AddSync(lumberjacklogger)
-	consoleCore := zapcore.AddSync(os.Stdout)
 	// multiSyncer := zapcore.NewMultiWriteSyncer(fileCore, consoleCore)
 
-	teecore := zapcore.NewTee(
-		// zapcore.NewCore(fileEncoder, zapcore.AddSync(logFile), zap.DebugLevel),
-		// zapcore.NewCore(fileEncoder, zapcore.AddSync(errFile), zap.ErrorLevel),
-		zapcore.NewCore(fileEncoder, fileCore, zap.DebugLevel),
-		zapcore.NewCore(fileEncoder, consoleCore, zap.DebugLevel),
-	)
-
+	coreList := make([]zapcore.Core, 0)
+	coreList = append(coreList, zapcore.NewCore(fileEncoder, fileCore, zap.DebugLevel))
+	if !base.IsProduct() {
+		consoleCore := zapcore.AddSync(os.Stdout)
+		coreList = append(coreList, zapcore.NewCore(fileEncoder, consoleCore, zap.DebugLevel))
+	}
+	teecore := zapcore.NewTee(coreList...)
 	instance = zap.New(teecore, zap.AddCaller(), zap.AddCallerSkip(1)).Sugar()
 	defer instance.Sync()
 

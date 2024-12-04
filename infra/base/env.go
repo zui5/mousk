@@ -58,6 +58,10 @@ func GetMode() int {
 	return mode
 }
 
+func IsProduct() bool {
+	return config.GetSettings().ENV == "product"
+}
+
 func GetModeDesc() string {
 	switch mode {
 	case 0:
