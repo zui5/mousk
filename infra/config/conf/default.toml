@@ -1,0 +1,45 @@
+StartOnSystemUp = true
+
+[PresetFunc]
+  ForceQuit = ["LCONTROL", "LSHIFT", "A"]
+  ActiveMode = ["LALT", "0"]
+  ResetSetting = ["LALT", "R"]
+  ToggleControlMode = ["LALT", "0"]
+  TmpQuitMode = ["Q"]
+  QuitMode = ["LALT", "0"]
+  OpenSetting = ["LALT", "COMMA"]
+  [PresetFunc.MouseMove]
+    [PresetFunc.MouseMove.Fast]
+      Down = ["J"]
+      Left = ["H"]
+      Right = ["L"]
+      Up = ["K"]
+    [PresetFunc.MouseMove.Slow]
+      Down = ["S"]
+      Left = ["A"]
+      Right = ["D"]
+      Up = ["W"]
+    [PresetFunc.MouseMove.SpeedLevel]
+      LevelSwitch = [1, 8, 24, 48, 64]
+  [PresetFunc.MouseScroll]
+    [PresetFunc.MouseScroll.Fast]
+      Down = ["LSHIFT", "J"]
+      Left = ["LSHIFT", "H"]
+      Right = ["LSHIFT", "L"]
+      Up = ["LSHIFT", "K"]
+    [PresetFunc.MouseScroll.Slow]
+      Down = ["LSHIFT", "S"]
+      Left = ["LSHIFT", "A"]
+      Right = ["LSHIFT", "D"]
+      Up = ["LSHIFT", "W"]
+    [PresetFunc.MouseScroll.SpeedLevel]
+      LevelSwitch = [1, 8, 24, 48, 64]
+  [PresetFunc.MouseLeftButtonClick]
+    Primary = "I"
+    Secondary = "R"
+  [PresetFunc.MouseRightButtonClick]
+    Primary = "O"
+    Secondary = "T"
+  [PresetFunc.MouseLeftButtonHold]
+    Primary = "C"
+    Secondary = "N"

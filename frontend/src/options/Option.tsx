@@ -29,7 +29,7 @@ const Option: React.FC = () => {
   const [current, setCurrent] = useState('General');
   const [collapsed, setCollapsed] = useState(false);
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    // token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
   const onClick: MenuProps['onClick'] = (e) => {

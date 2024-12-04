@@ -1,12 +1,15 @@
 package config
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"mousk/common/logger"
 	"os"
 	"os/user"
 	"path/filepath"
+
+	_ "embed"
 
 	"github.com/BurntSushi/toml"
 )
@@ -19,6 +22,9 @@ var (
 	ModeLoadFromDefault Mode = Mode(0)
 	ModeLoadFromUser    Mode = Mode(1)
 )
+
+//go:embed conf/default.toml
+var defaultConfigFile []byte
 
 var defaultFilePath = "./conf/default.toml"
 
@@ -119,14 +125,8 @@ type Settings struct {
 }
 
 func Init() {
-	// TODO
-	// if InitConfigFile() != nil {
-	// 	log.Fatalf("init config file error")
-	// 	return
-	// }
-
-	if LoadSettingsFromFile(ModeLoadFromDefault) != nil {
-		log.Fatalf("load config file error")
+	if initConfigFile() != nil {
+		log.Fatalf("init config file error")
 		return
 	}
 }
@@ -134,16 +134,21 @@ func Init() {
 func LoadSettingsFromFile(mode Mode) error {
 	var filePath string
 	var err error
-	if mode == 0 {
-		filePath = getEmbededConfigPath()
-	} else if mode == 1 {
+	if mode == 1 {
 		_, filePath, err = getUserConfigPath()
-	}
-	if err != nil {
-		return err
-	}
-	if _, err := toml.DecodeFile(filePath, &settingsVar); err != nil {
-		return fmt.Errorf("decoding TOML:%+v", err)
+		fmt.Println("config file path:" + filePath)
+		if _, err = toml.DecodeFile(filePath, &settingsVar); err != nil {
+			log.Fatalf("decode config file error:%+v", err)
+			return fmt.Errorf("decoding TOML:%+v", err)
+		}
+	} else if mode == 0 {
+		// toml.DecodeReader(io.ByteReader(), v any)
+		if _, err = toml.NewDecoder(bytes.NewReader(defaultConfigFile)).Decode(&settingsVar); err != nil {
+			log.Fatalf("decode default config file error:%+v", err)
+			return fmt.Errorf("decoding TOML:%+v", err)
+		}
+	} else {
+		return fmt.Errorf("not valid mode:%d", mode)
 	}
 
 	// 输出生成的结构体
@@ -156,7 +161,10 @@ func GetSettings() *Settings {
 }
 
 func WriteSettings() error {
-	filePath := getEmbededConfigPath()
+	_, filePath, err := getUserConfigPath()
+	if err != nil {
+		return err
+	}
 	// 打开文件
 	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
@@ -170,9 +178,9 @@ func WriteSettings() error {
 	return nil
 }
 
-func getEmbededConfigPath() string {
-	return defaultFilePath
-}
+// func getEmbededConfigPath() string {
+// 	return defaultFilePath
+// }
 
 func getUserConfigPath() (string, string, error) {
 	// 获取当前用户的主目录
@@ -187,7 +195,7 @@ func getUserConfigPath() (string, string, error) {
 	return configDir, filePath, nil
 }
 
-func InitConfigFile() error {
+func initConfigFile() error {
 	// 构建文件路径
 	configDir, filePath, err := getUserConfigPath()
 	if err != nil {
@@ -207,7 +215,6 @@ func InitConfigFile() error {
 			return fmt.Errorf("creating file:%+v", err)
 		}
 		defer file.Close()
-
 		err = RestoreSettings()
 		if err != nil {
 			return err
@@ -224,7 +231,6 @@ func InitConfigFile() error {
 }
 
 func RestoreSettings() error {
-
 	if err := LoadSettingsFromFile(ModeLoadFromDefault); err != nil {
 		return fmt.Errorf("decoding TOML:%+v", err)
 	}

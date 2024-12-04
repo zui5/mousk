@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	fileName = "./dist/app.log"
+	fileName = "./dist/mousk.log"
 )
 
 var (
