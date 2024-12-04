@@ -2,7 +2,6 @@ package logger
 
 import (
 	"fmt"
-	"mousk/infra/base"
 	"os"
 
 	"github.com/natefinch/lumberjack"
@@ -15,8 +14,13 @@ const (
 )
 
 var (
-	instance *zap.SugaredLogger = nil
+	instance     *zap.SugaredLogger = nil
+	consoleOuput                    = false
 )
+
+func SetConsoleOutput(b bool) {
+	consoleOuput = b
+}
 
 func init() {
 	lumberjacklogger := &lumberjack.Logger{
@@ -40,7 +44,7 @@ func init() {
 
 	coreList := make([]zapcore.Core, 0)
 	coreList = append(coreList, zapcore.NewCore(fileEncoder, fileCore, zap.DebugLevel))
-	if !base.IsProduct() {
+	if consoleOuput {
 		consoleCore := zapcore.AddSync(os.Stdout)
 		coreList = append(coreList, zapcore.NewCore(fileEncoder, consoleCore, zap.DebugLevel))
 	}

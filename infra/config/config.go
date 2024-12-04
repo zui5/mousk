@@ -130,6 +130,8 @@ func Init() {
 		log.Fatalf("init config file error")
 		return
 	}
+
+	logger.SetConsoleOutput(GetSettings().ENV == "product")
 }
 
 func LoadSettingsFromFile(mode Mode) error {
