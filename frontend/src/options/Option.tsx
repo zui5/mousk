@@ -1,6 +1,6 @@
 
 import { Events, WML } from "@wailsio/runtime";
-import { Layout, Menu, theme, type MenuProps } from 'antd';
+import { Layout, Menu, MenuTheme, Switch, type MenuProps } from 'antd';
 import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import React, { useEffect, useState } from 'react';
@@ -11,7 +11,7 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 const items: MenuItem[] = [
   { key: 'General', label: 'General' },
-  { key: 'Keymap', label: 'Keymap' },
+  // { key: 'Keymap', label: 'Keymap' },
   { key: 'About', label: 'About' },
 ];
 
@@ -28,9 +28,9 @@ const Option: React.FC = () => {
   const [, setTime] = useState<string>('Listening for Time event...');
   const [current, setCurrent] = useState('General');
   const [collapsed, setCollapsed] = useState(false);
-  const {
-    // token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  // const {
+  //   token: { colorBgContainer, borderRadiusLG },
+  // } = theme.useToken();
 
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
@@ -45,16 +45,28 @@ const Option: React.FC = () => {
   }, []);
 
   const CurrentComponent = GetCurrentComponent(current);
+  const [theme, setTheme] = useState<MenuTheme>('dark');
+
+  const changeTheme = (value: boolean) => {
+    setTheme(value ? 'dark' : 'light');
+  };
 
   return (
     <Layout className="h-screen " >
-      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-        {/* <div className="bg-red-500" /> */}
-        <Menu theme="dark" defaultSelectedKeys={['General']} onClick={onClick} mode="inline" items={items} />
+      <Sider className="flex-auto " theme={theme} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+        <Switch
+        className="my-2 mx-6"
+          checked={theme === 'dark'}
+          onChange={changeTheme}
+          checkedChildren="Dark"
+          unCheckedChildren="Light"
+        />
+        <br />
+        <Menu className="text-left" theme={theme} defaultSelectedKeys={['General']} onClick={onClick} mode="inline" items={items} />
       </Sider>
       <Layout className="h-full w-full">
         {/* <Header className="bg-red-800"/> */}
-        <Content  className = "w-full h-full" >
+        <Content className="w-full h-full" >
           <div className="w-full h-full" >
             <CurrentComponent />
           </div>

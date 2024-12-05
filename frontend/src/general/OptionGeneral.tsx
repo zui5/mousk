@@ -23,31 +23,32 @@ const General: React.FC = (props) => {
 
     const [autoStart, setAutoStart] = useState(false);
 
+
     const handleAutoStartChange = (e) => {
         console.log("auto start", e.target.value)
         StartupService.Startup(e.target.value)
         setAutoStart(e.target.value);
     };
     return (
-        <div className="bg-yellow-400 min-h-screen flex items-center justify-center">
-            <Card className="w-full max-w-md text-center rounded-lg shadow-lg p-8">
-                <Title level={2}>Mousk</Title>
-                <Paragraph type="secondary">作者：zui5</Paragraph>
+        // <div className=" bg-slate-100 min-h-screen flex items-center justify-center">
+        <Card className="w-auto h-full text-center rounded-lg shadow-lg p-8">
+            <Title level={2}>Mousk.</Title>
+            {/* <Paragraph type="secondary">作者：zui5</Paragraph> */}
 
-                <div className="mt-6 text-left">
-                    <Paragraph strong>是否随系统启动</Paragraph>
-                    <Radio.Group onChange={handleAutoStartChange} value={autoStart} className="block mt-2">
-                        <Radio value={true}>是</Radio>
-                        <Radio value={false} className="ml-6">否</Radio>
-                    </Radio.Group>
-                </div>
+            <div className="mt-6 text-left">
+                <Paragraph strong>是否随系统启动</Paragraph>
+                <Radio.Group onChange={handleAutoStartChange} value={autoStart} className="block mt-2">
+                    <Radio value={true}>是</Radio>
+                    <Radio value={false} className="ml-6">否</Radio>
+                </Radio.Group>
+            </div>
 
-                <div className="mt-6 text-left">
-                    <Paragraph strong>其他选项</Paragraph>
-                    <Input placeholder="留白" className="mt-2" />
-                </div>
-            </Card>
-        </div>
+            <div className="mt-6 text-left">
+                <Paragraph strong>其他选项</Paragraph>
+                <Input placeholder="留白" className="mt-2" />
+            </div>
+        </Card>
+        // </div>
     )
 
 }
