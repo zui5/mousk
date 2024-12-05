@@ -6,7 +6,7 @@
         <key>CFBundleName</key>
         <string>My Product</string>
         <key>CFBundleExecutable</key>
-        <string>mousk</string>
+        <string>mousk.exe</string>
         <key>CFBundleIdentifier</key>
         <string>com.wails.mousk</string>
         <key>CFBundleVersion</key>
