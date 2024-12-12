@@ -1,59 +1,54 @@
-# Welcome to Your New Wails3 Project!
+# Keyboard-Controlled Mouse Project
 
-Congratulations on generating your Wails3 application! This README will guide you through the next steps to get your project up and running.
+This project allows you to control your mouse using your keyboard, providing a variety of functions such as moving the mouse cursor, simulating mouse scrolls, and clicking mouse buttons. The project is designed to run on Windows.
 
-## Getting Started
+## Supported Platforms
 
-1. Navigate to your project directory in the terminal.
+- **Windows** (Only supported platform currently)
 
-2. To run your application in development mode, use the following command:
+## Installation
 
-   ```
-   wails3 dev
-   ```
+1. Ensure you are running a Windows operating system.
+2. Run the executable or script provided in the repository.
 
-   This will start your application and enable hot-reloading for both frontend and backend changes.
 
-3. To build your application for production, use:
+## Most Important
 
-   ```
-   wails3 build
-   ```
+After start the application, the app will in normal mode by default. You can toggle to control mode by pressing `Left Alt + 0`. In normal mode, the keyboard will function as usual without affecting mouse operations. Only in control mode will the keyboard simulate mouse actions.
 
-   This will create a production-ready executable in the `build` directory.
+## Control Mode Features
 
-## Exploring Wails3 Features
+- **General Controls**:
+  - Toggle Mode: `LALT + 0`
+  - Open Settings: `SPACE + COMMA`
+  - Reset Settings: `LALT + R`
+  - Force Quit: `LCONTROL + LSHIFT + A`
+  - Temporary Quit Controle Mode(Only in controle mode): `Q`
 
-Now that you have your project set up, it's time to explore the features that Wails3 offers:
+- **Mouse Movement**:
+  - Fast mode: Use `J`, `H`, `L`, `K` for down, left, right, and up respectively.
+  - Slow mode: Use `S`, `A`, `D`, `W` for down, left, right, and up respectively.
+  - **Speed levels**: Use `1`, `2`, `3`, `4`, `5` to switch between speed levels, `5` is highest.
 
-1. **Check out the examples**: The best way to learn is by example. Visit the `examples` directory in the `v3/examples` directory to see various sample applications.
+- **Mouse Scroll Simulation**:
+  - Fast mode: Use `LSHIFT + J`, `LSHIFT + H`, `LSHIFT + L`, `LSHIFT + K` for down, left, right, and up respectively.
+  - Slow mode: Use `LSHIFT + S`, `LSHIFT + A`, `LSHIFT + D`, `LSHIFT + W` for down, left, right, and up respectively.
+  - **Speed levels**: Use `Shift + 1`, `Shift + 2`, `Shift + 3`, `Shift + 4`, `Shift + 5` to switch between speed levels `Shift + 5` is highest.
 
-2. **Run an example**: To run any of the examples, navigate to the example's directory and use:
+- **Mouse Clicks**:
+  - Left Button Click: Primary - `I`, Secondary - `R`.
+  - Right Button Click: Primary - `O`, Secondary - `T`.
+  - Left Button Hold (C/N hold mouse, then H/J/K/L do the movement): Primary - `C`, Secondary - `N`.
 
-   ```
-   go run .
-   ```
 
-   Note: Some examples may be under development during the alpha phase.
+## Configuration
 
-3. **Explore the documentation**: Visit the [Wails3 documentation](https://v3alpha.wails.io/) for in-depth guides and API references.
+You can customize the key bindings by editing the configuration file included in the repository.
 
-4. **Join the community**: Have questions or want to share your progress? Join the [Wails Discord](https://discord.gg/JDdSxwjhGf) or visit the [Wails discussions on GitHub](https://github.com/wailsapp/wails/discussions).
+## Usage Example
 
-## Project Structure
-
-Take a moment to familiarize yourself with your project structure:
-
-- `frontend/`: Contains your frontend code (HTML, CSS, JavaScript/TypeScript)
-- `main.go`: The entry point of your Go backend
-- `app.go`: Define your application structure and methods here
-- `wails.json`: Configuration file for your Wails project
-
-## Next Steps
-
-1. Modify the frontend in the `frontend/` directory to create your desired UI.
-2. Add backend functionality in `main.go`.
-3. Use `wails3 dev` to see your changes in real-time.
-4. When ready, build your application with `wails3 build`.
-
-Happy coding with Wails3! If you encounter any issues or have questions, don't hesitate to consult the documentation or reach out to the Wails community.
+1. Start the application.
+2. Press `Left Alt + 0` to switch to control mode.
+3. Use the defined key bindings to control mouse movements, scrolls, and clicks:
+   - **Mouse Movement Speed**: Press `1`, `2`, `3`, `4`, `5` to switch between different movement speeds.
+   - **Mouse Scroll Speed**: Press `Shift + 1`, `Shift + 2`, `Shift + 3`, `Shift + 4`, `Shift + 5
