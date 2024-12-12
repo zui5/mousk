@@ -74,7 +74,7 @@ func initHelperDialogWindow() *application.WebviewWindow {
 	diaglogView := application.NewWindow(application.WebviewWindowOptions{
 		Name:              "helper",
 		Width:             1000,
-		Height:            700,
+		Height:            750,
 		AlwaysOnTop:       true,
 		EnableDragAndDrop: true,
 		DisableResize:     true,
