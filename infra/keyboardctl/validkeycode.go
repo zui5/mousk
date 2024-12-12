@@ -157,7 +157,7 @@ var validKeycodeNameMap = map[uint32]string{
 	// 186: "OEM_1",               //;:
 	// 187: "OEM_PLUS",            //:+
 	// 189: "OEM_MINUS", //-_
-	// 190: "OEM_PERIOD",
+	190: "PERIOD",
 	// 191: "OEM_2", ///?
 	// 192: "OEM_3", //`~
 	// 219: "OEM_4", //[{
@@ -350,7 +350,7 @@ var validNameKeycodeMap = map[string]uint32{
 	// "OEM_COMMA":           188,
 	"COMMA":       188,
 	"OEM_MINUS":   189, //-_
-	"OEM_PERIOD":  190,
+	"PERIOD":      190,
 	"OEM_2":       191, ///?
 	"OEM_3":       192, //`~
 	"OEM_4":       219, //[{

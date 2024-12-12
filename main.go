@@ -219,7 +219,7 @@ func main() {
 
 func keyboardProcess() {
 	// load config
-	config.Init()
+	// config.Init()
 	var ts = keyboardctl.GetCodesByNames
 	var ta = keyboardctl.GetCodeByName
 	settings := config.GetSettings()
@@ -228,15 +228,20 @@ func keyboardProcess() {
 	vkCodesToggleControlMode := ts(settings.PresetFunc.ActiveMode)
 	keyboardctl.RegisterNormal(ToggleControlMode, 0, vkCodesToggleControlMode...)
 
+	// alt+periot : help pane
+	vkCodesHelpPane := ts(settings.PresetFunc.HelpPane)
+	keyboardctl.RegisterNormal(ToggleHelpPane, 0, vkCodesHelpPane...)
+	// keyboardctl.RegisterWithReleaseEventMulti(cb keyboardctl.Callback2, prority int, mulitiVkCodes ...[]uint32)
+
 	// 屏蔽部分按键
 	keyboardctl.RegisterMulti(BlockKey, -1, keyboardctl.ExportAllCodes()...)
 
 	vkCodesForceQuit := ts(settings.PresetFunc.ForceQuit)
 	keyboardctl.RegisterNormal(ForceQuit, 0, vkCodesForceQuit...)
 
-	// // alt+r: reset setting
-	// vkCodesResetSetting := ts(settings.PresetFunc.ResetSetting)
-	// keyboardctl.RegisterNormal(ResetSetting,0, vkCodesResetSetting...)
+	// alt+r: reset setting
+	vkCodesResetSetting := ts(settings.PresetFunc.ResetSetting)
+	keyboardctl.RegisterNormal(ResetSetting, 0, vkCodesResetSetting...)
 
 	// Q : tmp quit
 	vkCodesTmpQuitMode := ts(settings.PresetFunc.TmpQuitMode)
@@ -503,4 +508,15 @@ func ForceQuit(wParam uintptr, vkCode, scanCode uint32) uintptr {
 
 func BlockKey(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	return 1
+}
+
+func ToggleHelpPane(wParam uintptr, vkCode, scanCode uint32) uintptr {
+	toggleHelpPane()
+	return 1
+}
+
+func toggleHelpPane() {
+	base.SetHelperMode(1 - base.GetHelperMode())
+	logger.Infof("", "toggle helper mode to:%d", base.GetMode())
+	ui.ToggleHelper(fmt.Sprintf("change to: %s helper mode", base.GetModeDesc()), base.GetHelperMode())
 }

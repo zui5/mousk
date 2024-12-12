@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"mousk/infra/base"
 	"os"
 
 	"github.com/natefinch/lumberjack"
@@ -23,6 +24,8 @@ func SetConsoleOutput(b bool) {
 }
 
 func init() {
+	consoleOuput = !base.IsProduct()
+
 	lumberjacklogger := &lumberjack.Logger{
 		Filename:   fileName,
 		MaxSize:    1, // megabytes

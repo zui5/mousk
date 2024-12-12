@@ -4,6 +4,7 @@ import "mousk/infra/config"
 
 var (
 	mode              = 0 // 0:normal, 1:control
+	showHelper        = 0 // 0:normal, 1:control
 	moveSpeedLevel    = 3 // the speed of you mouse movement
 	scrollSpeedLevel  = 3 // the speed of you mouse scroll
 	optionViewVisable = false
@@ -53,11 +54,16 @@ func GetScrollSpeed() int {
 func SetMode(modeArg int) {
 	mode = modeArg
 }
-
 func GetMode() int {
 	return mode
 }
 
+func SetHelperMode(modeArg int) {
+	showHelper = modeArg
+}
+func GetHelperMode() int {
+	return showHelper
+}
 func IsProduct() bool {
 	return config.GetSettings().ENV == "product"
 }

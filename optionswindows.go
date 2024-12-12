@@ -21,7 +21,7 @@ func StartOptionView() {
 			Title:             "Options",
 			Width:             800,
 			Height:            600,
-			AlwaysOnTop:       false,
+			AlwaysOnTop:       true,
 			URL:               "#/option",
 			DisableResize:     true,
 			EnableDragAndDrop: true,

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"mousk/infra/config"
 	"mousk/infra/mousectl"
 	"testing"
 	"time"
@@ -27,7 +26,7 @@ func Test_keyboardProcess(t *testing.T) {
 
 func TestScrollMouseFunc(t *testing.T) {
 	time.Sleep(2 * time.Second)
-	config.Init()
+	// config.Init()
 	fmt.Println("hah1")
 	mousectl.ScrollMouseCtrl(mousectl.DirectionVerticalDown, 2)
 	time.Sleep(time.Second)

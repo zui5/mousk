@@ -1,7 +1,10 @@
+StartOnSystENV = "test"
+VER = 0.1
 StartOnSystemUp = true
 
 [PresetFunc]
   ForceQuit = ["LCONTROL", "LSHIFT", "A"]
+  HelpPane = ["LALT", "PERIOD"]
   ActiveMode = ["LALT", "0"]
   ResetSetting = ["LALT", "R"]
   ToggleControlMode = ["LALT", "0"]

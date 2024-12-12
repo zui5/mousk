@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"mousk/common/logger"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -66,9 +65,11 @@ const (
 // }
 
 type Settings struct {
-	ENV             string `toml:"ENV"`
-	StartOnSystemUp bool   `toml:"StartOnSystemUp"`
+	ENV             string  `toml:"ENV"`
+	VER             float64 `toml:"VER"`
+	StartOnSystemUp bool    `toml:"StartOnSystemUp"`
 	PresetFunc      struct {
+		HelpPane          []string `toml:"HelpPane"`
 		ForceQuit         []string `toml:"ForceQuit"`
 		ActiveMode        []string `toml:"ActiveMode"`
 		ResetSetting      []string `toml:"ResetSetting"`
@@ -125,13 +126,11 @@ type Settings struct {
 	} `toml:"PresetFunc"`
 }
 
-func Init() {
+func init() {
 	if initConfigFile() != nil {
 		log.Fatalf("init config file error")
 		return
 	}
-
-	logger.SetConsoleOutput(GetSettings().ENV == "product")
 }
 
 func LoadSettingsFromFile(mode Mode) error {
@@ -155,7 +154,8 @@ func LoadSettingsFromFile(mode Mode) error {
 	}
 
 	// 输出生成的结构体
-	logger.Infof("", "%#v", settingsVar)
+	// log.Infof("", "%#v", settingsVar)
+	log.Printf("setting var:%#v", settingsVar)
 	return nil
 }
 
@@ -222,13 +222,15 @@ func initConfigFile() error {
 		if err != nil {
 			return err
 		}
-		logger.Infof("", "Config file created at:", filePath)
+		// logger.Infof("", "Config file created at:", filePath)
+		log.Printf("Config file created at:%s", filePath)
 	} else {
 		err = LoadSettingsFromFile(ModeLoadFromUser)
 		if err != nil {
 			return err
 		}
-		logger.Infof("", "Config file already exists at:", filePath)
+		// logger.Infof("", "Config file already exists at:", filePath)
+		log.Printf("Config file already exists at:%s", filePath)
 	}
 	return nil
 }
@@ -238,7 +240,8 @@ func RestoreSettings() error {
 		return fmt.Errorf("decoding TOML:%+v", err)
 	}
 	// 输出生成的结构体
-	logger.Infof("", "restore setting:%#v", settingsVar)
+	// logger.Infof("", "restore setting:%#v", settingsVar)
+	log.Printf("restore setting:%#v", settingsVar)
 	if err := WriteSettings(); err != nil {
 		return err
 	}
