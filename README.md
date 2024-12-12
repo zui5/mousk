@@ -20,6 +20,7 @@ After start the application, the app will in normal mode by default. You can tog
 
 - **General Controls**:
   - Toggle Mode: `LALT + 0`
+  - Helper Pane: `LALT + Period`
   - Open Settings: `SPACE + COMMA`
   - Reset Settings: `LALT + R`
   - Force Quit: `LCONTROL + LSHIFT + A`
