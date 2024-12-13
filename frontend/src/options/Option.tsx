@@ -5,6 +5,7 @@ import { Content } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import React, { useEffect, useState } from 'react';
 import About from "../about/About";
+import Helper from "../about/Helper";
 import General from "../general/OptionGeneral";
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -12,11 +13,13 @@ type MenuItem = Required<MenuProps>['items'][number];
 const items: MenuItem[] = [
   { key: 'General', label: 'General' },
   // { key: 'Keymap', label: 'Keymap' },
+  { key: 'Helper', label: 'Helper' },
   { key: 'About', label: 'About' },
 ];
 
 const contentsMap: { [key: string]: React.FC } = {
   "General": General,
+  "Helper": Helper,
   "About": About,
 };
 
