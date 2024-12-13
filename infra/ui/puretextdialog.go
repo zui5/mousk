@@ -73,8 +73,14 @@ func initPureTextDialogWindow() *application.WebviewWindow {
 func initHelperDialogWindow() *application.WebviewWindow {
 	diaglogView := application.NewWindow(application.WebviewWindowOptions{
 		Name:              "helper",
-		Width:             1000,
-		Height:            750,
+		Title:             "helper",
+		Width:             1200,
+		Height:            600,
+		MinWidth:          800,
+		MinHeight:         400,
+		MaxWidth:          1200,
+		MaxHeight:         800,
+		URL:               "#/helper",
 		AlwaysOnTop:       true,
 		EnableDragAndDrop: true,
 		DisableResize:     true,
@@ -100,7 +106,7 @@ func ToggleHelper(text string, helpmode int) {
 	}
 	go func() {
 		// pureTextDialogWindow.SetHTML(fmt.Sprintf("<div style="background-color:white\">%s</div>", text))
-		html := `<html>
+		_ = `<html>
 <head>
   <style>
     body {
@@ -217,7 +223,7 @@ func ToggleHelper(text string, helpmode int) {
 `
 		if helpmode == 1 {
 			base.SetHelperMode(1)
-			helperDialogWindow.SetHTML(html)
+			// helperDialogWindow.SetHTML(html)
 			helperDialogWindow.Show()
 			time.Sleep(5000 * time.Millisecond)
 			helperDialogWindow.Hide()
