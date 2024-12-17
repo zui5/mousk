@@ -7,18 +7,20 @@ import React, { useEffect, useState } from 'react';
 import About from "../about/About";
 import Helper from "../about/Helper";
 import General from "../general/OptionGeneral";
+import Keymap from "../keymap/Keymap";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
 const items: MenuItem[] = [
   { key: 'General', label: 'General' },
-  // { key: 'Keymap', label: 'Keymap' },
+  { key: 'Keymap', label: 'Keymap' },
   { key: 'Helper', label: 'Helper' },
   { key: 'About', label: 'About' },
 ];
 
 const contentsMap: { [key: string]: React.FC } = {
   "General": General,
+  "Keymap": Keymap,
   "Helper": Helper,
   "About": About,
 };
@@ -58,7 +60,7 @@ const Option: React.FC = () => {
     <Layout className="h-screen " >
       <Sider className="flex-auto " theme={theme} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <Switch
-        className="my-2 mx-6"
+          className="my-2 mx-6"
           checked={theme === 'dark'}
           onChange={changeTheme}
           checkedChildren="Dark"

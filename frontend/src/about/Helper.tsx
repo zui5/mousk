@@ -24,15 +24,15 @@ const Helper: React.FC = (props) => {
             items: [
                 { key: 'Fast mode', shortcut: 'LSHIFT + J, H, L, K' },
                 { key: 'Slow mode', shortcut: 'LSHIFT + S, A, D, W' },
-                { key: 'Speed levels', shortcut: 'Shift + 1, 2, 3, 4, 5' },
+                { key: 'Speed levels', shortcut: 'LShift + 1, 2, 3, 4, 5' },
             ]
         },
         {
             title: 'Mouse Clicks',
             items: [
-                { key: 'Left Button Click', shortcut: 'Primary - I, Secondary - R' },
-                { key: 'Right Button Click', shortcut: 'Primary - O, Secondary - T' },
-                { key: 'Left Button Hold', shortcut: 'Primary - C, Secondary - N' },
+                { key: 'Left Button Click', shortcut: 'I, Secondary - R' },
+                { key: 'Right Button Click', shortcut: 'O, Secondary - T' },
+                { key: 'Left Button Hold', shortcut: 'C, Secondary - N' },
             ]
         }
     ];
