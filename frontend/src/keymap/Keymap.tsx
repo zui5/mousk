@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import { KeymapService } from "../../bindings/mousk/service";
 interface ShortcutItem {
     key: string;
     shortcut: string;
@@ -49,6 +50,29 @@ const Keymap: React.FC = () => {
         }
     ];
 
+    // 确保在组件挂载时设置和清除事件监听器
+    useEffect(() => {
+        // 定义异步函数来调用 a 并获取结果
+        const fetchData = async () => {
+            keycodeMap= await KeymapService.GetValidKeycodes()
+            console.log("keycodeMap init:", keycodeMap)
+        };
+
+        fetchData();  // 调用异步函数
+        const handleModifierKeyDown = (e: KeyboardEvent) => handleKeyDown(e as unknown as React.KeyboardEvent);
+        const handleModifierKeyUp = (e: KeyboardEvent) => handleKeyDown(e as unknown as React.KeyboardEvent);
+
+        window.addEventListener('keydown', handleModifierKeyDown);
+        window.addEventListener('keyup', handleModifierKeyUp);
+
+        return () => {
+            window.removeEventListener('keydown', handleModifierKeyDown);
+            window.removeEventListener('keyup', handleModifierKeyUp);
+        };
+    }, []);
+
+
+
     const [shortcutData, setShortcutData] = useState<ShortcutSection[]>(initialShortcutData);
     const [editingShortcut, setEditingShortcut] = useState<{ sectionIndex: number, itemIndex: number } | null>(null);
 
@@ -58,10 +82,10 @@ const Keymap: React.FC = () => {
 
     // 全局数组，用来保存当前按下的修饰键
     const pressedModifiers: string[] = [];
+    var keycodeMap: { [key: string]: number } = {}
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = async (e: React.KeyboardEvent) => {
         console.log("handleKeyDown", e);
-
         // 处理修饰键的按下状态
         const handleModifierKey = (code: string, pressed: boolean) => {
             const modifierMap: { [key: string]: string } = {
@@ -122,21 +146,6 @@ const Keymap: React.FC = () => {
             setEditingShortcut(null);
         }
     };
-
-    // 确保在组件挂载时设置和清除事件监听器
-    useEffect(() => {
-        const handleModifierKeyDown = (e: KeyboardEvent) => handleKeyDown(e as unknown as React.KeyboardEvent);
-        const handleModifierKeyUp = (e: KeyboardEvent) => handleKeyDown(e as unknown as React.KeyboardEvent);
-
-        window.addEventListener('keydown', handleModifierKeyDown);
-        window.addEventListener('keyup', handleModifierKeyUp);
-
-        return () => {
-            window.removeEventListener('keydown', handleModifierKeyDown);
-            window.removeEventListener('keyup', handleModifierKeyUp);
-        };
-    }, []);
-
 
 
     return (

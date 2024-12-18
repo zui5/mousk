@@ -403,6 +403,10 @@ func ExportAllCodes() [][]uint32 {
 	return codes
 }
 
+func ExportNameKeycodeMap() map[string]uint32 {
+	return validNameKeycodeMap
+}
+
 func GetCodesByNames(names []string) []uint32 {
 	codes := make([]uint32, 0)
 	for _, v := range names {
