@@ -57,20 +57,41 @@ const Keymap: React.FC = () => {
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
+        console.log("handleKeyDown", e);
         if (editingShortcut !== null) {
             const { sectionIndex, itemIndex } = editingShortcut;
-            const newShortcut = e.key.toUpperCase(); // 可以根据需求修改此处逻辑
-
+    
+            // 检查是否按下的是修饰键
+            const isModifierKey = e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt' || e.key === 'Meta';
+    
+            // 如果按下的只是修饰键，直接返回
+            if (isModifierKey) {
+                return;
+            }
+    
+            // 检查组合键
+            const keys: string[] = [];
+            if (e.ctrlKey) keys.push('Ctrl');
+            if (e.shiftKey) keys.push('Shift');
+            if (e.altKey) keys.push('Alt');
+            if (e.metaKey) keys.push('Meta'); // 对应于 Mac 的 Command 键
+    
+            // 使用 e.code 获取标准化按键名称
+            const key = e.code.replace('Key', '').replace('Digit', '');
+            keys.push(key);
+    
+            const newShortcut = keys.join('+');
+    
             setShortcutData(prevData => {
                 const newData = [...prevData];
                 newData[sectionIndex].items[itemIndex].shortcut = newShortcut;
                 return newData;
             });
-
+    
             setEditingShortcut(null);
         }
     };
-
+    
     return (
         <div className="flex flex-wrap justify-between p-8 rounded-xl w-full h-screen shadow-xl overflow-auto" onKeyDown={handleKeyDown} tabIndex={0}>
             {
