@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface ShortcutItem {
     key: string;
@@ -56,42 +56,89 @@ const Keymap: React.FC = () => {
         setEditingShortcut({ sectionIndex, itemIndex });
     };
 
+    // 全局数组，用来保存当前按下的修饰键
+    const pressedModifiers: string[] = [];
+
     const handleKeyDown = (e: React.KeyboardEvent) => {
         console.log("handleKeyDown", e);
+
+        // 处理修饰键的按下状态
+        const handleModifierKey = (code: string, pressed: boolean) => {
+            const modifierMap: { [key: string]: string } = {
+                'ControlLeft': 'LeftCtrl',
+                'ControlRight': 'RightCtrl',
+                'ShiftLeft': 'LeftShift',
+                'ShiftRight': 'RightShift',
+                'AltLeft': 'LeftAlt',
+                'AltRight': 'RightAlt',
+                'MetaLeft': 'LeftMeta',
+                'MetaRight': 'RightMeta'
+            };
+
+            const modifierKey = modifierMap[code];
+
+            if (!modifierKey) return;
+
+            const index = pressedModifiers.indexOf(modifierKey);
+            if (pressed && index === -1) {
+                pressedModifiers.push(modifierKey);
+            } else if (!pressed && index !== -1) {
+                pressedModifiers.splice(index, 1);
+            }
+        };
+
+
+
+        // 更新修饰键的状态
+        if (e.code.includes('Control')) handleModifierKey(e.code, e.ctrlKey);
+        if (e.code.includes('Shift')) handleModifierKey(e.code, e.shiftKey);
+        if (e.code.includes('Alt')) handleModifierKey(e.code, e.altKey);
+        if (e.code.includes('Meta')) handleModifierKey(e.code, e.metaKey);
+
         if (editingShortcut !== null) {
             const { sectionIndex, itemIndex } = editingShortcut;
-    
+
             // 检查是否按下的是修饰键
             const isModifierKey = e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt' || e.key === 'Meta';
-    
+
             // 如果按下的只是修饰键，直接返回
             if (isModifierKey) {
                 return;
             }
-    
+
             // 检查组合键
-            const keys: string[] = [];
-            if (e.ctrlKey) keys.push('Ctrl');
-            if (e.shiftKey) keys.push('Shift');
-            if (e.altKey) keys.push('Alt');
-            if (e.metaKey) keys.push('Meta'); // 对应于 Mac 的 Command 键
-    
-            // 使用 e.code 获取标准化按键名称
+            const keys: string[] = [...pressedModifiers];
             const key = e.code.replace('Key', '').replace('Digit', '');
             keys.push(key);
-    
+
             const newShortcut = keys.join('+');
-    
+
             setShortcutData(prevData => {
                 const newData = [...prevData];
                 newData[sectionIndex].items[itemIndex].shortcut = newShortcut;
                 return newData;
             });
-    
+
             setEditingShortcut(null);
         }
     };
-    
+
+    // 确保在组件挂载时设置和清除事件监听器
+    useEffect(() => {
+        const handleModifierKeyDown = (e: KeyboardEvent) => handleKeyDown(e as unknown as React.KeyboardEvent);
+        const handleModifierKeyUp = (e: KeyboardEvent) => handleKeyDown(e as unknown as React.KeyboardEvent);
+
+        window.addEventListener('keydown', handleModifierKeyDown);
+        window.addEventListener('keyup', handleModifierKeyUp);
+
+        return () => {
+            window.removeEventListener('keydown', handleModifierKeyDown);
+            window.removeEventListener('keyup', handleModifierKeyUp);
+        };
+    }, []);
+
+
+
     return (
         <div className="flex flex-wrap justify-between p-8 rounded-xl w-full h-screen shadow-xl overflow-auto" onKeyDown={handleKeyDown} tabIndex={0}>
             {
