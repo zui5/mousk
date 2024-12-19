@@ -13,7 +13,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-var settingsVar Settings
+var settingsVar Config
 
 type Mode int
 
@@ -63,6 +63,286 @@ const (
 // 		Slow MouseConfig
 // 	}
 // }
+
+type Config struct {
+	StartOnSystENV  string  `toml:"StartOnSystENV"`
+	Ver             float64 `toml:"VER"`
+	StartOnSystemUp bool    `toml:"StartOnSystemUp"`
+	Shortcuts       struct {
+		ForceQuit struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"ForceQuit"`
+		HelpPane struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"HelpPane"`
+		ActiveMode struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"ActiveMode"`
+		ResetSetting struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"ResetSetting"`
+		ToggleControlMode struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"ToggleControlMode"`
+		TmpQuitMode struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"TmpQuitMode"`
+		QuitMode struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"QuitMode"`
+		OpenSetting struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"OpenSetting"`
+		MouseMoveFastDown struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveFastDown"`
+		MouseMoveFastLeft struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveFastLeft"`
+		MouseMoveFastRight struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveFastRight"`
+		MouseMoveFastUp struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveFastUp"`
+		MouseMoveSlowDown struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveSlowDown"`
+		MouseMoveSlowLeft struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveSlowLeft"`
+		MouseMoveSlowRight struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveSlowRight"`
+		MouseMoveSlowUp struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveSlowUp"`
+		MouseMoveSpeedLevel1 struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveSpeedLevel1"`
+		MouseMoveSpeedLevel2 struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveSpeedLevel2"`
+		MouseMoveSpeedLevel3 struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveSpeedLevel3"`
+		MouseMoveSpeedLevel4 struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveSpeedLevel4"`
+		MouseMoveSpeedLevel5 struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseMoveSpeedLevel5"`
+		MouseScrollFastDown struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseScrollFastDown"`
+		MouseScrollFastLeft struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseScrollFastLeft"`
+		MouseScrollFastRight struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseScrollFastRight"`
+		MouseScrollFastUp struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseScrollFastUp"`
+		MouseScrollSlowDown struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseScrollSlowDown"`
+		MouseScrollSlowLeft struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseScrollSlowLeft"`
+		MouseScrollSlowRight struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseScrollSlowRight"`
+		MouseScrollSlowUp struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseScrollSlowUp"`
+		MouseScrollSpeedLevel1 struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseScrollSpeedLevel1"`
+		MouseScrollSpeedLevel2 struct {
+			Name        string   `toml:"name"`
+			Description string   `toml:"description"`
+			Keys        []string `toml:"keys"`
+		} `toml:"MouseScrollSpeedLevel2"`
+		MouseScrollSpeedLevel3 struct {
+			Name        string   `toml:"name"`
+			Description string   `toml:"description"`
+			Keys        []string `toml:"keys"`
+		} `toml:"MouseScrollSpeedLevel3"`
+		MouseScrollSpeedLevel4 struct {
+			Name        string   `toml:"name"`
+			Description string   `toml:"description"`
+			Keys        []string `toml:"keys"`
+		} `toml:"MouseScrollSpeedLevel4"`
+		MouseScrollSpeedLevel5 struct {
+			Name        string   `toml:"name"`
+			Description string   `toml:"description"`
+			Keys        []string `toml:"keys"`
+		} `toml:"MouseScrollSpeedLevel5"`
+		MouseLeftButtonClickPrimary struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseLeftButtonClickPrimary"`
+		MouseLeftButtonClickSecondary struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseLeftButtonClickSecondary"`
+		MouseRightButtonClickPrimary struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseRightButtonClickPrimary"`
+		MouseRightButtonClickSecondary struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseRightButtonClickSecondary"`
+		MouseLeftButtonHoldPrimary struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseLeftButtonHoldPrimary"`
+		MouseLeftButtonHoldSecondary struct {
+			Name         string   `toml:"name"`
+			Description  string   `toml:"description"`
+			Keys         []string `toml:"keys"`
+			Effectmode   []string `toml:"effectmode"`
+			Functioncall string   `toml:"functioncall"`
+		} `toml:"MouseLeftButtonHoldSecondary"`
+	} `toml:"shortcuts"`
+}
 
 type Settings struct {
 	ENV             string  `toml:"ENV"`
@@ -159,7 +439,7 @@ func LoadSettingsFromFile(mode Mode) error {
 	return nil
 }
 
-func GetSettings() *Settings {
+func GetSettings() *Config {
 	return &settingsVar
 }
 

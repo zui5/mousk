@@ -40,7 +40,8 @@ func GetMoveSpeedLevel() int {
 }
 
 func GetMoveSpeed() int {
-	return config.GetSettings().PresetFunc.MouseMove.SpeedLevel.LevelSwitch[moveSpeedLevel-1]
+	// return config.GetSettings().PresetFunc.MouseMove.SpeedLevel.LevelSwitch[moveSpeedLevel-1]
+	return config.GetSettings().Shortcuts.MouseMoveSpeedLevel.Keys[]
 }
 
 func GetScrollSpeedLevel() int {
