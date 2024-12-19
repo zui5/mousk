@@ -212,7 +212,6 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 				}
 			}
 			logger.Infof("", "most keycallback:%+v", GetNamesByCodes(mostKeyNumCallback.FirstClickKeys))
-			// return mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
 			mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
 			return 1
 		}

@@ -8,265 +8,317 @@ StartOnSystemUp = true
     description = "Force quit the application"
     keys = ["LCONTROL", "LSHIFT", "A"]
 		effectmode = ["control"]  
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.HelpPane]
     name = "Help Pane"
     description = "Open the help pane"
     keys = ["LALT", "PERIOD"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.ActiveMode]
     name = "Active Mode"
     description = "Activate the mode"
     keys = ["LALT", "0"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.ResetSetting]
     name = "Reset Setting"
     description = "Reset the settings"
     keys = ["LALT", "R"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.ToggleControlMode]
     name = "Toggle Control Mode"
     description = "Toggle the control mode"
     keys = ["LALT", "0"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.TmpQuitMode]
     name = "Temporary Quit Mode"
     description = "Temporarily quit the mode"
     keys = ["Q"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.QuitMode]
     name = "Quit Mode"
     description = "Quit the mode"
     keys = ["LALT", "0"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.OpenSetting]
     name = "Open Setting"
     description = "Open the settings menu"
     keys = ["LALT", "COMMA"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseMoveFastDown]
     name = "Mouse Move Fast Down"
     description = "Move the mouse down quickly"
     keys = ["J"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseMoveFastLeft]
     name = "Mouse Move Fast Left"
     description = "Move the mouse left quickly"
     keys = ["H"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseMoveFastRight]
     name = "Mouse Move Fast Right"
     description = "Move the mouse right quickly"
     keys = ["L"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseMoveFastUp]
     name = "Mouse Move Fast Up"
     description = "Move the mouse up quickly"
     keys = ["K"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseMoveSlowDown]
     name = "Mouse Move Slow Down"
     description = "Move the mouse down slowly"
     keys = ["S"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseMoveSlowLeft]
     name = "Mouse Move Slow Left"
     description = "Move the mouse left slowly"
     keys = ["A"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseMoveSlowRight]
     name = "Mouse Move Slow Right"
     description = "Move the mouse right slowly"
     keys = ["D"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseMoveSlowUp]
     name = "Mouse Move Slow Up"
     description = "Move the mouse up slowly"
     keys = ["W"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseMoveSpeedLevel1]
     name = "Mouse Move Speed Level 1"
     description = "Switch the mouse move speed level 1"
     keys = ["1"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[1]
+		fucntioncall=""
 
    [shortcuts.MouseMoveSpeedLevel2]
     name = "Mouse Move Speed Level 2"
     description = "Switch the mouse move speed level 2"
     keys = ["2"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[8]
+		fucntioncall=""
 
     [shortcuts.MouseMoveSpeedLevel3]
     name = "Mouse Move Speed Level 3"
     description = "Switch the mouse move speed level 3"
     keys = ["3"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[16]
+		fucntioncall=""
 
    [shortcuts.MouseMoveSpeedLevel4]
     name = "Mouse Move Speed Level 4"
     description = "Switch the mouse move speed level 4"
     keys = ["4"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[32]
+		fucntioncall=""
 
    [shortcuts.MouseMoveSpeedLevel5]
     name = "Mouse Move Speed Level 5"
     description = "Switch the mouse move speed level 5"
     keys = ["5"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[48]
+		fucntioncall=""
 
  [shortcuts.MouseScrollFastDown]
     name = "Mouse Scroll Fast Down"
     description = "Scroll the mouse down quickly"
     keys = ["LSHIFT", "J"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseScrollFastLeft]
     name = "Mouse Scroll Fast Left"
     description = "Scroll the mouse left quickly"
     keys = ["LSHIFT", "H"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseScrollFastRight]
     name = "Mouse Scroll Fast Right"
     description = "Scroll the mouse right quickly"
     keys = ["LSHIFT", "L"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseScrollFastUp]
     name = "Mouse Scroll Fast Up"
     description = "Scroll the mouse up quickly"
     keys = ["LSHIFT", "K"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseScrollSlowDown]
     name = "Mouse Scroll Slow Down"
     description = "Scroll the mouse down slowly"
     keys = ["LSHIFT", "S"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseScrollSlowLeft]
     name = "Mouse Scroll Slow Left"
     description = "Scroll the mouse left slowly"
     keys = ["LSHIFT", "A"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseScrollSlowRight]
     name = "Mouse Scroll Slow Right"
     description = "Scroll the mouse right slowly"
     keys = ["LSHIFT", "D"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseScrollSlowUp]
     name = "Mouse Scroll Slow Up"
     description = "Scroll the mouse up slowly"
     keys = ["LSHIFT", "W"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseScrollSpeedLevel1]
     name = "Mouse Scroll Speed Level 1"
     description = "Switch the mouse scroll speed level 1"
     keys = ["LSFHIT","1"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[1]
+		fucntioncall=""
 
   [shortcuts.MouseScrollSpeedLevel2]
     name = "Mouse Scroll Speed Level 2"
     description = "Switch the mouse scroll speed level 2"
     keys = ["LSFHIT","2"]
+		effectmode = ["control"]
+		property=[8]
+		fucntioncall=""
+
   [shortcuts.MouseScrollSpeedLevel3]
     name = "Mouse Scroll Speed Level 3"
     description = "Switch the mouse scroll speed level 3"
     keys = ["LSFHIT","3"]
+		effectmode = ["control"]
+		property=[16]
+		fucntioncall=""
+
   [shortcuts.MouseScrollSpeedLevel4]
     name = "Mouse Scroll Speed Level 4"
     description = "Switch the mouse scroll speed level 4"
     keys = ["LSFHIT","4"]
+		effectmode = ["control"]
+		property=[32]
+		fucntioncall=""
+
   [shortcuts.MouseScrollSpeedLevel5]
     name = "Mouse Scroll Speed Level 5"
     description = "Switch the mouse scroll speed level 5"
     keys = ["LSFHIT","5"]
+		effectmode = ["control"]
+		property=[48]
+		fucntioncall=""
+
   [shortcuts.MouseLeftButtonClickPrimary]
     name = "Primary Mouse Left Button Click"
     description = "Click the primary mouse left button"
     keys = ["I"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseLeftButtonClickSecondary]
     name = "Secondary Mouse Left Button Click"
     description = "Click the secondary mouse left button"
     keys = ["R"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseRightButtonClickPrimary]
     name = "Primary Mouse Right Button Click"
     description = "Click the primary mouse right button"
     keys = ["O"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseRightButtonClickSecondary]
     name = "Secondary Mouse Right Button Click"
     description = "Click the secondary mouse right button"
     keys = ["T"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseLeftButtonHoldPrimary]
     name = "Primary Mouse Left Button Hold"
     description = "Hold the primary mouse left button"
     keys = ["C"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
 
   [shortcuts.MouseLeftButtonHoldSecondary]
     name = "Secondary Mouse Left Button Hold"
     description = "Hold the secondary mouse left button"
     keys = ["N"]
 		effectmode = ["control"]
-		functioncall=""
+		property=[]
+		fucntioncall=""
