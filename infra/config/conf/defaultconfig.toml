@@ -1,4 +1,4 @@
-StartOnSystENV = "test"
+ENV = "test"
 VER = 0.1
 StartOnSystemUp = true
 

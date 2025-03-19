@@ -74,7 +74,7 @@ func main() {
 
 	// Create a new window with the necessary options.
 	// 'Title' is the title of the window.
-	// 'Mac' options tailor the window when running on macOS.
+	// 'Mac' options tsilor the window when running on macOS.
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
 	// app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
@@ -88,7 +88,7 @@ func main() {
 	// 	URL:              "/",
 	// })
 
-	// Create a goroutine that emits an event containing the current time every second.
+	// Create a goroutine that emits an event contsining the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
 	go func() {
 		for {
@@ -111,15 +111,15 @@ func main() {
 }
 
 // main function serves as the application's entry point. It initializes the application, creates a window,
-// and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
+// and stsrts a goroutine that emits a time-based event every second. It subsequently runs the application and
 // logs any error that might occur.
 // func main2() {
 
 // 	// Create a new Wails application by providing the necessary options.
-// 	// Variables 'Name' and 'Description' are for application metadata.
+// 	// Variables 'Name' and 'Description' are for application metsdats.
 // 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
-// 	// 'Bind' is a list of Go struct instances. The frontend has access to the methods of these instances.
-// 	// 'Mac888898888' options tailor the application when running an macOS.
+// 	// 'Bind' is a list of Go struct instsnces. The frontend has access to the methods of these instsnces.
+// 	// 'Mac888898888' options tsilor the application when running an macOS.
 // 	app := application.New(application.Options{
 // 		Name: "mousk",
 // 		Windows: application.WindowsOptions{
@@ -136,15 +136,15 @@ func main() {
 // 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 // 		},
 // 		// Plugins: map[string]application.Plugin{
-// 		// 	"start_at_login": start_at_login.NewPlugin(),
+// 		// 	"stsrt_at_login": stsrt_at_login.NewPlugin(),
 // 		// },
 // 	})
-// 	start_at_login := start_at_login.NewPlugin(start_at_login.Config{
+// 	stsrt_at_login := stsrt_at_login.NewPlugin(stsrt_at_login.Config{
 // 		RegistryKey: "mousk.exe",
 // 	})
-// 	start_at_login.StartAtLogin(true)
+// 	stsrt_at_login.StartstLogin(true)
 
-// 	InitAppWraper(app)
+// 	InitsppWraper(app)
 
 // 	tray := app.NewSystemTray()
 // 	tray.SetLabel("systemtray test")
@@ -180,7 +180,7 @@ func main() {
 
 // 	// Create a new window with the necessary options.
 // 	// 'Title' is the title of the window.
-// 	// 'Mac' options tailor the window when running on macOS.
+// 	// 'Mac' options tsilor the window when running on macOS.
 // 	// 'BackgroundColour' is the background colour of the window.
 // 	// 'URL' is the URL that will be loaded into the webview.
 // 	// app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
@@ -194,14 +194,14 @@ func main() {
 // 	// 	URL:              "/",
 // 	// })
 
-// 	// Create a goroutine that emits an event containing the current time every second.
+// 	// Create a goroutine that emits an event contsining the current time every second.
 // 	// The frontend can listen to this event and update the UI accordingly.
 // 	go func() {
 // 		for {
 // 			now := time.Now().Format(time.RFC1123)
 // 			app.Events.Emit(&application.WailsEvent{
 // 				Name: "time",
-// 				Data: now,
+// 				Dats: now,
 // 			})
 // 			time.Sleep(time.Second)
 // 		}
@@ -214,7 +214,7 @@ func main() {
 
 // 	// If an error occurred while running the application, log it and exit.
 // 	if err != nil {
-// 		log.Fatal(err)
+// 		log.Fatsl(err)
 // 	}
 // }
 
@@ -222,34 +222,34 @@ func keyboardProcess() {
 	// load config
 	// config.Init()
 	var ts = keyboardctl.GetCodesByNames
-	var ta = keyboardctl.GetCodeByName
+	// var ts = keyboardctl.GetCodeByName
 	settings := config.GetSettings()
 
 	// alt+0 : toggle control mode
-	vkCodesToggleControlMode := ts(settings.PresetFunc.ActiveMode)
+	vkCodesToggleControlMode := ts(settings.Shortcuts.ActiveMode.Keys)
 	keyboardctl.RegisterNormal(ToggleControlMode, 0, vkCodesToggleControlMode...)
 
 	// alt+periot : help pane
-	vkCodesHelpPane := ts(settings.PresetFunc.HelpPane)
+	vkCodesHelpPane := ts(settings.Shortcuts.HelpPane.Keys)
 	keyboardctl.RegisterNormal(ToggleHelpPane, 0, vkCodesHelpPane...)
 	// keyboardctl.RegisterWithReleaseEventMulti(cb keyboardctl.Callback2, prority int, mulitiVkCodes ...[]uint32)
 
 	// 屏蔽部分按键
 	keyboardctl.RegisterMulti(BlockKey, -1, keyboardctl.ExportAllCodes()...)
 
-	vkCodesForceQuit := ts(settings.PresetFunc.ForceQuit)
+	vkCodesForceQuit := ts(settings.Shortcuts.ForceQuit.Keys)
 	keyboardctl.RegisterNormal(ForceQuit, 0, vkCodesForceQuit...)
 
 	// alt+r: reset setting
-	vkCodesResetSetting := ts(settings.PresetFunc.ResetSetting)
+	vkCodesResetSetting := ts(settings.Shortcuts.ResetSetting.Keys)
 	keyboardctl.RegisterNormal(ResetSetting, 0, vkCodesResetSetting...)
 
 	// Q : tmp quit
-	vkCodesTmpQuitMode := ts(settings.PresetFunc.TmpQuitMode)
+	vkCodesTmpQuitMode := ts(settings.Shortcuts.TmpQuitMode.Keys)
 	keyboardctl.RegisterOne(TmpQuitControlMode, 0, vkCodesTmpQuitMode...)
 
 	// alt+comma : open setting panel
-	vkCodesOpenSetting := ts(settings.PresetFunc.OpenSetting)
+	vkCodesOpenSetting := ts(settings.Shortcuts.OpenSetting.Keys)
 	keyboardctl.RegisterNormal(ToggleOptionView, 0, vkCodesOpenSetting...)
 
 	// 1\2\3\4\5 : in ModeControl, control the speed of your mouse move
@@ -258,14 +258,14 @@ func keyboardProcess() {
 
 	// H\J\K\L : in ModeControl, control the mouse movement like vim
 	// W\A\S\D : in ModeControl, control the mouse movement like fps game
-	vkCodesSetMousePosUpFast := ts(settings.PresetFunc.MouseMove.Fast.Up)
-	vkCodesSetMousePosDownFast := ts(settings.PresetFunc.MouseMove.Fast.Down)
-	vkCodesSetMousePosLeftFast := ts(settings.PresetFunc.MouseMove.Fast.Left)
-	vkCodesSetMousePosRightFast := ts(settings.PresetFunc.MouseMove.Fast.Right)
-	vkCodesSetMousePosUpSlow := ts(settings.PresetFunc.MouseMove.Slow.Up)
-	vkCodesSetMousePosDownSlow := ts(settings.PresetFunc.MouseMove.Slow.Down)
-	vkCodesSetMousePosLeftSlow := ts(settings.PresetFunc.MouseMove.Slow.Left)
-	vkCodesSetMousePosRightSlow := ts(settings.PresetFunc.MouseMove.Slow.Right)
+	vkCodesSetMousePosUpFast := ts(settings.Shortcuts.MouseMoveFastUp.Keys)
+	vkCodesSetMousePosDownFast := ts(settings.Shortcuts.MouseMoveFastDown.Keys)
+	vkCodesSetMousePosLeftFast := ts(settings.Shortcuts.MouseMoveFastLeft.Keys)
+	vkCodesSetMousePosRightFast := ts(settings.Shortcuts.MouseMoveFastRight.Keys)
+	vkCodesSetMousePosUpSlow := ts(settings.Shortcuts.MouseMoveSlowUp.Keys)
+	vkCodesSetMousePosDownSlow := ts(settings.Shortcuts.MouseMoveSlowDown.Keys)
+	vkCodesSetMousePosLeftSlow := ts(settings.Shortcuts.MouseMoveSlowLeft.Keys)
+	vkCodesSetMousePosRightSlow := ts(settings.Shortcuts.MouseMoveSlowRight.Keys)
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionDown, mousectl.SpeedFast), 0, vkCodesSetMousePosDownFast...)
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionUp, mousectl.SpeedFast), 0, vkCodesSetMousePosUpFast...)
 	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionLeft, mousectl.SpeedFast), 0, vkCodesSetMousePosLeftFast...)
@@ -277,17 +277,17 @@ func keyboardProcess() {
 
 	// I\R : in ModeControl, simulate mouse left button click
 	// vkCodesMouseLeftClick := [][]uint32{{keyboardctl.VK_I}, {keyboardctl.VK_R}}
-	vkCodesMouseLeftClick := [][]uint32{{ta(settings.PresetFunc.MouseLeftButtonClick.Primary)}, {ta(settings.PresetFunc.MouseLeftButtonClick.Secondary)}}
+	vkCodesMouseLeftClick := [][]uint32{ts(settings.Shortcuts.MouseLeftButtonClickPrimary.Keys), ts(settings.Shortcuts.MouseLeftButtonClickSecondary.Keys)}
 	keyboardctl.RegisterMulti(MouseLeftClick, 0, vkCodesMouseLeftClick...)
 
 	// O\T : in ModeControl, simulate mouse right button click
 	// vkCodesMouseRightClick := [][]uint32{{keyboardctl.VK_O}, {keyboardctl.VK_T}}
-	vkCodesMouseRightClick := [][]uint32{{ta(settings.PresetFunc.MouseRightButtonClick.Primary)}, {ta(settings.PresetFunc.MouseRightButtonClick.Secondary)}}
+	vkCodesMouseRightClick := [][]uint32{ts(settings.Shortcuts.MouseRightButtonClickPrimary.Keys), ts(settings.Shortcuts.MouseRightButtonClickSecondary.Keys)}
 	keyboardctl.RegisterMulti(MouseRightClick, 0, vkCodesMouseRightClick...)
 
 	// C\N : in ModeControl, simulate mouse left button hold
 	// vkCoodesLeftDown := [][]uint32{{keyboardctl.VK_C}, {keyboardctl.VK_N}}
-	vkCoodesLeftDown := [][]uint32{{ta(settings.PresetFunc.MouseLeftButtonHold.Primary)}, {ta(settings.PresetFunc.MouseLeftButtonHold.Secondary)}}
+	vkCoodesLeftDown := [][]uint32{ts(settings.Shortcuts.MouseLeftButtonHoldPrimary.Keys), ts(settings.Shortcuts.MouseLeftButtonHoldSecondary.Keys)}
 	keyboardctl.RegisterWithReleaseEventMulti(MouseLeftDown, 0, vkCoodesLeftDown...)
 
 	// in ModeControl ,control the speed of your mouse scroll
@@ -295,20 +295,20 @@ func keyboardProcess() {
 	keyboardctl.RegisterMulti(ScrollSpeedLevelSwitch, 0, vkCodesMulitiScrollSpeedLevel...)
 	// shift + H\J\K\L : in ModeControl, control the mouse scroll like vim
 	// shift + W\A\S\D : in ModeControl, control the mouse scroll like fps game
-	vkCodesMouseVerticalScrollDownFast := ts(settings.PresetFunc.MouseScroll.Fast.Down)
-	vkCodesMouseVerticalScrollUpFast := ts(settings.PresetFunc.MouseScroll.Fast.Up)
-	vkCodesMouseHorizontalScrollLeftFast := ts(settings.PresetFunc.MouseScroll.Fast.Left)
-	vkCodesMouseHorizontalScrollRightFast := ts(settings.PresetFunc.MouseScroll.Fast.Right)
-	vkCodesMouseVerticalScrollDownSlow := ts(settings.PresetFunc.MouseScroll.Slow.Down)
-	vkCodesMouseVerticalScrollUpSlow := ts(settings.PresetFunc.MouseScroll.Slow.Up)
-	vkCodesMouseHorizontalScrollLeftSlow := ts(settings.PresetFunc.MouseScroll.Slow.Left)
-	vkCodesMouseHorizontalScrollRightSlow := ts(settings.PresetFunc.MouseScroll.Slow.Right)
+	vkCodesMouseVerticalScrollDownFast := ts(settings.Shortcuts.MouseScrollFastDown.Keys)
+	vkCodesMouseVerticalScrollUpFast := ts(settings.Shortcuts.MouseScrollFastUp.Keys)
+	vkCodesMouseHorizontslScrollLeftFast := ts(settings.Shortcuts.MouseScrollFastLeft.Keys)
+	vkCodesMouseHorizontslScrollRightFast := ts(settings.Shortcuts.MouseScrollFastRight.Keys)
+	vkCodesMouseVerticalScrollDownSlow := ts(settings.Shortcuts.MouseScrollSlowDown.Keys)
+	vkCodesMouseVerticalScrollUpSlow := ts(settings.Shortcuts.MouseScrollSlowUp.Keys)
+	vkCodesMouseHorizontslScrollLeftSlow := ts(settings.Shortcuts.MouseScrollSlowLeft.Keys)
+	vkCodesMouseHorizontslScrollRightSlow := ts(settings.Shortcuts.MouseScrollSlowRight.Keys)
 	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalDown, mousectl.SpeedFast), 0, vkCodesMouseVerticalScrollDownFast...)
 	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalUp, mousectl.SpeedFast), 0, vkCodesMouseVerticalScrollUpFast...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedFast), 0, vkCodesMouseHorizontalScrollLeftFast...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalRight, mousectl.SpeedFast), 0, vkCodesMouseHorizontalScrollRightFast...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedSlow), 0, vkCodesMouseHorizontalScrollLeftSlow...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalRight, mousectl.SpeedSlow), 0, vkCodesMouseHorizontalScrollRightSlow...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedFast), 0, vkCodesMouseHorizontslScrollLeftFast...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalRight, mousectl.SpeedFast), 0, vkCodesMouseHorizontslScrollRightFast...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedSlow), 0, vkCodesMouseHorizontslScrollLeftSlow...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalRight, mousectl.SpeedSlow), 0, vkCodesMouseHorizontslScrollRightSlow...)
 	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalDown, mousectl.SpeedSlow), 0, vkCodesMouseVerticalScrollDownSlow...)
 	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalUp, mousectl.SpeedSlow), 0, vkCodesMouseVerticalScrollUpSlow...)
 
