@@ -1,5 +1,5 @@
 ENV = "test"
-VER = 0.1
+VER = 0.2
 StartOnSystemUp = true
 
 [shortcuts]

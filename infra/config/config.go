@@ -22,7 +22,7 @@ var (
 	ModeLoadFromUser    Mode = Mode(1)
 )
 
-//go:embed conf/default.toml
+//go:embed conf/defaultconfig.toml
 var defaultConfigFile []byte
 
 var defaultFilePath = "./conf/default.toml"
@@ -550,15 +550,35 @@ func initConfigFile() error {
 		if err != nil {
 			return err
 		}
-		// logger.Infof("", "Config file created at:", filePath)
 		log.Printf("Config file created at:%s", filePath)
 	} else {
-		err = LoadSettingsFromFile(ModeLoadFromUser)
-		if err != nil {
-			return err
+		// 加载默认配置获取版本号
+		if err := LoadSettingsFromFile(ModeLoadFromDefault); err != nil {
+			return fmt.Errorf("loading default config:%+v", err)
 		}
-		// logger.Infof("", "Config file already exists at:", filePath)
-		log.Printf("Config file already exists at:%s", filePath)
+		defaultVer := settingsVar.Ver
+
+		// 加载用户配置获取版本号
+		if err := LoadSettingsFromFile(ModeLoadFromUser); err != nil {
+			log.Printf("Failed to load user config, will restore to default settings: %v", err)
+			if err := RestoreSettings(); err != nil {
+				return fmt.Errorf("restoring settings:%+v", err)
+			}
+			log.Printf("Successfully restored default settings")
+			return nil
+		}
+		userVer := settingsVar.Ver
+
+		// 比较版本号
+		if defaultVer > userVer {
+			// 版本号更高，覆盖用户配置
+			log.Printf("Updating config from version %.1f to %.1f", userVer, defaultVer)
+			if err := RestoreSettings(); err != nil {
+				return fmt.Errorf("restoring settings:%+v", err)
+			}
+		} else {
+			log.Printf("Config file already exists at:%s (version %.1f)", filePath, userVer)
+		}
 	}
 	return nil
 }
