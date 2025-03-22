@@ -4,19 +4,18 @@ import (
 	"encoding/json"
 	"mousk/common/logger"
 	"mousk/infra/base"
-	"os"
 	"syscall"
 	"time"
 	"unsafe"
 )
 
 var (
-	keyPressedStates    map[uint32]*KeyState
+	keyPressedStates    map[string]*KeyState
 	setWindowsHookEx    = base.User32.NewProc("SetWindowsHookExW")
 	getMessageW         = base.User32.NewProc("GetMessageW")
 	unhookWindowsHookEx = base.User32.NewProc("UnhookWindowsHookEx")
 	// todo serilize to file config
-	listeningKeyReference = make(map[uint32]*KeyReference, 0)
+	listeningKeyReference = make(map[string]*KeyReference, 0)
 )
 
 type KeyState struct {
@@ -38,8 +37,8 @@ type KeyReference struct {
 
 type KeyCallback struct {
 	LastTriggerTime    time.Time
-	FirstClickKeys     []uint32  // for example. []{"ctrl","a"}
-	SecondClickKeys    []uint32  // for example. []{"ctrl","a"}
+	FirstClickKeys     []string  // for example. ["CONTROL","A"]
+	SecondClickKeys    []string  // for example. ["CONTROL","A"]
 	Cb                 Callback2 `json:"-"`
 	CbPriority         int
 	withReleaseEvent   bool
@@ -52,29 +51,29 @@ type Callback HookProc
 type Callback2 func(wParam uintptr, vkCode, scanCode uint32) uintptr
 type HookProc func(nCode int, wParam uintptr, lParam uintptr) uintptr
 
-func registerKeyListening(cb Callback2, cbPriority int, effectOnNormal bool, withReleaseEvent bool, firstClickVkCodes []uint32, secondClickVkCodes []uint32) {
-	for _, v := range firstClickVkCodes {
-		if listeningKeyReference[v] == nil {
-			listeningKeyReference[v] = &KeyReference{}
+func registerKeyListening(cb Callback2, cbPriority int, effectOnNormal bool, withReleaseEvent bool, firstClickKeys []string, secondClickKeys []string) {
+	for _, keyName := range firstClickKeys {
+		if listeningKeyReference[keyName] == nil {
+			listeningKeyReference[keyName] = &KeyReference{}
 		}
-		listeningKeyReference[v].Count += 1
-		listeningKeyReference[v].KeyCombinations = append(listeningKeyReference[v].KeyCombinations, KeyCallback{
-			FirstClickKeys:     firstClickVkCodes,
-			SecondClickKeys:    secondClickVkCodes,
+		listeningKeyReference[keyName].Count += 1
+		listeningKeyReference[keyName].KeyCombinations = append(listeningKeyReference[keyName].KeyCombinations, KeyCallback{
+			FirstClickKeys:     firstClickKeys,
+			SecondClickKeys:    secondClickKeys,
 			Cb:                 cb,
 			CbPriority:         cbPriority,
 			withReleaseEvent:   withReleaseEvent,
 			effectOnNormalMode: effectOnNormal,
 		})
 	}
-	for _, v := range secondClickVkCodes {
-		if listeningKeyReference[v] == nil {
-			listeningKeyReference[v] = &KeyReference{}
+	for _, keyName := range secondClickKeys {
+		if listeningKeyReference[keyName] == nil {
+			listeningKeyReference[keyName] = &KeyReference{}
 		}
-		listeningKeyReference[v].Count += 1
-		listeningKeyReference[v].KeyCombinations = append(listeningKeyReference[v].KeyCombinations, KeyCallback{
-			FirstClickKeys:     firstClickVkCodes,
-			SecondClickKeys:    secondClickVkCodes,
+		listeningKeyReference[keyName].Count += 1
+		listeningKeyReference[keyName].KeyCombinations = append(listeningKeyReference[keyName].KeyCombinations, KeyCallback{
+			FirstClickKeys:     firstClickKeys,
+			SecondClickKeys:    secondClickKeys,
 			Cb:                 cb,
 			withReleaseEvent:   withReleaseEvent,
 			effectOnNormalMode: effectOnNormal,
@@ -83,42 +82,34 @@ func registerKeyListening(cb Callback2, cbPriority int, effectOnNormal bool, wit
 }
 
 //lint:ignore U1000 Ignore unused function temporarily for debugging
-func unRegisterKeyListening(vkCodes ...uint32) {
-	for _, v := range vkCodes {
-		listeningKeyReference[v].Count -= 1
-		listeningKeyReference[v].KeyCombinations = append(listeningKeyReference[v].KeyCombinations, KeyCallback{
-			FirstClickKeys: vkCodes,
+func unRegisterKeyListening(keyNames ...string) {
+	for _, vkCode := range keyNames {
+		listeningKeyReference[vkCode].Count -= 1
+		listeningKeyReference[vkCode].KeyCombinations = append(listeningKeyReference[vkCode].KeyCombinations, KeyCallback{
+			FirstClickKeys: keyNames,
 		})
 	}
 }
 
-func RegisterMulti(cb Callback2, priority int, mulitiVkCodes ...[]uint32) {
-	// switch keyAction {
-	// case WM_KEYDOWN:
-
-	// 	break
-	// default:
-	// 	logger.Infof("","method not develop yet")
-	// 	return
-	// }
-	for _, vkCodes := range mulitiVkCodes {
-		registerKeyListening(cb, priority, false, false, vkCodes, nil)
+func RegisterMulti(cb Callback2, priority int, multiKeyNames ...[]string) {
+	for _, keyNames := range multiKeyNames {
+		registerKeyListening(cb, priority, false, false, keyNames, nil)
 	}
 }
 
-func RegisterNormal(cb Callback2, priority int, vkCodes ...uint32) {
-	registerKeyListening(cb, priority, true, false, vkCodes, nil)
+func RegisterNormal(cb Callback2, priority int, keyNames ...string) {
+	registerKeyListening(cb, priority, true, false, keyNames, nil)
 }
 
-func RegisterOne(cb Callback2, priority int, vkCodes ...uint32) {
-	registerKeyListening(cb, priority, false, false, vkCodes, nil)
+func RegisterOne(cb Callback2, priority int, keyNames ...string) {
+	registerKeyListening(cb, priority, false, false, keyNames, nil)
 }
 
-func RegisterDoubleClick(cb Callback2, priority int, firstClick []uint32, secondClick []uint32) {
+func RegisterDoubleClick(cb Callback2, priority int, firstClick []string, secondClick []string) {
 	registerKeyListening(cb, priority, false, false, firstClick, secondClick)
 }
 
-func EffectOnNormalMode(vkCode uint32) bool {
+func EffectOnNormalMode(vkCode string) bool {
 	if listeningKeyReference[vkCode] != nil {
 		// logger.Infof("", "effect on normal check:%+v, current:%d", listeningKeyReference[vkCode], vkCode)
 		ref := listeningKeyReference[vkCode]
@@ -151,12 +142,13 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 		kbdStruct := (*KBDLLHOOKSTRUCT)(unsafe.Pointer(lParam))
 		scanCode := kbdStruct.ScanCode
 		vkCode := kbdStruct.VkCode
+		keyName := GetNameByCode(vkCode)
 
 		if wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN {
-			SetPressed(vkCode)
+			SetPressed(keyName)
 		} else if wParam == WM_KEYUP || wParam == WM_SYSKEYUP {
-			SetReleased(vkCode)
-			if vkCode == 160 {
+			SetReleased(keyName)
+			if keyName == "LSHIFT" {
 				logger.Infof("", "shift dectect:%t", IsShiftPressed())
 			}
 		}
@@ -168,13 +160,13 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 		// 	return 1
 		// }
 
-		if base.GetMode() == base.ModeNormal && !EffectOnNormalMode(vkCode) {
-			logger.Infof("", "%d not in control mode, mode:%d, keystatus:%d", time.Now().UnixMilli(), base.GetMode(), vkCode)
+		if base.GetMode() == base.ModeNormal && !EffectOnNormalMode(keyName) {
+			logger.Infof("", "%d not in control mode, mode:%d, keystatus:%s", time.Now().UnixMilli(), base.GetMode(), keyName)
 			return 0
 		}
 
-		if listeningKeyReference[vkCode] != nil {
-			ref := listeningKeyReference[vkCode]
+		if listeningKeyReference[keyName] != nil {
+			ref := listeningKeyReference[keyName]
 			// TODO : ref.KeyCombinations中满足多个快捷键组合时，仅优先执行其中按键数量最多的
 			// k | ctrl+k, 优先执行ctrl+k
 
@@ -199,7 +191,7 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 			mostKeyNumCallback := satisfiedCallback[0]
 
 			for _, v := range satisfiedCallback {
-				logger.Infof("", "all keycallback:%+v", GetNamesByCodes(v.FirstClickKeys))
+				logger.Infof("", "all keycallback:%+v", v.FirstClickKeys)
 				if len(v.FirstClickKeys) > len(mostKeyNumCallback.FirstClickKeys) {
 					mostKeyNumCallback = v
 				} else if len(v.FirstClickKeys) == len(mostKeyNumCallback.FirstClickKeys) {
@@ -210,7 +202,7 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 				} else {
 				}
 			}
-			logger.Infof("", "most keycallback:%+v", GetNamesByCodes(mostKeyNumCallback.FirstClickKeys))
+			logger.Infof("", "most keycallback:%+v", mostKeyNumCallback.FirstClickKeys)
 			mostKeyNumCallback.Cb(wParam, vkCode, scanCode)
 			return 1
 		}
@@ -219,36 +211,9 @@ func LowLevelKeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr
 	return 0
 }
 
-func KeyboardCallback(nCode int, wParam uintptr, lParam uintptr) uintptr {
-	if nCode >= 0 {
-		kbdStruct := (*KBDLLHOOKSTRUCT)(unsafe.Pointer(lParam))
-		vkCode := kbdStruct.VkCode
-
-		if wParam == WM_KEYDOWN {
-			SetPressed(vkCode)
-			logger.Infof("", "Key pressed (VK code): %d", vkCode)
-		} else if wParam == WM_KEYUP {
-			SetReleased(vkCode)
-			logger.Infof("", "Key released (VK code): %d", vkCode)
-		}
-
-		// 检查是否同时按下了 Ctrl、Shift 和 A 键
-		if Pressed(VK_LCONTROL) && Pressed(VK_LSHIFT) && Pressed(VK_A) {
-			logger.Infof("", "Ctrl+Shift+A keys pressed simultaneously")
-		}
-
-		// 如果按下了 'Q' 键，退出程序
-		if Pressed(VK_Q) {
-			os.Exit(0)
-		}
-		return 1
-	}
-	return 0
-}
-
 func RawKeyboardListener(cb Callback) {
 
-	keyPressedStates = make(map[uint32]*KeyState)
+	keyPressedStates = make(map[string]*KeyState)
 
 	hookProc := HookProc(cb)
 
@@ -275,7 +240,7 @@ func RawKeyboardListener(cb Callback) {
 
 }
 
-func Pressed(vkCode uint32) bool {
+func Pressed(vkCode string) bool {
 	// logger.Infof("",vkCode, keyPressedStates[vkCode])
 	if keyPressedStates[vkCode] == nil {
 		keyPressedStates[vkCode] = nilKeyState()
@@ -284,7 +249,7 @@ func Pressed(vkCode uint32) bool {
 }
 
 // deprecated
-func AllPressed(vkCodes ...uint32) bool {
+func AllPressed(vkCodes ...string) bool {
 	if vkCodes == nil {
 		return true
 	}
@@ -296,7 +261,7 @@ func AllPressed(vkCodes ...uint32) bool {
 	return allPressed
 }
 
-func SetPressed(vkCode uint32) {
+func SetPressed(vkCode string) {
 	if keyPressedStates[vkCode] == nil {
 		keyPressedStates[vkCode] = nilKeyState()
 	}
@@ -318,7 +283,7 @@ func nilKeyState() *KeyState {
 	}
 }
 
-func SetReleased(vkCode uint32) {
+func SetReleased(vkCode string) {
 	if keyPressedStates[vkCode] == nil {
 		keyPressedStates[vkCode] = nilKeyState()
 	}
@@ -329,7 +294,7 @@ func SetReleased(vkCode uint32) {
 	logger.Infof("", "Key released (VK code): %d, last released: %s", vkCode, currTime)
 }
 
-func RegisterWithReleaseEventMulti(cb Callback2, prority int, mulitiVkCodes ...[]uint32) {
+func RegisterWithReleaseEventMulti(cb Callback2, prority int, mulitiVkCodes ...[]string) {
 	// switch keyAction {
 	// case WM_KEYDOWN:
 
@@ -343,25 +308,21 @@ func RegisterWithReleaseEventMulti(cb Callback2, prority int, mulitiVkCodes ...[
 	}
 }
 
-func StatusCheckNew(vkCodes []uint32, pressed int) bool {
-	// logger.Infof("", "key status check param:%+v", GetNamesByCodes(vkCodes))
-	if vkCodes == nil {
-		return true
+func StatusCheckNew(keyNames []string, status int) bool {
+	if len(keyNames) == 0 {
+		return false
 	}
-	for _, v := range vkCodes {
-		keyState, ok := keyPressedStates[v]
-		logger.Infof("", "key status check param:%+v, key:%s, keystate:%+v", GetNamesByCodes(vkCodes), GetNameByCode(v), keyState)
-		if !ok {
-			keyState = nilKeyState()
-		}
-		if pressed == 1 && !keyState.Pressed {
-			return false
-		}
-		if pressed == 0 && keyState.Pressed {
-			return false
+	for _, name := range keyNames {
+		if status == 1 {
+			if !Pressed(name) {
+				return false
+			}
+		} else {
+			if Pressed(name) {
+				return false
+			}
 		}
 	}
-	logger.Infof("", "key status check:%+v", GetNamesByCodes(vkCodes))
 	return true
 }
 

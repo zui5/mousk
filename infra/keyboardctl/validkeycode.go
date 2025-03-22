@@ -395,10 +395,10 @@ func GetCodeByName(name string) uint32 {
 	return 0
 }
 
-func ExportAllCodes() [][]uint32 {
-	codes := make([][]uint32, 0)
-	for _, v := range validNameKeycodeMap {
-		codes = append(codes, []uint32{v})
+func ExportAllCodes() [][]string {
+	codes := make([][]string, 0)
+	for k := range validNameKeycodeMap {
+		codes = append(codes, []string{k})
 	}
 	return codes
 }

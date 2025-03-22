@@ -218,123 +218,74 @@ func main() {
 func keyboardProcess() {
 	// load config
 	// config.Init()
-	var ts = keyboardctl.GetCodesByNames
-	// var ts = keyboardctl.GetCodeByName
 	settings := config.GetSettings()
 
 	// alt+0 : toggle control mode
-	vkCodesToggleControlMode := ts(settings.Shortcuts.ActiveMode.Keys)
-	keyboardctl.RegisterNormal(ToggleControlMode, 0, vkCodesToggleControlMode...)
+	keyboardctl.RegisterNormal(ToggleControlMode, 0, settings.Shortcuts.ActiveMode.Keys...)
 
 	// alt+periot : help pane
-	vkCodesHelpPane := ts(settings.Shortcuts.HelpPane.Keys)
-	keyboardctl.RegisterNormal(ToggleHelpPane, 0, vkCodesHelpPane...)
-	// keyboardctl.RegisterWithReleaseEventMulti(cb keyboardctl.Callback2, prority int, mulitiVkCodes ...[]uint32)
+	keyboardctl.RegisterNormal(ToggleHelpPane, 0, settings.Shortcuts.HelpPane.Keys...)
 
 	// 屏蔽部分按键
 	keyboardctl.RegisterMulti(BlockKey, -1, keyboardctl.ExportAllCodes()...)
 
-	vkCodesForceQuit := ts(settings.Shortcuts.ForceQuit.Keys)
-	keyboardctl.RegisterNormal(ForceQuit, 0, vkCodesForceQuit...)
+	// force quit
+	keyboardctl.RegisterNormal(ForceQuit, 0, settings.Shortcuts.ForceQuit.Keys...)
 
 	// alt+r: reset setting
-	vkCodesResetSetting := ts(settings.Shortcuts.ResetSetting.Keys)
-	keyboardctl.RegisterNormal(ResetSetting, 0, vkCodesResetSetting...)
+	keyboardctl.RegisterNormal(ResetSetting, 0, settings.Shortcuts.ResetSetting.Keys...)
 
 	// Q : tmp quit
-	vkCodesTmpQuitMode := ts(settings.Shortcuts.TmpQuitMode.Keys)
-	keyboardctl.RegisterOne(TmpQuitControlMode, 0, vkCodesTmpQuitMode...)
+	keyboardctl.RegisterOne(TmpQuitControlMode, 0, settings.Shortcuts.TmpQuitMode.Keys...)
 
 	// alt+comma : open setting panel
-	vkCodesOpenSetting := ts(settings.Shortcuts.OpenSetting.Keys)
-	keyboardctl.RegisterNormal(ToggleOptionView, 0, vkCodesOpenSetting...)
+	keyboardctl.RegisterNormal(ToggleOptionView, 0, settings.Shortcuts.OpenSetting.Keys...)
 
 	// Mouse move speed level controls
-	vkCodes1 := ts(settings.Shortcuts.MouseMoveSpeedLevel1.Keys)
-	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel1.Property[0]), 0, vkCodes1...)
-
-	vkCodes2 := ts(settings.Shortcuts.MouseMoveSpeedLevel2.Keys)
-	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel2.Property[0]), 0, vkCodes2...)
-
-	vkCodes3 := ts(settings.Shortcuts.MouseMoveSpeedLevel3.Keys)
-	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel3.Property[0]), 0, vkCodes3...)
-
-	vkCodes4 := ts(settings.Shortcuts.MouseMoveSpeedLevel4.Keys)
-	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel4.Property[0]), 0, vkCodes4...)
-
-	vkCodes5 := ts(settings.Shortcuts.MouseMoveSpeedLevel5.Keys)
-	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel5.Property[0]), 0, vkCodes5...)
+	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel1.Property[0]), 0, settings.Shortcuts.MouseMoveSpeedLevel1.Keys...)
+	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel2.Property[0]), 0, settings.Shortcuts.MouseMoveSpeedLevel2.Keys...)
+	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel3.Property[0]), 0, settings.Shortcuts.MouseMoveSpeedLevel3.Keys...)
+	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel4.Property[0]), 0, settings.Shortcuts.MouseMoveSpeedLevel4.Keys...)
+	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel5.Property[0]), 0, settings.Shortcuts.MouseMoveSpeedLevel5.Keys...)
 
 	// H\J\K\L : in ModeControl, control the mouse movement like vim
 	// W\A\S\D : in ModeControl, control the mouse movement like fps game
-	vkCodesSetMousePosUpFast := ts(settings.Shortcuts.MouseMoveFastUp.Keys)
-	vkCodesSetMousePosDownFast := ts(settings.Shortcuts.MouseMoveFastDown.Keys)
-	vkCodesSetMousePosLeftFast := ts(settings.Shortcuts.MouseMoveFastLeft.Keys)
-	vkCodesSetMousePosRightFast := ts(settings.Shortcuts.MouseMoveFastRight.Keys)
-	vkCodesSetMousePosUpSlow := ts(settings.Shortcuts.MouseMoveSlowUp.Keys)
-	vkCodesSetMousePosDownSlow := ts(settings.Shortcuts.MouseMoveSlowDown.Keys)
-	vkCodesSetMousePosLeftSlow := ts(settings.Shortcuts.MouseMoveSlowLeft.Keys)
-	vkCodesSetMousePosRightSlow := ts(settings.Shortcuts.MouseMoveSlowRight.Keys)
-	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionDown, mousectl.SpeedFast), 0, vkCodesSetMousePosDownFast...)
-	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionUp, mousectl.SpeedFast), 0, vkCodesSetMousePosUpFast...)
-	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionLeft, mousectl.SpeedFast), 0, vkCodesSetMousePosLeftFast...)
-	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionRight, mousectl.SpeedFast), 0, vkCodesSetMousePosRightFast...)
-	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionUp, mousectl.SpeedSlow), 0, vkCodesSetMousePosUpSlow...)
-	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionDown, mousectl.SpeedSlow), 0, vkCodesSetMousePosDownSlow...)
-	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionLeft, mousectl.SpeedSlow), 0, vkCodesSetMousePosLeftSlow...)
-	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionRight, mousectl.SpeedSlow), 0, vkCodesSetMousePosRightSlow...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionDown, mousectl.SpeedFast), 0, settings.Shortcuts.MouseMoveFastDown.Keys...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionUp, mousectl.SpeedFast), 0, settings.Shortcuts.MouseMoveFastUp.Keys...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionLeft, mousectl.SpeedFast), 0, settings.Shortcuts.MouseMoveFastLeft.Keys...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionRight, mousectl.SpeedFast), 0, settings.Shortcuts.MouseMoveFastRight.Keys...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionUp, mousectl.SpeedSlow), 0, settings.Shortcuts.MouseMoveSlowUp.Keys...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionDown, mousectl.SpeedSlow), 0, settings.Shortcuts.MouseMoveSlowDown.Keys...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionLeft, mousectl.SpeedSlow), 0, settings.Shortcuts.MouseMoveSlowLeft.Keys...)
+	keyboardctl.RegisterOne(MoveMouseFunc(mousectl.DirectionRight, mousectl.SpeedSlow), 0, settings.Shortcuts.MouseMoveSlowRight.Keys...)
 
 	// I\R : in ModeControl, simulate mouse left button click
-	// vkCodesMouseLeftClick := [][]uint32{{keyboardctl.VK_I}, {keyboardctl.VK_R}}
-	vkCodesMouseLeftClick := [][]uint32{ts(settings.Shortcuts.MouseLeftButtonClickPrimary.Keys), ts(settings.Shortcuts.MouseLeftButtonClickSecondary.Keys)}
-	keyboardctl.RegisterMulti(MouseLeftClick, 0, vkCodesMouseLeftClick...)
+	keyboardctl.RegisterMulti(MouseLeftClick, 0, [][]string{settings.Shortcuts.MouseLeftButtonClickPrimary.Keys, settings.Shortcuts.MouseLeftButtonClickSecondary.Keys}...)
 
 	// O\T : in ModeControl, simulate mouse right button click
-	// vkCodesMouseRightClick := [][]uint32{{keyboardctl.VK_O}, {keyboardctl.VK_T}}
-	vkCodesMouseRightClick := [][]uint32{ts(settings.Shortcuts.MouseRightButtonClickPrimary.Keys), ts(settings.Shortcuts.MouseRightButtonClickSecondary.Keys)}
-	keyboardctl.RegisterMulti(MouseRightClick, 0, vkCodesMouseRightClick...)
+	keyboardctl.RegisterMulti(MouseRightClick, 0, [][]string{settings.Shortcuts.MouseRightButtonClickPrimary.Keys, settings.Shortcuts.MouseRightButtonClickSecondary.Keys}...)
 
 	// C\N : in ModeControl, simulate mouse left button hold
-	// vkCoodesLeftDown := [][]uint32{{keyboardctl.VK_C}, {keyboardctl.VK_N}}
-	vkCoodesLeftDown := [][]uint32{ts(settings.Shortcuts.MouseLeftButtonHoldPrimary.Keys), ts(settings.Shortcuts.MouseLeftButtonHoldSecondary.Keys)}
-	keyboardctl.RegisterWithReleaseEventMulti(MouseLeftDown, 0, vkCoodesLeftDown...)
+	keyboardctl.RegisterWithReleaseEventMulti(MouseLeftDown, 0, [][]string{settings.Shortcuts.MouseLeftButtonHoldPrimary.Keys, settings.Shortcuts.MouseLeftButtonHoldSecondary.Keys}...)
 
 	// Register mouse scroll speed level shortcuts
-	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel1.Keys); len(vkCodes) > 0 {
-		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel1.Property[0]), 0, vkCodes...)
-	}
-	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel2.Keys); len(vkCodes) > 0 {
-		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel2.Property[0]), 0, vkCodes...)
-	}
-	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel3.Keys); len(vkCodes) > 0 {
-		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel3.Property[0]), 0, vkCodes...)
-	}
-	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel4.Keys); len(vkCodes) > 0 {
-		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel4.Property[0]), 0, vkCodes...)
-	}
-	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel5.Keys); len(vkCodes) > 0 {
-		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel5.Property[0]), 0, vkCodes...)
-	}
+	keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel1.Property[0]), 0, settings.Shortcuts.MouseScrollSpeedLevel1.Keys...)
+	keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel2.Property[0]), 0, settings.Shortcuts.MouseScrollSpeedLevel2.Keys...)
+	keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel3.Property[0]), 0, settings.Shortcuts.MouseScrollSpeedLevel3.Keys...)
+	keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel4.Property[0]), 0, settings.Shortcuts.MouseScrollSpeedLevel4.Keys...)
+	keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel5.Property[0]), 0, settings.Shortcuts.MouseScrollSpeedLevel5.Keys...)
+
 	// shift + H\J\K\L : in ModeControl, control the mouse scroll like vim
 	// shift + W\A\S\D : in ModeControl, control the mouse scroll like fps game
-	vkCodesMouseVerticalScrollDownFast := ts(settings.Shortcuts.MouseScrollFastDown.Keys)
-	vkCodesMouseVerticalScrollUpFast := ts(settings.Shortcuts.MouseScrollFastUp.Keys)
-	vkCodesMouseHorizontslScrollLeftFast := ts(settings.Shortcuts.MouseScrollFastLeft.Keys)
-	vkCodesMouseHorizontslScrollRightFast := ts(settings.Shortcuts.MouseScrollFastRight.Keys)
-	vkCodesMouseVerticalScrollDownSlow := ts(settings.Shortcuts.MouseScrollSlowDown.Keys)
-	vkCodesMouseVerticalScrollUpSlow := ts(settings.Shortcuts.MouseScrollSlowUp.Keys)
-	vkCodesMouseHorizontslScrollLeftSlow := ts(settings.Shortcuts.MouseScrollSlowLeft.Keys)
-	vkCodesMouseHorizontslScrollRightSlow := ts(settings.Shortcuts.MouseScrollSlowRight.Keys)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalDown, mousectl.SpeedFast), 0, vkCodesMouseVerticalScrollDownFast...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalUp, mousectl.SpeedFast), 0, vkCodesMouseVerticalScrollUpFast...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedFast), 0, vkCodesMouseHorizontslScrollLeftFast...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalRight, mousectl.SpeedFast), 0, vkCodesMouseHorizontslScrollRightFast...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedSlow), 0, vkCodesMouseHorizontslScrollLeftSlow...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalRight, mousectl.SpeedSlow), 0, vkCodesMouseHorizontslScrollRightSlow...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalDown, mousectl.SpeedSlow), 0, vkCodesMouseVerticalScrollDownSlow...)
-	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalUp, mousectl.SpeedSlow), 0, vkCodesMouseVerticalScrollUpSlow...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalDown, mousectl.SpeedFast), 0, settings.Shortcuts.MouseScrollFastDown.Keys...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalUp, mousectl.SpeedFast), 0, settings.Shortcuts.MouseScrollFastUp.Keys...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedFast), 0, settings.Shortcuts.MouseScrollFastLeft.Keys...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalRight, mousectl.SpeedFast), 0, settings.Shortcuts.MouseScrollFastRight.Keys...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalLeft, mousectl.SpeedSlow), 0, settings.Shortcuts.MouseScrollSlowLeft.Keys...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionHorizontalRight, mousectl.SpeedSlow), 0, settings.Shortcuts.MouseScrollSlowRight.Keys...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalDown, mousectl.SpeedSlow), 0, settings.Shortcuts.MouseScrollSlowDown.Keys...)
+	keyboardctl.RegisterOne(ScrollMouseFunc(mousectl.DirectionVerticalUp, mousectl.SpeedSlow), 0, settings.Shortcuts.MouseScrollSlowUp.Keys...)
 
-	// _____________________________________________________________________________________________________________________________11111111111111111111111111222222222222222222222222222222222223333333333333333
 	// main keyboard event listener
 	keyboardctl.RawKeyboardListener(keyboardctl.LowLevelKeyboardCallback)
 
