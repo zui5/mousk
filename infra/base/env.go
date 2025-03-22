@@ -1,6 +1,10 @@
 package base
 
-import "mousk/infra/config"
+import (
+	"fmt"
+	"mousk/infra/config"
+	"reflect"
+)
 
 var (
 	mode              = 0 // 0:normal, 1:control
@@ -40,10 +44,20 @@ func GetMoveSpeedLevel() int {
 }
 
 func GetMoveSpeed() int {
-	// TODO
-	// return config.GetSettings().PresetFunc.MouseMove.SpeedLevel.LevelSwitch[moveSpeedLevel-1]
+	speedLevelKey := fmt.Sprintf("MouseMoveSpeedLevel%d", moveSpeedLevel)
+	if _, ok := reflect.TypeOf(*config.GetSettings()).FieldByName("Shortcuts"); ok {
+		if shortcutsStruct := reflect.ValueOf(*config.GetSettings()).FieldByName("Shortcuts"); ok {
+			if speedLevelField := shortcutsStruct.FieldByName(speedLevelKey); ok {
+				if property := speedLevelField.FieldByName("Property"); ok && !property.IsNil() {
+					propertySlice := property.Interface().([]int)
+					if len(propertySlice) > 0 {
+						return propertySlice[0]
+					}
+				}
+			}
+		}
+	}
 	return 1
-	// return config.GetSettings().Shortcuts.MouseMoveSpeedLevel.Keys[]
 }
 
 func GetScrollSpeedLevel() int {
@@ -51,8 +65,19 @@ func GetScrollSpeedLevel() int {
 }
 
 func GetScrollSpeed() int {
-	// TODO
-	// return config.GetSettings().PresetFunc.MouseScroll.SpeedLevel.LevelSwitch[scrollSpeedLevel-1]
+	speedLevelKey := fmt.Sprintf("MouseScrollSpeedLevel%d", scrollSpeedLevel)
+	if _, ok := reflect.TypeOf(*config.GetSettings()).FieldByName("Shortcuts"); ok {
+		if shortcutsStruct := reflect.ValueOf(*config.GetSettings()).FieldByName("Shortcuts"); ok {
+			if speedLevelField := shortcutsStruct.FieldByName(speedLevelKey); ok {
+				if property := speedLevelField.FieldByName("Property"); ok && !property.IsNil() {
+					propertySlice := property.Interface().([]int)
+					if len(propertySlice) > 0 {
+						return propertySlice[0]
+					}
+				}
+			}
+		}
+	}
 	return 1
 }
 

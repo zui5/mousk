@@ -10,7 +10,6 @@ import (
 	"mousk/infra/keyboardctl"
 	"mousk/infra/mousectl"
 	"mousk/infra/ui"
-	"mousk/infra/util"
 	"mousk/service"
 	"os"
 	"time"
@@ -25,8 +24,6 @@ import (
 
 //go:embed frontend/dist
 var assets embed.FS
-
-var vkCodesMulitiSpeedLevelArr = []uint32{keyboardctl.VK_1, keyboardctl.VK_2, keyboardctl.VK_3, keyboardctl.VK_4, keyboardctl.VK_5}
 
 func init() {
 
@@ -252,9 +249,21 @@ func keyboardProcess() {
 	vkCodesOpenSetting := ts(settings.Shortcuts.OpenSetting.Keys)
 	keyboardctl.RegisterNormal(ToggleOptionView, 0, vkCodesOpenSetting...)
 
-	// 1\2\3\4\5 : in ModeControl, control the speed of your mouse move
-	vkCodesMulitiSpeedLevel := [][]uint32{{keyboardctl.VK_1}, {keyboardctl.VK_2}, {keyboardctl.VK_3}, {keyboardctl.VK_4}, {keyboardctl.VK_5}}
-	keyboardctl.RegisterMulti(SpeedLevelSwitch, 0, vkCodesMulitiSpeedLevel...)
+	// Mouse move speed level controls
+	vkCodes1 := ts(settings.Shortcuts.MouseMoveSpeedLevel1.Keys)
+	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel1.Property[0]), 0, vkCodes1...)
+
+	vkCodes2 := ts(settings.Shortcuts.MouseMoveSpeedLevel2.Keys)
+	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel2.Property[0]), 0, vkCodes2...)
+
+	vkCodes3 := ts(settings.Shortcuts.MouseMoveSpeedLevel3.Keys)
+	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel3.Property[0]), 0, vkCodes3...)
+
+	vkCodes4 := ts(settings.Shortcuts.MouseMoveSpeedLevel4.Keys)
+	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel4.Property[0]), 0, vkCodes4...)
+
+	vkCodes5 := ts(settings.Shortcuts.MouseMoveSpeedLevel5.Keys)
+	keyboardctl.RegisterOne(SpeedLevelSwitchFunc(settings.Shortcuts.MouseMoveSpeedLevel5.Property[0]), 0, vkCodes5...)
 
 	// H\J\K\L : in ModeControl, control the mouse movement like vim
 	// W\A\S\D : in ModeControl, control the mouse movement like fps game
@@ -290,9 +299,22 @@ func keyboardProcess() {
 	vkCoodesLeftDown := [][]uint32{ts(settings.Shortcuts.MouseLeftButtonHoldPrimary.Keys), ts(settings.Shortcuts.MouseLeftButtonHoldSecondary.Keys)}
 	keyboardctl.RegisterWithReleaseEventMulti(MouseLeftDown, 0, vkCoodesLeftDown...)
 
-	// in ModeControl ,control the speed of your mouse scroll
-	vkCodesMulitiScrollSpeedLevel := [][]uint32{{keyboardctl.VK_LSHIFT, keyboardctl.VK_1}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_2}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_3}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_4}, {keyboardctl.VK_LSHIFT, keyboardctl.VK_5}}
-	keyboardctl.RegisterMulti(ScrollSpeedLevelSwitch, 0, vkCodesMulitiScrollSpeedLevel...)
+	// Register mouse scroll speed level shortcuts
+	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel1.Keys); len(vkCodes) > 0 {
+		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel1.Property[0]), 0, vkCodes[0])
+	}
+	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel2.Keys); len(vkCodes) > 0 {
+		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel2.Property[0]), 0, vkCodes[0])
+	}
+	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel3.Keys); len(vkCodes) > 0 {
+		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel3.Property[0]), 0, vkCodes[0])
+	}
+	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel4.Keys); len(vkCodes) > 0 {
+		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel4.Property[0]), 0, vkCodes[0])
+	}
+	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel5.Keys); len(vkCodes) > 0 {
+		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel5.Property[0]), 0, vkCodes[0])
+	}
 	// shift + H\J\K\L : in ModeControl, control the mouse scroll like vim
 	// shift + W\A\S\D : in ModeControl, control the mouse scroll like fps game
 	vkCodesMouseVerticalScrollDownFast := ts(settings.Shortcuts.MouseScrollFastDown.Keys)
@@ -405,32 +427,22 @@ func QuitControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	return 0
 }
 
-func ScrollSpeedLevelSwitch(wParam uintptr, vkCode, scanCode uint32) uintptr {
-	logger.Infof("", "current mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
-	// if base.GetMode() != base.ModeControl {
-	// 	logger.Infof("","not in control mode, can not switch speed,mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
-	// 	return 0
-	// }
-	if util.Contains[uint32](vkCodesMulitiSpeedLevelArr, uint32(vkCode)) {
-		speedLevel := int(vkCode) - keyboardctl.VK_1 + 1
-		base.SetScrollSpeedLevel(speedLevel)
+func ScrollSpeedLevelSwitchFunc(level int) keyboardctl.Callback2 {
+	return func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		logger.Infof("", "current mode:%d,current speed:%d", base.GetMode(), base.GetScrollSpeedLevel())
+		base.SetScrollSpeedLevel(level)
 		logger.Infof("", "change speed to :%d", base.GetScrollSpeed())
+		return 1
 	}
-	return 1
 }
 
-func SpeedLevelSwitch(wParam uintptr, vkCode, scanCode uint32) uintptr {
-	logger.Infof("", "current mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
-	// if base.GetMode() != base.ModeControl {
-	// 	logger.Infof("","not in control mode, can not switch speed,mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
-	// 	return 0
-	// }
-	if util.Contains[uint32](vkCodesMulitiSpeedLevelArr, uint32(vkCode)) {
-		speedLevel := int(vkCode) - keyboardctl.VK_1 + 1
-		base.SetMoveSpeedLevel(speedLevel)
+func SpeedLevelSwitchFunc(level int) keyboardctl.Callback2 {
+	return func(wParam uintptr, vkCode, scanCode uint32) uintptr {
+		logger.Infof("", "current mode:%d,current speed:%d", base.GetMode(), base.GetMoveSpeedLevel())
+		base.SetMoveSpeedLevel(level)
 		logger.Infof("", "change speed to :%d", base.GetMoveSpeedLevel())
+		return 1
 	}
-	return 1
 }
 
 func MouseLeftClick(wParam uintptr, vkCode, scanCode uint32) uintptr {
