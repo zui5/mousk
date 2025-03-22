@@ -90,7 +90,6 @@ func unRegisterKeyListening(vkCodes ...uint32) {
 			FirstClickKeys: vkCodes,
 		})
 	}
-
 }
 
 func RegisterMulti(cb Callback2, priority int, mulitiVkCodes ...[]uint32) {
@@ -366,87 +365,8 @@ func StatusCheckNew(vkCodes []uint32, pressed int) bool {
 	return true
 }
 
-// Deprecated!!!
-func StatusCheck(vkCodes []uint32, pressed int, durationBetween time.Duration) bool {
-	// logger.Infof("", "key status check param:%+v", GetNamesByCodes(vkCodes))
-	if vkCodes == nil {
-		return true
-	}
-
-	var maxLastReleasedTime *time.Time = nil
-	var minLastReleasedTime *time.Time = nil
-	var maxLastPressedTime *time.Time = nil
-	var minLastPressedTime *time.Time = nil
-	for _, v := range vkCodes {
-		keyState, ok := keyPressedStates[v]
-		// logger.Infof("", "key status check param:%+v, key:%s, keystate:%+v", GetNamesByCodes(vkCodes), GetNameByCode(v), keyState)
-		if !ok {
-			keyState = nilKeyState()
-		}
-		if pressed == 1 {
-			if !keyState.Pressed || keyState.LastPressed == nil {
-				return false
-			}
-
-			if maxLastPressedTime == nil {
-				maxLastPressedTime = keyState.LastPressed
-			} else {
-				if maxLastPressedTime.Sub(*keyState.LastPressed) < 0 {
-					maxLastPressedTime = keyState.LastPressed
-				}
-			}
-			if minLastPressedTime == nil {
-				minLastPressedTime = keyState.LastPressed
-			} else {
-				if minLastPressedTime.Sub(*keyState.LastPressed) > 0 {
-					minLastPressedTime = keyState.LastPressed
-				}
-			}
-		} else {
-			if keyState.Pressed || keyState.LastReleased == nil {
-				return false
-			}
-
-			if maxLastReleasedTime == nil {
-				maxLastReleasedTime = keyState.LastReleased
-			} else {
-				if maxLastReleasedTime.Sub(*keyState.LastReleased) < 0 {
-					maxLastReleasedTime = keyState.LastReleased
-				}
-			}
-			if minLastReleasedTime == nil {
-				minLastReleasedTime = keyState.LastReleased
-			} else {
-				if minLastReleasedTime.Sub(*keyState.LastReleased) > 0 {
-					minLastReleasedTime = keyState.LastReleased
-				}
-			}
-		}
-
-	}
-	if pressed == 1 {
-		durationPressedVal := minLastPressedTime.Sub(*maxLastPressedTime)
-		if durationPressedVal < 0 {
-			durationPressedVal = -1 * durationPressedVal
-		}
-		if durationPressedVal > durationBetween {
-			return false
-		}
-	} else {
-		durationReleasedVal := minLastReleasedTime.Sub(*maxLastReleasedTime)
-		if durationReleasedVal < 0 {
-			durationReleasedVal = -1 * durationReleasedVal
-		}
-		if durationReleasedVal > durationBetween {
-			return false
-		}
-	}
-
-	logger.Infof("", "key status check:%+v", GetNamesByCodes(vkCodes))
-	return true
-}
-
 func PrintAllKeys() string {
 	keysRaw, _ := json.Marshal(listeningKeyReference)
+	logger.Infof("", "all key refrence", string(keysRaw))
 	return string(keysRaw)
 }

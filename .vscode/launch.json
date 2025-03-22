@@ -9,6 +9,16 @@
       "program": "${workspaceFolder}/main.go",
     },
     {
+      "name": "Wails: Debug mousk(No-NPM-Build)",
+      "type": "go",
+      "request": "launch",
+      "console": "internalConsole",
+      "mode": "exec",
+      "program": "${workspaceFolder}/build/bin/mousk.exe",
+      // "preLaunchTask": "build debug",
+      "cwd": "${workspaceFolder}"
+    },
+    {
       "name": "Wails: Debug mousk",
       "type": "go",
       "request": "launch",

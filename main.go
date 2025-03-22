@@ -301,19 +301,19 @@ func keyboardProcess() {
 
 	// Register mouse scroll speed level shortcuts
 	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel1.Keys); len(vkCodes) > 0 {
-		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel1.Property[0]), 0, vkCodes[0])
+		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel1.Property[0]), 0, vkCodes...)
 	}
 	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel2.Keys); len(vkCodes) > 0 {
-		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel2.Property[0]), 0, vkCodes[0])
+		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel2.Property[0]), 0, vkCodes...)
 	}
 	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel3.Keys); len(vkCodes) > 0 {
-		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel3.Property[0]), 0, vkCodes[0])
+		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel3.Property[0]), 0, vkCodes...)
 	}
 	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel4.Keys); len(vkCodes) > 0 {
-		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel4.Property[0]), 0, vkCodes[0])
+		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel4.Property[0]), 0, vkCodes...)
 	}
 	if vkCodes := keyboardctl.GetCodesByNames(settings.Shortcuts.MouseScrollSpeedLevel5.Keys); len(vkCodes) > 0 {
-		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel5.Property[0]), 0, vkCodes[0])
+		keyboardctl.RegisterOne(ScrollSpeedLevelSwitchFunc(settings.Shortcuts.MouseScrollSpeedLevel5.Property[0]), 0, vkCodes...)
 	}
 	// shift + H\J\K\L : in ModeControl, control the mouse scroll like vim
 	// shift + W\A\S\D : in ModeControl, control the mouse scroll like fps game
@@ -337,10 +337,6 @@ func keyboardProcess() {
 	// _____________________________________________________________________________________________________________________________11111111111111111111111111222222222222222222222222222222222223333333333333333
 	// main keyboard event listener
 	keyboardctl.RawKeyboardListener(keyboardctl.LowLevelKeyboardCallback)
-
-}
-
-func void() {
 
 }
 
@@ -510,6 +506,7 @@ func TmpQuitControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 
 func ToggleControlMode(wParam uintptr, vkCode, scanCode uint32) uintptr {
 	toggleControlMode()
+	keyboardctl.PrintAllKeys()
 	return 1
 }
 

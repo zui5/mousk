@@ -1,5 +1,5 @@
 ENV = "test"
-VER = 0.2
+VER = 0.3
 StartOnSystemUp = true
 
 [shortcuts]
@@ -238,7 +238,7 @@ StartOnSystemUp = true
   [shortcuts.MouseScrollSpeedLevel1]
     name = "Mouse Scroll Speed Level 1"
     description = "Switch the mouse scroll speed level 1"
-    keys = ["LSFHIT","1"]
+    keys = ["LSHIFT","1"]
 		effectmode = ["control"]
 		property=[1]
 		fucntioncall=""
@@ -246,7 +246,7 @@ StartOnSystemUp = true
   [shortcuts.MouseScrollSpeedLevel2]
     name = "Mouse Scroll Speed Level 2"
     description = "Switch the mouse scroll speed level 2"
-    keys = ["LSFHIT","2"]
+    keys = ["LSHIFT","2"]
 		effectmode = ["control"]
 		property=[8]
 		fucntioncall=""
@@ -254,7 +254,7 @@ StartOnSystemUp = true
   [shortcuts.MouseScrollSpeedLevel3]
     name = "Mouse Scroll Speed Level 3"
     description = "Switch the mouse scroll speed level 3"
-    keys = ["LSFHIT","3"]
+    keys = ["LSHIFT","3"]
 		effectmode = ["control"]
 		property=[16]
 		fucntioncall=""
@@ -262,7 +262,7 @@ StartOnSystemUp = true
   [shortcuts.MouseScrollSpeedLevel4]
     name = "Mouse Scroll Speed Level 4"
     description = "Switch the mouse scroll speed level 4"
-    keys = ["LSFHIT","4"]
+    keys = ["LSHIFT","4"]
 		effectmode = ["control"]
 		property=[32]
 		fucntioncall=""
@@ -270,7 +270,7 @@ StartOnSystemUp = true
   [shortcuts.MouseScrollSpeedLevel5]
     name = "Mouse Scroll Speed Level 5"
     description = "Switch the mouse scroll speed level 5"
-    keys = ["LSFHIT","5"]
+    keys = ["LSHIFT","5"]
 		effectmode = ["control"]
 		property=[48]
 		fucntioncall=""
